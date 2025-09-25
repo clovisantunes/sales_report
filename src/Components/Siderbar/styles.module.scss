@@ -1,0 +1,190 @@
+@import '../../styles/theme.scss';
+
+.sidebar {
+  background: $color-primary-bg-light;
+  width: 70px;
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  top: 0;
+  padding-top: 12vh;
+  transition: all 0.3s ease;
+  border-right: 1px solid $color-primary-dark-light;
+  z-index: 900;
+  display: flex;
+  flex-direction: column;
+  font-family: $font-primary;
+  z-index: 1;
+    &.expanded {
+    width: 250px;
+  }
+
+  &.dark {
+    background: $color-primary-bg-dark;
+    border-right-color: $color-primary-dark-dark;
+  }
+
+  .toggleButton {
+    position: absolute;
+    top: 12vh;
+    right: -12px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: $color-bg-button-light;
+    border: 2px solid $color-white-light;
+    color: $color-white-light;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 12px;
+
+    &.dark {
+      background: $color-bg-button-dark;
+      border-color: $color-primary-bg-dark;
+    }
+
+    &:hover {
+      transform: scale(1.1);
+      background: $color-hover-text-light;
+    }
+
+    &.dark:hover {
+      background: $color-hover-text-dark;
+    }
+  }
+
+  .navList {
+    list-style: none;
+    padding: 20px 0;
+    margin: 0;
+    flex: 1;
+
+    .navItem {
+      margin-bottom: 8px;
+    }
+
+    .navLink {
+      display: flex;
+      align-items: center;
+      padding: 12px 15px;
+      color: $color-card-text-light;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      border-left: 3px solid transparent;
+      white-space: nowrap;
+      overflow: hidden;
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
+      cursor: pointer;
+
+      &.dark {
+        color: $color-card-text-dark;
+      }
+
+      &:hover {
+        background: $color-primary-light-light;
+        color: $color-hover-text-light;
+        border-left-color: $color-bg-button-light;
+      }
+
+      &.dark:hover {
+        background: $color-primary-light-dark;
+        color: $color-hover-text-dark;
+        border-left-color: $color-bg-button-dark;
+      }
+
+      &.active {
+        background: $color-primary-light-light;
+        color: $color-bg-button-light;
+        border-left-color: $color-bg-button-light;
+      }
+
+      &.dark.active {
+        background: $color-primary-light-dark;
+        color: $color-bg-button-dark;
+        border-left-color: $color-bg-button-dark;
+      }
+
+      .icon {
+        font-size: 20px;
+        min-width: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .label {
+        font-size: $font-size-text-lg-light;
+        font-weight: 500;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+    }
+  }
+
+  &.expanded .navLink .label {
+    opacity: 1;
+  }
+
+  .clockContainer {
+    padding: 20px 15px;
+    border-top: 1px solid $color-primary-dark-light;
+    margin-top: auto;
+
+    &.dark {
+      border-top-color: $color-primary-dark-dark;
+    }
+
+    .clock {
+      display: flex;
+      align-items: center;
+      color: $color-subtitle-text-light;
+      font-size: $font-size-text-sm-light;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+
+      &.dark {
+        color: $color-subtitle-text-dark;
+      }
+
+      .clockIcon {
+        font-size: 16px;
+        min-width: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .time {
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+    }
+  }
+
+  &.expanded .clock .time {
+    opacity: 1;
+  }
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    width: 60px;
+
+    &.expanded {
+      width: 100%;
+      max-width: 280px;
+    }
+
+    .toggleButton {
+      top: 75px;
+      right: -10px;
+    }
+  }
+}

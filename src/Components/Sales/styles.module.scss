@@ -1,0 +1,345 @@
+@import '../../styles/theme.scss';
+
+.sales {
+  padding: 20px;
+  min-height: calc(100vh - 70px);
+  background: $color-primary-light-light;
+  transition: all 0.3s ease;
+ padding-top: 13.5vh;
+  &.dark {
+    background: $color-primary-bg-dark;
+  }
+}
+
+.salesHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+
+  .salesTitle {
+    font-size: $font-size-banner-subtitle-light;
+    font-weight: 700;
+    color: $color-title-text-light;
+
+    &.dark {
+      color: $color-title-text-dark;
+    }
+  }
+
+  .addButton {
+    background: $color-bg-button-light;
+    color: $color-white-light;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    &.dark {
+      background: $color-bg-button-dark;
+    }
+
+    &:hover {
+      background: $color-hover-text-light;
+
+      &.dark {
+        background: $color-hover-text-dark;
+      }
+    }
+  }
+}
+
+.filtersContainer {
+  background: $color-on-white-bg-light;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  margin-bottom: 30px;
+
+  &.dark {
+    background: $color-card-bg-dark;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  }
+
+  .filtersTitle {
+    font-size: $font-size-text-xl-light;
+    font-weight: 600;
+    color: $color-title-text-light;
+    margin-bottom: 15px;
+
+    &.dark {
+      color: $color-title-text-dark;
+    }
+  }
+
+  .filtersGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+
+    .filterGroup {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+
+      label {
+        font-size: $font-size-text-md-light;
+        color: $color-card-text-light;
+        font-weight: 500;
+
+        &.dark {
+          color: $color-card-text-dark;
+        }
+      }
+
+      select, input {
+        padding: 10px;
+        border: 1px solid $color-primary-dark-light;
+        border-radius: 6px;
+        background: $color-white-light;
+        color: $color-text-light;
+        font-size: $font-size-text-md-light;
+
+        &.dark {
+          background: $color-primary-light-dark;
+          border-color: $color-primary-dark-dark;
+          color: $color-text-dark;
+        }
+      }
+    }
+  }
+
+  .filterActions {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+
+    button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+
+      &.applyButton {
+        background: $color-bg-button-light;
+        color: $color-white-light;
+
+        &.dark {
+          background: $color-bg-button-dark;
+        }
+
+        &:hover {
+          background: $color-hover-text-light;
+
+          &.dark {
+            background: $color-hover-text-dark;
+          }
+        }
+      }
+
+      &.clearButton {
+        background: $color-primary-dark-light;
+        color: $color-text-light;
+
+        &.dark {
+          background: $color-primary-dark-dark;
+          color: $color-text-dark;
+        }
+
+        &:hover {
+          background: $color-subtitle-text-light;
+          color: $color-white-light;
+
+          &.dark {
+            background: $color-subtitle-text-dark;
+          }
+        }
+      }
+    }
+  }
+}
+
+.salesTableContainer {
+  background: $color-on-white-bg-light;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  overflow-x: auto;
+
+  &.dark {
+    background: $color-card-bg-dark;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  }
+
+  .tableTitle {
+    font-size: $font-size-subtitle-light;
+    font-weight: 600;
+    color: $color-title-text-light;
+    margin-bottom: 20px;
+
+    &.dark {
+      color: $color-title-text-dark;
+    }
+  }
+}
+
+.salesTable {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 1200px;
+
+  th {
+    background: $color-primary-light-light;
+    color: $color-title-text-light;
+    font-weight: 600;
+    padding: 15px 12px;
+    text-align: left;
+    border-bottom: 2px solid $color-primary-dark-light;
+    font-size: $font-size-text-md-light;
+    white-space: nowrap;
+
+    &.dark {
+      background: $color-primary-light-dark;
+      color: $color-title-text-dark;
+      border-bottom-color: $color-primary-dark-dark;
+    }
+  }
+
+  td {
+    padding: 12px;
+    border-bottom: 1px solid $color-primary-dark-light;
+    color: $color-card-text-light;
+    font-size: $font-size-text-md-light;
+
+    &.dark {
+      border-bottom-color: $color-primary-dark-dark;
+      color: $color-card-text-dark;
+    }
+  }
+
+  tbody tr {
+    transition: all 0.3s ease;
+
+    &:hover {
+      background: $color-primary-light-light;
+
+      &.dark {
+        background: $color-primary-light-dark;
+      }
+    }
+  }
+
+  // Estilos para a coluna de Resultado
+  .resultado {
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: 4px;
+    text-align: center;
+    
+    &.fechado {
+      color: #059669;
+      
+      &.dark {
+        background: #065f46;
+        color: #34d399;
+      }
+    }
+    
+    &.perdida {
+      color: #dc2626;
+      
+      &.dark {
+        background: #7f1d1d;
+        color: #fca5a5;
+      }
+    }
+    
+    &.em-andamento {
+      color: #ea580c;
+      
+      &.dark {
+        background: #7c2d12;
+        color: #fdba74;
+      }
+    }
+  }
+
+  // Estilos para os estágios (mantendo os anteriores para referência)
+  .stage {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: $font-size-text-sm-light;
+    font-weight: 500;
+
+    &.prospecção {
+      background: #fef3c7;
+      color: #d97706;
+    }
+
+    &.apresentada proposta {
+      background: #dbeafe;
+      color: #2563eb;
+    }
+
+    &.negociar {
+      background: #ddd6fe;
+      color: #7c3aed;
+    }
+
+    &.fechar proposta {
+      background: #fce7f3;
+      color: #db2777;
+    }
+
+    &.fechado {
+      background: #d1fae5;
+      color: #059669;
+    }
+
+    &.pós venda {
+      background: #ccfbf1;
+      color: #0d9488;
+    }
+
+    &.visita manutenção {
+      background: #e0f2fe;
+      color: #0369a1;
+    }
+
+    &.renegociar contrato {
+      color: #ca8a04;
+    }
+
+    &.perdida {
+      color: #dc2626;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .sales {
+    padding: 15px;
+  }
+
+  .salesHeader {
+    flex-direction: column;
+    gap: 15px;
+    align-items: flex-start;
+  }
+
+  .filtersContainer {
+    padding: 15px;
+  }
+
+  .filtersGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .salesTableContainer {
+    padding: 15px;
+  }
+}
