@@ -1,127 +1,43 @@
-import React, { useState } from 'react';
-import { FiEdit2, FiMail, FiPhone } from 'react-icons/fi';
+import React, { useState, useEffect } from 'react';
+import { FiEdit2, FiMail, FiPhone, FiMapPin, FiX, FiUser, FiBriefcase } from 'react-icons/fi';
 import type { Customer, CustomerFilters } from '../../types/Customers';
+import { customerService } from '../../services/Customers/Customers';
 import styles from './styles.module.scss';
 
 interface CustomersProps {
   darkMode: boolean;
   className?: string;
+  users?: any[];
 }
 
-const Customers: React.FC<CustomersProps> = ({ darkMode, className = "" }) => {
+const Customers: React.FC<CustomersProps> = ({ darkMode, className = "", users = [] }) => {
   const [filters, setFilters] = useState<CustomerFilters>({});
-  const [customers] = useState<Customer[]>([
-    {
-      id: '1',
-      name: 'Maria Silva',
-      company: 'Tech Solutions Ltda',
-      email: 'maria.silva@techsolutions.com',
-      phone: '(11) 99999-9999',
-      status: 'active',
-      salesStatus: 'fechado',
-      lastContact: '15/03/2024',
-      totalSales: 12500,
-      salesPerson: 'João Silva',
-      notes: 'Cliente satisfeito com os serviços'
-    },
-    {
-      id: '2',
-      name: 'João Santos',
-      company: 'Comércio Express',
-      email: 'joao.santos@comercioexpress.com',
-      phone: '(11) 98888-8888',
-      status: 'active',
-      salesStatus: 'negociar',
-      lastContact: '14/03/2024',
-      totalSales: 3200,
-      salesPerson: 'Ana Costa',
-      notes: 'Aguardando aprovação do orçamento'
-    },
-    {
-      id: '3',
-      name: 'Carlos Oliveira',
-      company: 'Indústria Moderna',
-      email: 'carlos.oliveira@industriamoderna.com',
-      phone: '(11) 97777-7777',
-      status: 'pending',
-      salesStatus: 'prospecção',
-      lastContact: '13/03/2024',
-      totalSales: 0,
-      salesPerson: 'João Silva',
-      notes: 'Primeiro contato, agendar reunião'
-    },
-    {
-      id: '4',
-      name: 'Ana Costa',
-      company: 'Serviços Rápidos',
-      email: 'ana.costa@servicosrapidos.com',
-      phone: '(11) 96666-6666',
-      status: 'inactive',
-      salesStatus: 'perdida',
-      lastContact: '12/03/2024',
-      totalSales: 0,
-      salesPerson: 'Ana Costa',
-      notes: 'Cliente optou por concorrente'
-    },
-    {
-      id: '5',
-      name: 'Pedro Rocha',
-      company: 'Marketing Digital',
-      email: 'pedro.rocha@marketingdigital.com',
-      phone: '(11) 95555-5555',
-      status: 'active',
-      salesStatus: 'fechado',
-      lastContact: '11/03/2024',
-      totalSales: 8500,
-      salesPerson: 'João Silva',
-      notes: 'Fechamento rápido, cliente decidido'
-    },
-    {
-      id: '6',
-      name: 'Roberto Almeida',
-      company: 'Construção Civil SA',
-      email: 'roberto.almeida@construcaocivil.com',
-      phone: '(11) 94444-4444',
-      status: 'active',
-      salesStatus: 'apresentada proposta',
-      lastContact: '10/03/2024',
-      totalSales: 0,
-      salesPerson: 'Ana Costa',
-      notes: 'Proposta enviada, aguardando retorno'
-    },
-    {
-      id: '7',
-      name: 'Fernanda Lima',
-      company: 'Alimentos Premium',
-      email: 'fernanda.lima@alimentospremium.com',
-      phone: '(11) 93333-3333',
-      status: 'active',
-      salesStatus: 'pós venda',
-      lastContact: '09/03/2024',
-      totalSales: 5600,
-      salesPerson: 'João Silva',
-      notes: 'Cliente em fase de implementação'
-    },
-    {
-      id: '8',
-      name: 'Ricardo Souza',
-      company: 'Logística Express',
-      email: 'ricardo.souza@logisticaexpress.com',
-      phone: '(11) 92222-2222',
-      status: 'active',
-      salesStatus: 'pós venda',
-      lastContact: '08/03/2024',
-      totalSales: 4200,
-      salesPerson: 'Ana Costa',
-      notes: 'Visita de manutenção agendada'
-    }
-  ]);
+  const [customers, setCustomers] = useState<Customer[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editingCustomer, setEditingCustomer] = useState<Customer | null>(null);
+  const [submitting, setSubmitting] = useState(false);
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL'
-    }).format(amount);
+  useEffect(() => {
+    loadCustomers();
+  }, []);
+
+  const loadCustomers = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      console.log('🔄 Carregando clientes...');
+      const customersData = await customerService.getCustomers();
+      console.log('✅ Clientes carregados:', customersData);
+      setCustomers(customersData);
+    } catch (error) {
+      console.error('❌ Erro ao carregar clientes:', error);
+      setError('Erro ao carregar clientes. Tente novamente.');
+      setCustomers([]);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const getStatusLabel = (status: string) => {
@@ -141,9 +57,21 @@ const Customers: React.FC<CustomersProps> = ({ darkMode, className = "" }) => {
       'fechar proposta': 'Fechar Proposta',
       'fechado': 'Fechado',
       'pós venda': 'Pós Venda',
+      'visita manutenção': 'Visita Manutenção',
+      'renegociar contrato': 'Renegociar Contrato',
       'perdida': 'Perdida'
     };
     return labels[status as keyof typeof labels] || status;
+  };
+
+  const getContactMethodLabel = (method: string) => {
+    const labels = {
+      'presencial': 'Presencial',
+      'telefone': 'Telefone',
+      'email': 'Email',
+      'whatsapp': 'WhatsApp'
+    };
+    return labels[method as keyof typeof labels] || method;
   };
 
   const handleFilterChange = (key: keyof CustomerFilters, value: string) => {
@@ -154,15 +82,80 @@ const Customers: React.FC<CustomersProps> = ({ darkMode, className = "" }) => {
     setFilters({});
   };
 
-  const handleEditCustomer = (customerId: string) => {
-    console.log('Editando cliente:', customerId);
-    // Aqui você implementaria a lógica de edição
+  const handleApplyFilters = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      console.log('🔍 Aplicando filtros:', filters);
+      const filteredData = await customerService.getCustomersWithFilters(filters);
+      console.log('✅ Dados filtrados:', filteredData);
+      setCustomers(filteredData);
+    } catch (error) {
+      console.error('❌ Erro ao aplicar filtros:', error);
+      setError('Erro ao aplicar filtros. Tente novamente.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleEditCustomer = (customer: Customer) => {
+    console.log('✏️ Editando cliente:', customer);
+    setEditingCustomer(customer);
+    setShowEditModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowEditModal(false);
+    setEditingCustomer(null);
+    setSubmitting(false);
+  };
+
+  const handleSaveCustomer = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingCustomer) return;
+
+    setSubmitting(true);
+    try {
+      // Aqui você implementaria a lógica para salvar as alterações
+      console.log('💾 Salvando alterações:', editingCustomer);
+      
+      // Simulando salvamento
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Recarrega os dados após salvar
+      await loadCustomers();
+      handleCloseModal();
+    } catch (error) {
+      console.error('❌ Erro ao salvar cliente:', error);
+      setError('Erro ao salvar alterações. Tente novamente.');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleResetData = async () => {
+    await loadCustomers();
+    clearFilters();
+  };
+
+  const getUserName = (userId: string) => {
+    if (!users || users.length === 0) return userId;
+    const user = users.find(u => u.id === userId);
+    return user ? user.name : userId;
+  };
+
+  const hasContactInfo = (customer: Customer) => {
+    return customer.email || customer.phone || customer.whatsapp || customer.address;
   };
 
   const filteredCustomers = customers.filter(customer => {
+    if (!customer) return false;
+    
     if (filters.status && customer.status !== filters.status) return false;
     if (filters.salesPerson && customer.salesPerson !== filters.salesPerson) return false;
     if (filters.salesStatus && customer.salesStatus !== filters.salesStatus) return false;
+    if (filters.contactMethod && customer.contactMethod !== filters.contactMethod) return false;
+    
     return true;
   });
 
@@ -172,10 +165,23 @@ const Customers: React.FC<CustomersProps> = ({ darkMode, className = "" }) => {
         <h1 className={`${styles.customersTitle} ${darkMode ? styles.dark : ''}`}>
           Gerenciamento de Clientes
         </h1>
-        <button className={`${styles.addButton} ${darkMode ? styles.dark : ''}`}>
-          + Novo Cliente
-        </button>
+        <div className={styles.headerActions}>
+          <button 
+            className={`${styles.refreshButton} ${darkMode ? styles.dark : ''}`}
+            onClick={loadCustomers}
+            disabled={loading}
+          >
+            {loading ? 'Carregando...' : 'Atualizar'}
+          </button>
+        </div>
       </div>
+
+      {error && (
+        <div className={styles.errorState}>
+          <p>{error}</p>
+          <button onClick={loadCustomers}>Tentar Novamente</button>
+        </div>
+      )}
 
       <div className={`${styles.filtersContainer} ${darkMode ? styles.dark : ''}`}>
         <h3 className={`${styles.filtersTitle} ${darkMode ? styles.dark : ''}`}>Filtros</h3>
@@ -206,7 +212,23 @@ const Customers: React.FC<CustomersProps> = ({ darkMode, className = "" }) => {
               <option value="fechar proposta">Fechar Proposta</option>
               <option value="fechado">Fechado</option>
               <option value="pós venda">Pós Venda</option>
+              <option value="visita manutenção">Visita Manutenção</option>
+              <option value="renegociar contrato">Renegociar Contrato</option>
               <option value="perdida">Perdida</option>
+            </select>
+          </div>
+
+          <div className={styles.filterGroup}>
+            <label>Forma de Contato</label>
+            <select 
+              value={filters.contactMethod || ''}
+              onChange={(e) => handleFilterChange('contactMethod', e.target.value)}
+            >
+              <option value="">Todas as formas</option>
+              <option value="presencial">Presencial</option>
+              <option value="telefone">Telefone</option>
+              <option value="email">Email</option>
+              <option value="whatsapp">WhatsApp</option>
             </select>
           </div>
 
@@ -217,86 +239,380 @@ const Customers: React.FC<CustomersProps> = ({ darkMode, className = "" }) => {
               onChange={(e) => handleFilterChange('salesPerson', e.target.value)}
             >
               <option value="">Todos os vendedores</option>
-              <option value="João Silva">João Silva</option>
-              <option value="Ana Costa">Ana Costa</option>
+              {users && users.map(user => (
+                <option key={user.id} value={user.id}>{user.name}</option>
+              ))}
             </select>
           </div>
         </div>
 
         <div className={styles.filterActions}>
-          <button className={`${styles.applyButton} ${darkMode ? styles.dark : ''}`}>
-            Aplicar Filtros
+          <button 
+            className={`${styles.applyButton} ${darkMode ? styles.dark : ''}`}
+            onClick={handleApplyFilters}
+            disabled={loading}
+          >
+            {loading ? 'Aplicando...' : 'Aplicar Filtros'}
           </button>
-          <button className={`${styles.clearButton} ${darkMode ? styles.dark : ''}`} onClick={clearFilters}>
+          <button 
+            className={`${styles.clearButton} ${darkMode ? styles.dark : ''}`} 
+            onClick={handleResetData}
+            disabled={loading}
+          >
             Limpar Filtros
           </button>
         </div>
       </div>
 
       <div className={`${styles.customersTableContainer} ${darkMode ? styles.dark : ''}`}>
-        <div className={`${styles.tableTitle} ${darkMode ? styles.dark : ''}`}>
-          Lista de Clientes ({filteredCustomers.length} resultados)
+        <div className={styles.tableHeader}>
+          <h2 className={`${styles.tableTitle} ${darkMode ? styles.dark : ''}`}>
+            Lista de Clientes ({filteredCustomers.length} resultados)
+          </h2>
+          <div className={styles.tableStats}>
+            <span className={styles.statItem}>
+              <span className={`${styles.statDot} ${styles.active}`}></span>
+              Ativos: {filteredCustomers.filter(c => c.status === 'active').length}
+            </span>
+            <span className={styles.statItem}>
+              <span className={`${styles.statDot} ${styles.pending}`}></span>
+              Pendentes: {filteredCustomers.filter(c => c.status === 'pending').length}
+            </span>
+            <span className={styles.statItem}>
+              <span className={`${styles.statDot} ${styles.inactive}`}></span>
+              Inativos: {filteredCustomers.filter(c => c.status === 'inactive').length}
+            </span>
+          </div>
         </div>
-        <table className={styles.customersTable}>
-          <thead>
-            <tr>
-              <th>Cliente</th>
-              <th>Empresa</th>
-              <th>Contato</th>
-              <th>Status</th>
-              <th>Status da Venda</th>
-              <th>Último Contato</th>
-              <th>Total de Vendas</th>
-              <th>Vendedor</th>
-              <th>Ações</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredCustomers.map((customer) => (
-              <tr key={customer.id}>
-                <td>
-                  <strong>{customer.name}</strong>
-                </td>
-                <td>{customer.company}</td>
-                <td>
-                  <div className={styles.contactInfo}>
-                    <div className={styles.email}>
-                      <FiMail size={12} /> {customer.email}
-                    </div>
-                    <div className={styles.phone}>
-                      <FiPhone size={12} /> {customer.phone}
-                    </div>
-                  </div>
-                </td>
-                <td>
-                  <span className={`${styles.status} ${styles[customer.status]} ${darkMode ? styles.dark : ''}`}>
-                    {getStatusLabel(customer.status)}
-                  </span>
-                </td>
-                <td>
-                  <span className={`${styles.salesStatus} ${styles[customer.salesStatus]}`}>
-                    {getSalesStatusLabel(customer.salesStatus)}
-                  </span>
-                </td>
-                <td>{customer.lastContact}</td>
-                <td>
-                  <strong>{formatCurrency(customer.totalSales)}</strong>
-                </td>
-                <td>{customer.salesPerson}</td>
-                <td>
-                  <button 
-                    className={`${styles.actionButton} ${darkMode ? styles.dark : ''}`}
-                    onClick={() => handleEditCustomer(customer.id)}
-                  >
-                    <FiEdit2 size={14} />
-                    Editar
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        
+        {loading ? (
+          <div className={styles.loadingState}>
+            <div className={styles.loadingSpinner}></div>
+            <div>Carregando clientes...</div>
+          </div>
+        ) : filteredCustomers.length === 0 ? (
+          <div className={styles.emptyState}>
+            <div className={styles.emptyIcon}>📋</div>
+            <p>Nenhum cliente encontrado.</p>
+            <button 
+              className={`${styles.resetButton} ${darkMode ? styles.dark : ''}`}
+              onClick={handleResetData}
+            >
+              Recarregar Dados
+            </button>
+          </div>
+        ) : (
+          <div className={styles.tableWrapper}>
+            <table className={styles.customersTable}>
+              <thead>
+                <tr>
+                  <th>Cliente</th>
+                  <th>Empresa</th>
+                  <th>Contato</th>
+                  <th>Status</th>
+                  <th>Status da Venda</th>
+                  <th>Último Contato</th>
+                  <th>Vendedor</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredCustomers.map((customer) => (
+                  <tr key={customer.id} className={styles.customerRow}>
+                    <td>
+                      <div className={styles.customerInfo}>
+                        <div className={styles.avatar}>
+                          <FiUser size={16} />
+                        </div>
+                        <div className={styles.customerDetails}>
+                          <strong className={styles.customerName}>
+                            {customer.name || 'Nome não informado'}
+                          </strong>
+                          {customer.contactMethod && (
+                            <div className={styles.contactMethod}>
+                              {getContactMethodLabel(customer.contactMethod)}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <div className={styles.companyInfo}>
+                        <FiBriefcase size={14} />
+                        <span>{customer.company || 'Empresa não informada'}</span>
+                      </div>
+                    </td>
+                    <td>
+                      {hasContactInfo(customer) ? (
+                        <div className={styles.contactInfo}>
+                          {customer.email && (
+                            <div className={styles.contactItem}>
+                              <FiMail size={12} />
+                              <span>{customer.email}</span>
+                            </div>
+                          )}
+                          {customer.phone && (
+                            <div className={styles.contactItem}>
+                              <FiPhone size={12} />
+                              <span>{customer.phone}</span>
+                            </div>
+                          )}
+                          {customer.whatsapp && (
+                            <div className={`${styles.contactItem} ${styles.whatsapp}`}>
+                              <FiPhone size={12} />
+                              <span>{customer.whatsapp}</span>
+                              <span className={styles.whatsappBadge}>WhatsApp</span>
+                            </div>
+                          )}
+                          {customer.address && (
+                            <div className={styles.contactItem}>
+                              <FiMapPin size={12} />
+                              <span>{customer.address}</span>
+                            </div>
+                          )}
+                        </div>
+                      ) : (
+                        <span className={styles.noContact}>Sem informações de contato</span>
+                      )}
+                    </td>
+                    <td>
+                      <span className={`${styles.status} ${styles[customer.status]} ${darkMode ? styles.dark : ''}`}>
+                        {getStatusLabel(customer.status)}
+                      </span>
+                    </td>
+                    <td>
+                      <span className={`${styles.salesStatus} ${styles[customer.salesStatus]}`}>
+                        {getSalesStatusLabel(customer.salesStatus)}
+                      </span>
+                    </td>
+                    <td>
+                      <span className={styles.lastContact}>
+                        {customer.lastContact || 'Não informado'}
+                      </span>
+                    </td>
+                    <td>
+                      <span className={styles.salesPerson}>
+                        {getUserName(customer.salesPerson)}
+                      </span>
+                    </td>
+                    <td>
+                      <button 
+                        className={`${styles.actionButton} ${darkMode ? styles.dark : ''}`}
+                        onClick={() => handleEditCustomer(customer)}
+                        title="Editar cliente"
+                      >
+                        <FiEdit2 size={14} />
+                        Editar
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
+
+      {/* Modal de Edição */}
+      {showEditModal && editingCustomer && (
+        <div className={`${styles.modalOverlay} ${darkMode ? styles.dark : ''}`}>
+          <div className={`${styles.modal} ${darkMode ? styles.dark : ''}`}>
+            <div className={styles.modalHeader}>
+              <h2 className={`${styles.modalTitle} ${darkMode ? styles.dark : ''}`}>
+                Editar Cliente
+              </h2>
+              <button 
+                className={`${styles.closeButton} ${darkMode ? styles.dark : ''}`}
+                onClick={handleCloseModal}
+                disabled={submitting}
+              >
+                <FiX size={20} />
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveCustomer} className={styles.modalForm}>
+              <div className={styles.formSection}>
+                <h3 className={styles.sectionTitle}>Informações Básicas</h3>
+                <div className={styles.formRow}>
+                  <div className={styles.formGroup}>
+                    <label htmlFor="name">Nome do Cliente</label>
+                    <input
+                      type="text"
+                      id="name"
+                      value={editingCustomer.name}
+                      onChange={(e) => setEditingCustomer({
+                        ...editingCustomer,
+                        name: e.target.value
+                      })}
+                      disabled={submitting}
+                      className={darkMode ? styles.dark : ''}
+                    />
+                  </div>
+                  <div className={styles.formGroup}>
+                    <label htmlFor="company">Empresa</label>
+                    <input
+                      type="text"
+                      id="company"
+                      value={editingCustomer.company}
+                      onChange={(e) => setEditingCustomer({
+                        ...editingCustomer,
+                        company: e.target.value
+                      })}
+                      disabled={submitting}
+                      className={darkMode ? styles.dark : ''}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className={styles.formSection}>
+                <h3 className={styles.sectionTitle}>Informações de Contato</h3>
+                <div className={styles.formRow}>
+                  <div className={styles.formGroup}>
+                    <label htmlFor="email">E-mail</label>
+                    <input
+                      type="email"
+                      id="email"
+                      value={editingCustomer.email}
+                      onChange={(e) => setEditingCustomer({
+                        ...editingCustomer,
+                        email: e.target.value
+                      })}
+                      disabled={submitting}
+                      className={darkMode ? styles.dark : ''}
+                    />
+                  </div>
+                  <div className={styles.formGroup}>
+                    <label htmlFor="phone">Telefone</label>
+                    <input
+                      type="tel"
+                      id="phone"
+                      value={editingCustomer.phone}
+                      onChange={(e) => setEditingCustomer({
+                        ...editingCustomer,
+                        phone: e.target.value
+                      })}
+                      disabled={submitting}
+                      className={darkMode ? styles.dark : ''}
+                    />
+                  </div>
+                </div>
+                <div className={styles.formRow}>
+                  <div className={styles.formGroup}>
+                    <label htmlFor="whatsapp">WhatsApp</label>
+                    <input
+                      type="tel"
+                      id="whatsapp"
+                      value={editingCustomer.whatsapp || ''}
+                      onChange={(e) => setEditingCustomer({
+                        ...editingCustomer,
+                        whatsapp: e.target.value
+                      })}
+                      disabled={submitting}
+                      className={darkMode ? styles.dark : ''}
+                    />
+                  </div>
+                  <div className={styles.formGroup}>
+                    <label htmlFor="address">Endereço</label>
+                    <input
+                      type="text"
+                      id="address"
+                      value={editingCustomer.address || ''}
+                      onChange={(e) => setEditingCustomer({
+                        ...editingCustomer,
+                        address: e.target.value
+                      })}
+                      disabled={submitting}
+                      className={darkMode ? styles.dark : ''}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className={styles.formSection}>
+                <h3 className={styles.sectionTitle}>Status</h3>
+                <div className={styles.formRow}>
+                  <div className={styles.formGroup}>
+                    <label htmlFor="status">Status do Cliente</label>
+                    <select
+                      id="status"
+                      value={editingCustomer.status}
+                      onChange={(e) => setEditingCustomer({
+                        ...editingCustomer,
+                        status: e.target.value as 'active' | 'inactive' | 'pending'
+                      })}
+                      disabled={submitting}
+                      className={darkMode ? styles.dark : ''}
+                    >
+                      <option value="active">Ativo</option>
+                      <option value="inactive">Inativo</option>
+                      <option value="pending">Pendente</option>
+                    </select>
+                  </div>
+                  <div className={styles.formGroup}>
+                    <label htmlFor="salesStatus">Status da Venda</label>
+                    <select
+                      id="salesStatus"
+                      value={editingCustomer.salesStatus}
+                      onChange={(e) => setEditingCustomer({
+                        ...editingCustomer,
+                        salesStatus: e.target.value
+                      })}
+                      disabled={submitting}
+                      className={darkMode ? styles.dark : ''}
+                    >
+                      <option value="prospecção">Prospecção</option>
+                      <option value="apresentada proposta">Proposta Apresentada</option>
+                      <option value="negociar">Em Negociação</option>
+                      <option value="fechar proposta">Fechar Proposta</option>
+                      <option value="fechado">Fechado</option>
+                      <option value="pós venda">Pós Venda</option>
+                      <option value="visita manutenção">Visita Manutenção</option>
+                      <option value="renegociar contrato">Renegociar Contrato</option>
+                      <option value="perdida">Perdida</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div className={styles.formSection}>
+                <div className={styles.formGroup}>
+                  <label htmlFor="notes">Observações</label>
+                  <textarea
+                    id="notes"
+                    value={editingCustomer.notes}
+                    onChange={(e) => setEditingCustomer({
+                      ...editingCustomer,
+                      notes: e.target.value
+                    })}
+                    rows={3}
+                    disabled={submitting}
+                    className={darkMode ? styles.dark : ''}
+                  />
+                </div>
+              </div>
+
+              <div className={styles.modalActions}>
+                <button
+                  type="button"
+                  className={`${styles.cancelButton} ${darkMode ? styles.dark : ''}`}
+                  onClick={handleCloseModal}
+                  disabled={submitting}
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  className={`${styles.saveButton} ${darkMode ? styles.dark : ''}`}
+                  disabled={submitting}
+                >
+                  {submitting ? 'Salvando...' : 'Salvar Alterações'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

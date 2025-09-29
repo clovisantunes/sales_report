@@ -1,20 +1,27 @@
 import React, { useState } from 'react';
-import  type{ LoginData } from '../../types/Auth';
+import { authService } from '../../services/AuthService/authService';
 import styles from './styles.module.scss';
 
+interface LoginData {
+  email: string;
+  password: string;
+}
+
 interface LoginProps {
-  onLogin: (userData: LoginData) => Promise<boolean>;
+  onLogin: (userData: any) => Promise<boolean>;
   darkMode: boolean;
   appName?: string;
 }
 
 const Login: React.FC<LoginProps> = ({ onLogin, darkMode, appName = "SalesReport Pro" }) => {
   const [loginData, setLoginData] = useState<LoginData>({
-    username: '',
+    email: '',
     password: ''
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [resetEmail, setResetEmail] = useState('');
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -25,11 +32,48 @@ const Login: React.FC<LoginProps> = ({ onLogin, darkMode, appName = "SalesReport
     if (error) setError('');
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  
+  if (!loginData.email.trim() || !loginData.password.trim()) {
+    setError('Por favor, preencha todos os campos');
+    return;
+  }
+
+  if (!loginData.email.includes('@')) {
+    setError('Por favor, digite um email válido');
+    return;
+  }
+
+  setLoading(true);
+  setError('');
+
+  try {
+    console.log('📤 Enviando para Firebase:', { 
+      email: loginData.email, 
+      password: loginData.password ? '***' : 'vazio' 
+    });
     
-    if (!loginData.username.trim() || !loginData.password.trim()) {
-      setError('Por favor, preencha todos os campos');
+   const success = await onLogin({
+      email: loginData.email,
+      password: loginData.password
+    });
+    
+    console.log('📤 Resultado do onLogin:', success);
+    
+    if (!success) {
+      setError('Erro ao processar login');
+    }
+  } catch (err) {
+    console.error('❌ Erro no handleSubmit:', err);
+    setError('Erro ao fazer login. Tente novamente.');
+  } finally {
+    setLoading(false);
+  }
+};
+  const handleForgotPassword = async () => {
+    if (!resetEmail.trim()) {
+      setError('Por favor, digite seu email');
       return;
     }
 
@@ -37,20 +81,20 @@ const Login: React.FC<LoginProps> = ({ onLogin, darkMode, appName = "SalesReport
     setError('');
 
     try {
-      const success = await onLogin(loginData);
-      if (!success) {
-        setError('Usuário ou senha inválidos');
+      const result = await authService.resetPassword(resetEmail);
+      
+      if (result.success) {
+        alert('Email de recuperação enviado com sucesso! Verifique sua caixa de entrada.');
+        setShowForgotPassword(false);
+        setResetEmail('');
+      } else {
+        setError(result.error || 'Erro ao enviar email de recuperação');
       }
     } catch (err) {
-      setError('Erro ao fazer login. Tente novamente.');
+      setError('Erro ao enviar email de recuperação');
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleForgotPassword = () => {
-    // Implementar lógica de recuperação de senha
-    alert('Funcionalidade de recuperação de senha será implementada em breve.');
   };
 
   return (
@@ -64,73 +108,133 @@ const Login: React.FC<LoginProps> = ({ onLogin, darkMode, appName = "SalesReport
             </div>
           </div>
           <h1 className={`${styles.title} ${darkMode ? styles.dark : ''}`}>
-            Acessar Sistema
+            {showForgotPassword ? 'Recuperar Senha' : 'Acessar Sistema'}
           </h1>
           <p className={`${styles.subtitle} ${darkMode ? styles.dark : ''}`}>
-            Digite suas credenciais para continuar
+            {showForgotPassword 
+              ? 'Digite seu email para receber o link de recuperação' 
+              : 'Digite suas credenciais para continuar'
+            }
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className={styles.loginForm}>
-          {error && (
-            <div className={`${styles.errorMessage} ${darkMode ? styles.dark : ''}`}>
-              {error}
-            </div>
-          )}
-
-          <div className={styles.formGroup}>
-            <label htmlFor="username">Usuário</label>
-            <input
-              type="text"
-              id="username"
-              name="username"
-              value={loginData.username}
-              onChange={handleInputChange}
-              placeholder="Digite seu usuário"
-              disabled={loading}
-              className={darkMode ? styles.dark : ''}
-            />
-          </div>
-
-          <div className={styles.formGroup}>
-            <label htmlFor="password">Senha</label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              value={loginData.password}
-              onChange={handleInputChange}
-              placeholder="Digite sua senha"
-              disabled={loading}
-              className={darkMode ? styles.dark : ''}
-            />
-          </div>
-
-          <div className={styles.forgotPassword}>
-            <button
-              type="button"
-              onClick={handleForgotPassword}
-              className={`${styles.forgotLink} ${darkMode ? styles.dark : ''}`}
-            >
-              Esqueci minha senha
-            </button>
-          </div>
-
-          <button
-            type="submit"
-            disabled={loading}
-            className={`${styles.loginButton} ${darkMode ? styles.dark : ''}`}
-          >
-            {loading ? (
-              <div className={styles.loading}>
-                <div className={styles.spinner}></div>
-                Entrando...
+        {!showForgotPassword ? (
+          <form onSubmit={handleSubmit} className={styles.loginForm}>
+            {error && (
+              <div className={`${styles.errorMessage} ${darkMode ? styles.dark : ''}`}>
+                {error}
               </div>
-            ) : (
-              'Entrar'
             )}
-          </button>
-        </form>
+
+            <div className={styles.formGroup}>
+              <label htmlFor="email">Email</label>
+              <input
+                type="email" 
+                id="email"
+                name="email" 
+                value={loginData.email}
+                onChange={handleInputChange}
+                placeholder="Digite seu email"
+                disabled={loading}
+                className={darkMode ? styles.dark : ''}
+                required
+              />
+            </div>
+
+            <div className={styles.formGroup}>
+              <label htmlFor="password">Senha</label>
+              <input
+                type="password"
+                id="password"
+                name="password"
+                value={loginData.password}
+                onChange={handleInputChange}
+                placeholder="Digite sua senha"
+                disabled={loading}
+                className={darkMode ? styles.dark : ''}
+                required
+              />
+            </div>
+
+            <div className={styles.forgotPassword}>
+              <button
+                type="button"
+                onClick={() => setShowForgotPassword(true)}
+                className={`${styles.forgotLink} ${darkMode ? styles.dark : ''}`}
+              >
+                Esqueci minha senha
+              </button>
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className={`${styles.loginButton} ${darkMode ? styles.dark : ''}`}
+            >
+              {loading ? (
+                <div className={styles.loading}>
+                  <div className={styles.spinner}></div>
+                  Entrando...
+                </div>
+              ) : (
+                'Entrar'
+              )}
+            </button>
+          </form>
+        ) : (
+          <div className={styles.forgotPasswordForm}>
+            {error && (
+              <div className={`${styles.errorMessage} ${darkMode ? styles.dark : ''}`}>
+                {error}
+              </div>
+            )}
+
+            <div className={styles.formGroup}>
+              <label htmlFor="resetEmail">Email</label>
+              <input
+                type="email"
+                id="resetEmail"
+                value={resetEmail}
+                onChange={(e) => setResetEmail(e.target.value)}
+                placeholder="Digite seu email cadastrado"
+                disabled={loading}
+                className={darkMode ? styles.dark : ''}
+                required
+              />
+            </div>
+
+            <div className={styles.buttonGroup}>
+              <button
+                type="button"
+                onClick={handleForgotPassword}
+                disabled={loading}
+                className={`${styles.loginButton} ${darkMode ? styles.dark : ''}`}
+              >
+                {loading ? (
+                  <div className={styles.loading}>
+                    <div className={styles.spinner}></div>
+                    Enviando...
+                  </div>
+                ) : (
+                  'Enviar Link de Recuperação'
+                )}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setShowForgotPassword(false);
+                  setResetEmail('');
+                  setError('');
+                }}
+                disabled={loading}
+                className={`${styles.backButton} ${darkMode ? styles.dark : ''}`}
+              >
+                Voltar para Login
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

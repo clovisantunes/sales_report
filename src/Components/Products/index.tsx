@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
-import { FiEdit2 } from 'react-icons/fi';
+import React, { useState, useEffect } from 'react';
+import { FiEdit2, FiX, FiTrash2 } from 'react-icons/fi';
 import type { Product, ProductFilters } from '../../types/Products';
+import { productsService } from '../../services/ProductService/ProductService';
 import styles from './styles.module.scss';
 
 interface ProductsProps {
@@ -10,44 +11,38 @@ interface ProductsProps {
 
 const Products: React.FC<ProductsProps> = ({ darkMode, className = "" }) => {
   const [filters, setFilters] = useState<ProductFilters>({});
-  const [products] = useState<Product[]>([
-    {
-      id: '1',
-      name: 'Medicina do Trabalho',
-      category: 'Saúde Ocupacional',
-      price: 0,
-      status: 'active',
-      description: 'Programa completo de medicina ocupacional para empresas',
-      createdAt: '15/01/2024'
-    },
-    {
-      id: '2',
-      name: 'Assistência Médica',
-      category: 'Plano de Saúde',
-      price: 0,
-      status: 'active',
-      description: 'Plano de saúde empresarial com ampla rede credenciada',
-      createdAt: '20/01/2024'
-    },
-    {
-      id: '3',
-      name: 'Plano Odontológico',
-      category: 'Odontologia',
-      price: 0,
-      status: 'active',
-      description: 'Cobertura odontológica completa para colaboradores',
-      createdAt: '10/02/2024'
-    },
-    {
-      id: '4',
-      name: 'Minha Saúde',
-      category: 'Bem-estar',
-      price: 0,
-      status: 'active',
-      description: 'Programa de bem-estar e saúde preventiva',
-      createdAt: '05/03/2024'
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  // Estados para o modal
+  const [showModal, setShowModal] = useState(false);
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [formData, setFormData] = useState({
+    name: '',
+    status: 'active' as 'active' | 'inactive',
+    description: ''
+  });
+  const [submitting, setSubmitting] = useState(false);
+
+  // Carregar produtos do Firebase
+  useEffect(() => {
+    loadProducts();
+  }, []);
+
+  const loadProducts = async () => {
+    try {
+      setLoading(true);
+      setError('');
+      const productsData = await productsService.getProducts();
+      setProducts(productsData);
+    } catch (err) {
+      console.error('Erro ao carregar produtos:', err);
+      setError('Erro ao carregar produtos. Tente novamente.');
+    } finally {
+      setLoading(false);
     }
-  ]);
+  };
 
   const getStatusLabel = (status: string) => {
     const labels = {
@@ -66,8 +61,100 @@ const Products: React.FC<ProductsProps> = ({ darkMode, className = "" }) => {
   };
 
   const handleEditProduct = (productId: string) => {
-    console.log('Editando produto:', productId);
-    // Aqui você implementaria a lógica de edição
+    const product = products.find(p => p.id === productId);
+    if (product) {
+      setEditingProduct(product);
+      setFormData({
+        name: product.name,
+        status: product.status,
+        description: product.description
+      });
+      setShowModal(true);
+    }
+  };
+
+  const handleAddProduct = () => {
+    setEditingProduct(null);
+    setFormData({
+      name: '',
+      status: 'active',
+      description: ''
+    });
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setEditingProduct(null);
+    setFormData({
+      name: '',
+      status: 'active',
+      description: ''
+    });
+    setSubmitting(false);
+  };
+
+  const handleFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!formData.name.trim() || !formData.description.trim()) {
+      alert('Por favor, preencha todos os campos obrigatórios.');
+      return;
+    }
+
+    setSubmitting(true);
+
+    try {
+      if (editingProduct) {
+        // Editar produto existente
+        await productsService.updateProduct(editingProduct.id, {
+          name: formData.name,
+          status: formData.status,
+          description: formData.description
+        });
+      } else {
+        // Adicionar novo produto
+        await productsService.addProduct({
+          name: formData.name,
+          category: 'Geral',
+          price: 0,
+          status: formData.status,
+          description: formData.description
+        });
+      }
+
+      // Recarregar a lista de produtos
+      await loadProducts();
+      handleCloseModal();
+      
+    } catch (err) {
+      console.error('Erro ao salvar produto:', err);
+      alert('Erro ao salvar produto. Tente novamente.');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleDeleteProduct = async (productId: string) => {
+    if (!confirm('Tem certeza que deseja excluir este produto?')) {
+      return;
+    }
+
+    try {
+      await productsService.deleteProduct(productId);
+      await loadProducts(); // Recarregar a lista
+    } catch (err) {
+      console.error('Erro ao excluir produto:', err);
+      alert('Erro ao excluir produto. Tente novamente.');
+    }
   };
 
   const filteredProducts = products.filter(product => {
@@ -75,16 +162,38 @@ const Products: React.FC<ProductsProps> = ({ darkMode, className = "" }) => {
     return true;
   });
 
+  if (loading) {
+    return (
+      <div className={`${styles.products} ${darkMode ? styles.dark : ''} ${className}`}>
+        <div className={styles.loadingState}>
+          <div>Carregando produtos...</div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className={`${styles.products} ${darkMode ? styles.dark : ''} ${className}`}>
       <div className={styles.productsHeader}>
         <h1 className={`${styles.productsTitle} ${darkMode ? styles.dark : ''}`}>
           Lista de Produtos
         </h1>
-        <button className={`${styles.addButton} ${darkMode ? styles.dark : ''}`}>
+        <button 
+          className={`${styles.addButton} ${darkMode ? styles.dark : ''}`}
+          onClick={handleAddProduct}
+        >
           + Novo Produto
         </button>
       </div>
+
+      {error && (
+        <div className={`${styles.errorMessage} ${darkMode ? styles.dark : ''}`}>
+          {error}
+          <button onClick={loadProducts} className={styles.retryButton}>
+            Tentar Novamente
+          </button>
+        </div>
+      )}
 
       <div className={`${styles.filtersContainer} ${darkMode ? styles.dark : ''}`}>
         <h3 className={`${styles.filtersTitle} ${darkMode ? styles.dark : ''}`}>Filtros</h3>
@@ -103,9 +212,6 @@ const Products: React.FC<ProductsProps> = ({ darkMode, className = "" }) => {
         </div>
 
         <div className={styles.filterActions}>
-          <button className={`${styles.applyButton} ${darkMode ? styles.dark : ''}`}>
-            Aplicar Filtros
-          </button>
           <button className={`${styles.clearButton} ${darkMode ? styles.dark : ''}`} onClick={clearFilters}>
             Limpar Filtros
           </button>
@@ -116,45 +222,152 @@ const Products: React.FC<ProductsProps> = ({ darkMode, className = "" }) => {
         <div className={`${styles.tableTitle} ${darkMode ? styles.dark : ''}`}>
           Produtos Cadastrados ({filteredProducts.length} resultados)
         </div>
-        <table className={styles.productsTable}>
-          <thead>
-            <tr>
-              <th>Nome do Produto</th>
-              <th>Status</th>
-              <th>Descrição</th>
-              <th>Data de Criação</th>
-              <th>Ações</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredProducts.map((product) => (
-              <tr key={product.id}>
-                <td>
-                  <strong>{product.name}</strong>
-                </td>
-                <td>
-                  <span className={`${styles.status} ${styles[product.status]} ${darkMode ? styles.dark : ''}`}>
-                    {getStatusLabel(product.status)}
-                  </span>
-                </td>
-                <td className={styles.description} title={product.description}>
-                  {product.description}
-                </td>
-                <td>{product.createdAt}</td>
-                <td>
-                  <button 
-                    className={`${styles.actionButton} ${darkMode ? styles.dark : ''}`}
-                    onClick={() => handleEditProduct(product.id)}
-                  >
-                    <FiEdit2 size={14} />
-                    Editar
-                  </button>
-                </td>
+        
+        {filteredProducts.length === 0 ? (
+          <div className={styles.emptyState}>
+            <p>Nenhum produto encontrado.</p>
+            <button 
+              className={`${styles.addButton} ${darkMode ? styles.dark : ''}`}
+              onClick={handleAddProduct}
+            >
+              + Adicionar Primeiro Produto
+            </button>
+          </div>
+        ) : (
+          <table className={styles.productsTable}>
+            <thead>
+              <tr>
+                <th>Nome do Produto</th>
+                <th>Status</th>
+                <th>Descrição</th>
+                <th>Data de Criação</th>
+                <th>Ações</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {filteredProducts.map((product) => (
+                <tr key={product.id}>
+                  <td>
+                    <strong>{product.name}</strong>
+                  </td>
+                  <td>
+                    <span className={`${styles.status} ${styles[product.status]} ${darkMode ? styles.dark : ''}`}>
+                      {getStatusLabel(product.status)}
+                    </span>
+                  </td>
+                  <td className={styles.description} title={product.description}>
+                    {product.description}
+                  </td>
+                  <td>{product.createdAt}</td>
+                  <td>
+                    <div className={styles.actionButtons}>
+                      <button 
+                        className={`${styles.actionButton} ${styles.editButton} ${darkMode ? styles.dark : ''}`}
+                        onClick={() => handleEditProduct(product.id)}
+                      >
+                        <FiEdit2 size={14} />
+                        Editar
+                      </button>
+                      <button 
+                        className={`${styles.actionButton} ${styles.deleteButton} ${darkMode ? styles.dark : ''}`}
+                        onClick={() => handleDeleteProduct(product.id)}
+                      >
+                        <FiTrash2 size={14} />
+                        Excluir
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
+
+      {/* Modal para Adicionar/Editar Produto */}
+      {showModal && (
+        <div className={`${styles.modalOverlay} ${darkMode ? styles.dark : ''}`}>
+          <div className={`${styles.modal} ${darkMode ? styles.dark : ''}`}>
+            <div className={styles.modalHeader}>
+              <h2 className={`${styles.modalTitle} ${darkMode ? styles.dark : ''}`}>
+                {editingProduct ? 'Editar Produto' : 'Novo Produto'}
+              </h2>
+              <button 
+                className={`${styles.closeButton} ${darkMode ? styles.dark : ''}`}
+                onClick={handleCloseModal}
+                disabled={submitting}
+              >
+                <FiX size={20} />
+              </button>
+            </div>
+
+            <form onSubmit={handleSubmit} className={styles.modalForm}>
+              <div className={styles.formGroup}>
+                <label htmlFor="name">Nome do Produto *</label>
+                <input
+                  type="text"
+                  id="name"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleFormChange}
+                  placeholder="Digite o nome do produto"
+                  required
+                  disabled={submitting}
+                  className={darkMode ? styles.dark : ''}
+                />
+              </div>
+
+              <div className={styles.formGroup}>
+                <label htmlFor="status">Status</label>
+                <select
+                  id="status"
+                  name="status"
+                  value={formData.status}
+                  onChange={handleFormChange}
+                  disabled={submitting}
+                  className={darkMode ? styles.dark : ''}
+                >
+                  <option value="active">Ativo</option>
+                  <option value="inactive">Inativo</option>
+                </select>
+              </div>
+
+              <div className={styles.formGroup}>
+                <label htmlFor="description">Descrição *</label>
+                <textarea
+                  id="description"
+                  name="description"
+                  value={formData.description}
+                  onChange={handleFormChange}
+                  placeholder="Digite uma breve descrição do produto"
+                  rows={3}
+                  required
+                  disabled={submitting}
+                  className={darkMode ? styles.dark : ''}
+                />
+              </div>
+
+              <div className={styles.modalActions}>
+                <button
+                  type="button"
+                  className={`${styles.cancelButton} ${darkMode ? styles.dark : ''}`}
+                  onClick={handleCloseModal}
+                  disabled={submitting}
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  className={`${styles.saveButton} ${darkMode ? styles.dark : ''}`}
+                  disabled={submitting}
+                >
+                  {submitting ? 'Salvando...' : (editingProduct ? 'Salvar Alterações' : 'Criar Produto')}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

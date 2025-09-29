@@ -10,4 +10,5 @@ export interface Product {
 
 export interface ProductFilters {
   status?: string;
+  category?: string;
 }

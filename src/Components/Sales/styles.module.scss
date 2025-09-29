@@ -1,3 +1,4 @@
+// src/Components/Sales/styles.module.scss
 @import '../../styles/theme.scss';
 
 .sales {
@@ -5,7 +6,8 @@
   min-height: calc(100vh - 70px);
   background: $color-primary-light-light;
   transition: all 0.3s ease;
- padding-top: 13.5vh;
+  padding-top: 13.5vh;
+
   &.dark {
     background: $color-primary-bg-dark;
   }
@@ -35,6 +37,9 @@
     border-radius: 8px;
     font-weight: 600;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
     transition: all 0.3s ease;
 
     &.dark {
@@ -101,11 +106,21 @@
         background: $color-white-light;
         color: $color-text-light;
         font-size: $font-size-text-md-light;
+        transition: all 0.3s ease;
+
+        &:focus {
+          outline: none;
+          border-color: $color-bg-button-light;
+        }
 
         &.dark {
           background: $color-primary-light-dark;
           border-color: $color-primary-dark-dark;
           color: $color-text-dark;
+
+          &:focus {
+            border-color: $color-bg-button-dark;
+          }
         }
       }
     }
@@ -116,47 +131,27 @@
     gap: 10px;
     margin-top: 20px;
 
-    button {
-      padding: 10px 20px;
+    .clearButton {
+      background: $color-primary-dark-light;
+      color: $color-text-light;
       border: none;
+      padding: 10px 20px;
       border-radius: 6px;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.3s ease;
 
-      &.applyButton {
-        background: $color-bg-button-light;
+      &.dark {
+        background: $color-primary-dark-dark;
+        color: $color-text-dark;
+      }
+
+      &:hover {
+        background: $color-subtitle-text-light;
         color: $color-white-light;
 
         &.dark {
-          background: $color-bg-button-dark;
-        }
-
-        &:hover {
-          background: $color-hover-text-light;
-
-          &.dark {
-            background: $color-hover-text-dark;
-          }
-        }
-      }
-
-      &.clearButton {
-        background: $color-primary-dark-light;
-        color: $color-text-light;
-
-        &.dark {
-          background: $color-primary-dark-dark;
-          color: $color-text-dark;
-        }
-
-        &:hover {
-          background: $color-subtitle-text-light;
-          color: $color-white-light;
-
-          &.dark {
-            background: $color-subtitle-text-dark;
-          }
+          background: $color-subtitle-text-dark;
         }
       }
     }
@@ -232,97 +227,490 @@
       }
     }
   }
+}
 
-  // Estilos para a coluna de Resultado
-  .resultado {
-    font-weight: 600;
-    padding: 6px 12px;
-    border-radius: 4px;
-    text-align: center;
-    
-    &.fechado {
-      color: #059669;
-      
-      &.dark {
-        background: #065f46;
-        color: #34d399;
-      }
+// Estados de loading e empty
+.loadingState {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+  font-size: 16px;
+  color: $color-card-text-light;
+
+  .dark & {
+    color: $color-card-text-dark;
+  }
+}
+
+.emptyState {
+  text-align: center;
+  padding: 40px;
+  color: $color-card-text-light;
+
+  .dark & {
+    color: $color-card-text-dark;
+  }
+
+  p {
+    margin-bottom: 20px;
+    font-size: $font-size-text-md-light;
+  }
+}
+
+// Botões de ação na tabela
+.actionButtons {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+.actionButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+
+  &.editButton {
+    color: $color-bg-button-light;
+
+    &:hover {
+      background: rgba($color-bg-button-light, 0.1);
     }
-    
-    &.perdida {
-      color: #dc2626;
-      
-      &.dark {
-        background: #7f1d1d;
-        color: #fca5a5;
-      }
-    }
-    
-    &.em-andamento {
-      color: #ea580c;
-      
-      &.dark {
-        background: #7c2d12;
-        color: #fdba74;
+
+    .dark & {
+      color: lighten($color-bg-button-dark, 15%);
+
+      &:hover {
+        background: rgba(lighten($color-bg-button-dark, 15%), 0.2);
       }
     }
   }
 
-  // Estilos para os estágios (mantendo os anteriores para referência)
-  .stage {
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: $font-size-text-sm-light;
-    font-weight: 500;
+  &.deleteButton {
+    color: #dc3545;
 
-    &.prospecção {
-      background: #fef3c7;
-      color: #d97706;
+    &:hover {
+      background: rgba(#dc3545, 0.1);
     }
 
-    &.apresentada proposta {
-      background: #dbeafe;
-      color: #2563eb;
-    }
+    .dark & {
+      color: #fa5252;
 
-    &.negociar {
-      background: #ddd6fe;
-      color: #7c3aed;
-    }
-
-    &.fechar proposta {
-      background: #fce7f3;
-      color: #db2777;
-    }
-
-    &.fechado {
-      background: #d1fae5;
-      color: #059669;
-    }
-
-    &.pós venda {
-      background: #ccfbf1;
-      color: #0d9488;
-    }
-
-    &.visita manutenção {
-      background: #e0f2fe;
-      color: #0369a1;
-    }
-
-    &.renegociar contrato {
-      color: #ca8a04;
-    }
-
-    &.perdida {
-      color: #dc2626;
+      &:hover {
+        background: rgba(#fa5252, 0.2);
+      }
     }
   }
 }
 
+// Estilos para células específicas
+.comments {
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: help;
+}
+
+// Estilos para os estágios
+.stage {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: $font-size-text-sm-light;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+
+  &.prospecção {
+    background: #fef3c7;
+    color: #d97706;
+  }
+
+  &.apresentada\ proposta {
+    background: #dbeafe;
+    color: #2563eb;
+  }
+
+  &.negociar {
+    background: #ddd6fe;
+    color: #7c3aed;
+  }
+
+  &.fechar\ proposta {
+    background: #fce7f3;
+    color: #db2777;
+  }
+
+  &.fechado {
+    background: #d1fae5;
+    color: #059669;
+  }
+
+  &.pós\ venda {
+    background: #ccfbf1;
+    color: #0d9488;
+  }
+
+  &.visita\ manutenção {
+    background: #e0f2fe;
+    color: #0369a1;
+  }
+
+  &.renegociar\ contrato {
+    background: #fef3c7;
+    color: #ca8a04;
+  }
+
+  &.perdida {
+    background: #fee2e2;
+    color: #dc2626;
+  }
+
+  .dark & {
+    &.prospecção {
+      background: rgba(214, 158, 46, 0.2);
+      color: #fbbf24;
+    }
+
+    &.apresentada\ proposta {
+      background: rgba(37, 99, 235, 0.2);
+      color: #60a5fa;
+    }
+
+    &.negociar {
+      background: rgba(124, 58, 237, 0.2);
+      color: #a78bfa;
+    }
+
+    &.fechar\ proposta {
+      background: rgba(219, 39, 119, 0.2);
+      color: #f472b6;
+    }
+
+    &.fechado {
+      background: rgba(5, 150, 105, 0.2);
+      color: #34d399;
+    }
+
+    &.pós\ venda {
+      background: rgba(13, 148, 136, 0.2);
+      color: #2dd4bf;
+    }
+
+    &.visita\ manutenção {
+      background: rgba(3, 105, 161, 0.2);
+      color: #38bdf8;
+    }
+
+    &.renegociar\ contrato {
+      background: rgba(202, 138, 4, 0.2);
+      color: #facc15;
+    }
+
+    &.perdida {
+      background: rgba(220, 38, 38, 0.2);
+      color: #f87171;
+    }
+  }
+}
+
+.resultado {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: $font-size-text-sm-light;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  text-align: center;
+
+  &.fechado {
+    background: #d1fae5;
+    color: #059669;
+  }
+
+  &.perdida {
+    background: #fee2e2;
+    color: #dc2626;
+  }
+
+  &.em-andamento {
+    background: #fef3c7;
+    color: #d97706;
+  }
+
+  .dark & {
+    &.fechado {
+      background: rgba(5, 150, 105, 0.2);
+      color: #34d399;
+    }
+
+    &.perdida {
+      background: rgba(220, 38, 38, 0.2);
+      color: #f87171;
+    }
+
+    &.em-andamento {
+      background: rgba(214, 158, 46, 0.2);
+      color: #fbbf24;
+    }
+  }
+}
+
+// ========== ESTILOS DO MODAL ==========
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+
+  &.dark {
+    background-color: rgba(0, 0, 0, 0.7);
+  }
+}
+
+.modal {
+  background: $color-on-white-bg-light;
+  border-radius: 12px;
+  padding: 0;
+  width: 90%;
+  max-width: 800px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+
+  &.dark {
+    background: $color-card-bg-dark;
+  }
+
+  animation: modalFadeIn 0.2s ease-out;
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px;
+  border-bottom: 1px solid $color-primary-dark-light;
+
+  .dark & {
+    border-bottom: 1px solid $color-primary-dark-dark;
+  }
+}
+
+.modalTitle {
+  margin: 0;
+  font-size: $font-size-subtitle-light;
+  font-weight: 700;
+  color: $color-title-text-light;
+
+  .dark & {
+    color: $color-title-text-dark;
+  }
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 6px;
+  color: $color-card-text-light;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+
+  &:hover:not(:disabled) {
+    background: $color-primary-light-light;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .dark & {
+    color: $color-card-text-dark;
+
+    &:hover:not(:disabled) {
+      background: $color-primary-light-dark;
+    }
+  }
+}
+
+.modalForm {
+  padding: 24px;
+}
+
+.formRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.modalForm .formGroup {
+  margin-bottom: 16px;
+
+  label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: $color-title-text-light;
+    font-size: $font-size-text-md-light;
+
+    .dark & {
+      color: $color-title-text-dark;
+    }
+  }
+
+  input,
+  select,
+  textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid $color-primary-dark-light;
+    border-radius: 8px;
+    font-size: $font-size-text-md-light;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+    background: $color-white-light;
+    color: $color-text-light;
+
+    &:focus {
+      outline: none;
+      border-color: $color-bg-button-light;
+      box-shadow: 0 0 0 3px rgba($color-bg-button-light, 0.1);
+    }
+
+    &:disabled {
+      background-color: $color-primary-light-light;
+      cursor: not-allowed;
+    }
+
+    &.dark {
+      background: $color-primary-light-dark;
+      border-color: $color-primary-dark-dark;
+      color: $color-text-dark;
+
+      &:focus {
+        border-color: $color-bg-button-dark;
+        box-shadow: 0 0 0 3px rgba($color-bg-button-dark, 0.2);
+      }
+
+      &:disabled {
+        background-color: $color-primary-bg-dark;
+      }
+    }
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 80px;
+    font-family: inherit;
+  }
+}
+
+.modalActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid $color-primary-dark-light;
+
+  .dark & {
+    border-top: 1px solid $color-primary-dark-dark;
+  }
+
+  button {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    font-size: $font-size-text-md-light;
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+}
+
+.cancelButton {
+  background: $color-primary-light-light;
+  color: $color-text-light;
+  border: 1px solid $color-primary-dark-light !important;
+
+  &:hover:not(:disabled) {
+    background: $color-primary-dark-light;
+    color: $color-white-light;
+  }
+
+  &.dark {
+    background: $color-primary-light-dark;
+    color: $color-text-dark;
+    border-color: $color-primary-dark-dark !important;
+
+    &:hover:not(:disabled) {
+      background: $color-primary-dark-dark;
+    }
+  }
+}
+
+.saveButton {
+  background: $color-bg-button-light;
+  color: $color-white-light;
+
+  &:hover:not(:disabled) {
+    background: $color-hover-text-light;
+  }
+
+  &.dark {
+    background: $color-bg-button-dark;
+
+    &:hover:not(:disabled) {
+      background: $color-hover-text-dark;
+    }
+  }
+}
+
+// Animações
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.modalOverlay {
+  animation: modalFadeIn 0.2s ease-out;
+}
+
+// Responsividade
 @media (max-width: 768px) {
   .sales {
     padding: 15px;
+    padding-top: 13.5vh;
   }
 
   .salesHeader {
@@ -341,5 +729,37 @@
 
   .salesTableContainer {
     padding: 15px;
+  }
+
+  .modal {
+    width: 95%;
+    margin: 20px;
+  }
+
+  .modalForm {
+    padding: 16px;
+  }
+
+  .formRow {
+    grid-template-columns: 1fr;
+  }
+
+  .modalActions {
+    flex-direction: column-reverse;
+  }
+
+  .modalActions button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .salesTable {
+    min-width: 1000px;
+  }
+  
+  .salesHeader .addButton {
+    width: 100%;
+    justify-content: center;
   }
 }

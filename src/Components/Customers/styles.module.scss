@@ -27,26 +27,67 @@
     }
   }
 
-  .addButton {
+  .headerActions {
+    display: flex;
+    gap: 10px;
+  }
+
+  .refreshButton {
     background: $color-bg-button-light;
     color: $color-white-light;
     border: none;
-    padding: 12px 24px;
+    padding: 12px 20px;
     border-radius: 8px;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 
     &.dark {
       background: $color-bg-button-dark;
     }
 
-    &:hover {
+    &:hover:not(:disabled) {
       background: $color-hover-text-light;
+      transform: translateY(-1px);
 
       &.dark {
         background: $color-hover-text-dark;
       }
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+}
+
+.errorState {
+  background: #fee2e2;
+  border: 1px solid #fecaca;
+  color: #dc2626;
+  padding: 16px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: between;
+  align-items: center;
+  gap: 15px;
+
+  button {
+    background: #dc2626;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+
+    &:hover {
+      background: #b91c1c;
     }
   }
 }
@@ -101,11 +142,21 @@
         background: $color-white-light;
         color: $color-text-light;
         font-size: $font-size-text-md-light;
+        transition: all 0.3s ease;
 
         &.dark {
           background: $color-primary-light-dark;
           border-color: $color-primary-dark-dark;
           color: $color-text-dark;
+        }
+
+        &:focus {
+          outline: none;
+          border-color: $color-bg-button-light;
+          
+          &.dark {
+            border-color: $color-bg-button-dark;
+          }
         }
       }
     }
@@ -124,6 +175,11 @@
       cursor: pointer;
       transition: all 0.3s ease;
 
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+
       &.applyButton {
         background: $color-bg-button-light;
         color: $color-white-light;
@@ -132,8 +188,9 @@
           background: $color-bg-button-dark;
         }
 
-        &:hover {
+        &:hover:not(:disabled) {
           background: $color-hover-text-light;
+          transform: translateY(-1px);
 
           &.dark {
             background: $color-hover-text-dark;
@@ -150,9 +207,10 @@
           color: $color-text-dark;
         }
 
-        &:hover {
+        &:hover:not(:disabled) {
           background: $color-subtitle-text-light;
           color: $color-white-light;
+          transform: translateY(-1px);
 
           &.dark {
             background: $color-subtitle-text-dark;
@@ -168,23 +226,129 @@
   padding: 25px;
   border-radius: 12px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  overflow-x: auto;
 
   &.dark {
     background: $color-card-bg-dark;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
   }
 
+  .tableHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 15px;
+  }
+
   .tableTitle {
     font-size: $font-size-subtitle-light;
     font-weight: 600;
     color: $color-title-text-light;
-    margin-bottom: 20px;
 
     &.dark {
       color: $color-title-text-dark;
     }
   }
+
+  .tableStats {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+
+    .statItem {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: $font-size-text-sm-light;
+      color: $color-card-text-light;
+
+      .statDot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+
+        &.active {
+          background: #059669;
+        }
+
+        &.pending {
+          background: #d97706;
+        }
+
+        &.inactive {
+          background: #6b7280;
+        }
+      }
+    }
+  }
+}
+
+.loadingState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  color: $color-card-text-light;
+
+  .loadingSpinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid $color-primary-light-light;
+    border-top: 3px solid $color-bg-button-light;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 15px;
+  }
+}
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+
+  .emptyIcon {
+    font-size: 48px;
+    margin-bottom: 15px;
+  }
+
+  p {
+    color: $color-card-text-light;
+    margin-bottom: 20px;
+    font-size: $font-size-text-lg-light;
+  }
+
+  .resetButton {
+    background: $color-bg-button-light;
+    color: $color-white-light;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    &.dark {
+      background: $color-bg-button-dark;
+    }
+
+    &:hover {
+      background: $color-hover-text-light;
+
+      &.dark {
+        background: $color-hover-text-dark;
+      }
+    }
+  }
+}
+
+.tableWrapper {
+  overflow-x: auto;
+  border-radius: 8px;
 }
 
 .customersTable {
@@ -200,6 +364,7 @@
     text-align: left;
     border-bottom: 2px solid $color-primary-dark-light;
     font-size: $font-size-text-md-light;
+    white-space: nowrap;
 
     &.dark {
       background: $color-primary-light-dark;
@@ -213,6 +378,7 @@
     border-bottom: 1px solid $color-primary-dark-light;
     color: $color-card-text-light;
     font-size: $font-size-text-md-light;
+    vertical-align: top;
 
     &.dark {
       border-bottom-color: $color-primary-dark-dark;
@@ -220,7 +386,7 @@
     }
   }
 
-  tbody tr {
+  .customerRow {
     transition: all 0.3s ease;
 
     &:hover {
@@ -232,13 +398,115 @@
     }
   }
 
+  .customerInfo {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+
+    .avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: $color-primary-light-light;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: $color-card-text-light;
+      flex-shrink: 0;
+
+      &.dark {
+        background: $color-primary-light-dark;
+        color: $color-card-text-dark;
+      }
+    }
+
+    .customerDetails {
+      flex: 1;
+    }
+
+    .customerName {
+      display: block;
+      margin-bottom: 4px;
+    }
+  }
+
+  .companyInfo {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: $color-card-text-light;
+
+    &.dark {
+      color: $color-card-text-dark;
+    }
+  }
+
+  .contactMethod {
+    font-size: $font-size-text-sm-light;
+    color: $color-subtitle-text-light;
+    padding: 2px 8px;
+    background: $color-primary-light-light;
+    border-radius: 12px;
+    display: inline-block;
+
+    &.dark {
+      color: $color-subtitle-text-dark;
+      background: $color-primary-light-dark;
+    }
+  }
+
+  .contactInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    
+    .contactItem {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: $font-size-text-sm-light;
+      color: $color-card-text-light;
+
+      &.dark {
+        color: $color-card-text-dark;
+      }
+
+      &.whatsapp {
+        .whatsappBadge {
+          background: #25D366;
+          color: white;
+          font-size: 10px;
+          padding: 1px 4px;
+          border-radius: 4px;
+          margin-left: 4px;
+        }
+      }
+    }
+  }
+
+  .noContact {
+    font-size: $font-size-text-sm-light;
+    color: $color-subtitle-text-light;
+    font-style: italic;
+
+    &.dark {
+      color: $color-subtitle-text-dark;
+    }
+  }
+
+  .lastContact, .salesPerson {
+    font-size: $font-size-text-sm-light;
+  }
+
   // Status do cliente
   .status {
     padding: 6px 12px;
-    border-radius: 4px;
+    border-radius: 20px;
     font-size: $font-size-text-sm-light;
     font-weight: 600;
     text-align: center;
+    display: inline-block;
+    min-width: 80px;
     
     &.active {
       background: #d1fae5;
@@ -274,10 +542,12 @@
   // Status da venda
   .salesStatus {
     padding: 6px 12px;
-    border-radius: 4px;
+    border-radius: 20px;
     font-size: $font-size-text-sm-light;
     font-weight: 600;
     text-align: center;
+    display: inline-block;
+    min-width: 120px;
     
     &.prospecção {
       background: #fef3c7;
@@ -309,6 +579,16 @@
       color: #0d9488;
     }
 
+    &.visita manutenção {
+      background: #e0e7ff;
+      color: #4f46e5;
+    }
+
+    &.renegociar contrato {
+      background: #f3e8ff;
+      color: #7c3aed;
+    }
+
     &.perdida {
       background: #fee2e2;
       color: #dc2626;
@@ -320,7 +600,7 @@
     color: $color-white-light;
     border: none;
     padding: 8px 16px;
-    border-radius: 4px;
+    border-radius: 6px;
     font-size: $font-size-text-sm-light;
     font-weight: 500;
     cursor: pointer;
@@ -328,6 +608,7 @@
     display: flex;
     align-items: center;
     gap: 5px;
+    white-space: nowrap;
 
     &.dark {
       background: $color-bg-button-dark;
@@ -342,35 +623,251 @@
       }
     }
   }
+}
 
-  .contactInfo {
+// Modal Styles
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+
+  &.dark {
+    background: rgba(0, 0, 0, 0.7);
+  }
+}
+
+.modal {
+  background: $color-on-white-bg-light;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 700px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+
+  &.dark {
+    background: $color-card-bg-dark;
+  }
+
+  .modalHeader {
     display: flex;
-    flex-direction: column;
-    gap: 2px;
-    
-    .email {
-      font-size: $font-size-text-sm-light;
-      color: $color-subtitle-text-light;
-      
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 25px;
+    border-bottom: 1px solid $color-primary-dark-light;
+
+    &.dark {
+      border-bottom-color: $color-primary-dark-dark;
+    }
+
+    .modalTitle {
+      font-size: $font-size-text-xl-light;
+      font-weight: 600;
+      color: $color-title-text-light;
+
       &.dark {
-        color: $color-subtitle-text-dark;
+        color: $color-title-text-dark;
       }
     }
-    
-    .phone {
-      font-size: $font-size-text-sm-light;
-      color: $color-subtitle-text-light;
-      
+
+    .closeButton {
+      background: none;
+      border: none;
+      color: $color-card-text-light;
+      cursor: pointer;
+      padding: 5px;
+      border-radius: 4px;
+      transition: all 0.3s ease;
+
       &.dark {
-        color: $color-subtitle-text-dark;
+        color: $color-card-text-dark;
+      }
+
+      &:hover:not(:disabled) {
+        background: $color-primary-light-light;
+        color: $color-title-text-light;
+
+        &.dark {
+          background: $color-primary-light-dark;
+          color: $color-title-text-dark;
+        }
+      }
+
+      &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+    }
+  }
+
+  .modalForm {
+    padding: 25px;
+
+    .formSection {
+      margin-bottom: 25px;
+
+      .sectionTitle {
+        font-size: $font-size-text-lg-light;
+        font-weight: 600;
+        color: $color-title-text-light;
+        margin-bottom: 15px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid $color-primary-dark-light;
+
+        &.dark {
+          color: $color-title-text-dark;
+          border-bottom-color: $color-primary-dark-dark;
+        }
+      }
+    }
+
+    .formRow {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin-bottom: 15px;
+
+      @media (max-width: 768px) {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .formGroup {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+
+      label {
+        font-size: $font-size-text-md-light;
+        color: $color-card-text-light;
+        font-weight: 500;
+
+        &.dark {
+          color: $color-card-text-dark;
+        }
+      }
+
+      input, select, textarea {
+        padding: 10px;
+        border: 1px solid $color-primary-dark-light;
+        border-radius: 6px;
+        background: $color-white-light;
+        color: $color-text-light;
+        font-size: $font-size-text-md-light;
+        transition: all 0.3s ease;
+
+        &.dark {
+          background: $color-primary-light-dark;
+          border-color: $color-primary-dark-dark;
+          color: $color-text-dark;
+        }
+
+        &:focus {
+          outline: none;
+          border-color: $color-bg-button-light;
+          
+          &.dark {
+            border-color: $color-bg-button-dark;
+          }
+        }
+
+        &:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
+        }
+      }
+
+      textarea {
+        resize: vertical;
+        min-height: 80px;
+        font-family: inherit;
+      }
+    }
+
+    .modalActions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      margin-top: 25px;
+      padding-top: 20px;
+      border-top: 1px solid $color-primary-dark-light;
+
+      &.dark {
+        border-top-color: $color-primary-dark-dark;
+      }
+
+      button {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 6px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+
+        &:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
+        }
+
+        &.cancelButton {
+          background: $color-primary-dark-light;
+          color: $color-text-light;
+
+          &.dark {
+            background: $color-primary-dark-dark;
+            color: $color-text-dark;
+          }
+
+          &:hover:not(:disabled) {
+            background: $color-subtitle-text-light;
+            color: $color-white-light;
+
+            &.dark {
+              background: $color-subtitle-text-dark;
+            }
+          }
+        }
+
+        &.saveButton {
+          background: $color-bg-button-light;
+          color: $color-white-light;
+
+          &.dark {
+            background: $color-bg-button-dark;
+          }
+
+          &:hover:not(:disabled) {
+            background: $color-hover-text-light;
+
+            &.dark {
+              background: $color-hover-text-dark;
+            }
+          }
+        }
       }
     }
   }
 }
 
+// Animations
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+// Responsive Design
 @media (max-width: 768px) {
   .customers {
     padding: 15px;
+    padding-top: 12vh;
   }
 
   .customersHeader {
@@ -390,4 +887,276 @@
   .customersTableContainer {
     padding: 15px;
   }
+
+  .tableHeader {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .tableStats {
+    justify-content: flex-start;
+  }
+
+  .modal {
+    margin: 10px;
+    
+    .modalForm {
+      padding: 15px;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .customers {
+    padding: 10px;
+    padding-top: 10vh;
+  }
+
+  .customersTableContainer {
+    padding: 10px;
+  }
+
+  .modalOverlay {
+    padding: 10px;
+  }
+}
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+
+  &.dark {
+    background-color: rgba(0, 0, 0, 0.7);
+  }
+}
+
+.modal {
+  background: $color-on-white-bg-light;
+  border-radius: 12px;
+  padding: 0;
+  width: 90%;
+  max-width: 800px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+
+  &.dark {
+    background: $color-card-bg-dark;
+  }
+
+  animation: modalFadeIn 0.2s ease-out;
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px;
+  border-bottom: 1px solid $color-primary-dark-light;
+
+  .dark & {
+    border-bottom: 1px solid $color-primary-dark-dark;
+  }
+}
+
+.modalTitle {
+  margin: 0;
+  font-size: $font-size-subtitle-light;
+  font-weight: 700;
+  color: $color-title-text-light;
+
+  .dark & {
+    color: $color-title-text-dark;
+  }
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 6px;
+  color: $color-card-text-light;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+
+  &:hover:not(:disabled) {
+    background: $color-primary-light-light;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .dark & {
+    color: $color-card-text-dark;
+
+    &:hover:not(:disabled) {
+      background: $color-primary-light-dark;
+    }
+  }
+}
+
+.modalForm {
+  padding: 24px;
+}
+
+.formRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.modalForm .formGroup {
+  margin-bottom: 16px;
+
+  label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: $color-title-text-light;
+    font-size: $font-size-text-md-light;
+
+    .dark & {
+      color: $color-title-text-dark;
+    }
+  }
+
+  input,
+  select,
+  textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid $color-primary-dark-light;
+    border-radius: 8px;
+    font-size: $font-size-text-md-light;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+    background: $color-white-light;
+    color: $color-text-light;
+
+    &:focus {
+      outline: none;
+      border-color: $color-bg-button-light;
+      box-shadow: 0 0 0 3px rgba($color-bg-button-light, 0.1);
+    }
+
+    &:disabled {
+      background-color: $color-primary-light-light;
+      cursor: not-allowed;
+    }
+
+    &.dark {
+      background: $color-primary-light-dark;
+      border-color: $color-primary-dark-dark;
+      color: $color-text-dark;
+
+      &:focus {
+        border-color: $color-bg-button-dark;
+        box-shadow: 0 0 0 3px rgba($color-bg-button-dark, 0.2);
+      }
+
+      &:disabled {
+        background-color: $color-primary-bg-dark;
+      }
+    }
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 80px;
+    font-family: inherit;
+  }
+}
+
+.modalActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid $color-primary-dark-light;
+
+  .dark & {
+    border-top: 1px solid $color-primary-dark-dark;
+  }
+
+  button {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    font-size: $font-size-text-md-light;
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+}
+
+.cancelButton {
+  background: $color-primary-light-light;
+  color: $color-text-light;
+  border: 1px solid $color-primary-dark-light !important;
+
+  &:hover:not(:disabled) {
+    background: $color-primary-dark-light;
+    color: $color-white-light;
+  }
+
+  &.dark {
+    background: $color-primary-light-dark;
+    color: $color-text-dark;
+    border-color: $color-primary-dark-dark !important;
+
+    &:hover:not(:disabled) {
+      background: $color-primary-dark-dark;
+    }
+  }
+}
+
+.saveButton {
+  background: $color-bg-button-light;
+  color: $color-white-light;
+
+  &:hover:not(:disabled) {
+    background: $color-hover-text-light;
+  }
+
+  &.dark {
+    background: $color-bg-button-dark;
+
+    &:hover:not(:disabled) {
+      background: $color-hover-text-dark;
+    }
+  }
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.modalOverlay {
+  animation: modalFadeIn 0.2s ease-out;
 }

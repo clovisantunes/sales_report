@@ -327,4 +327,259 @@
   .productsTable {
     min-width: 500px;
   }
+}// Estilos para o Modal
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+
+  &.dark {
+    background-color: rgba(0, 0, 0, 0.7);
+  }
+}
+
+.modal {
+  background: white;
+  border-radius: 8px;
+  padding: 0;
+  width: 90%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+
+  &.dark {
+    background: #1e1e1e;
+    color: white;
+  }
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid #e1e5e9;
+
+  .dark & {
+    border-bottom: 1px solid #333;
+  }
+}
+
+.modalTitle {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+
+  .dark & {
+    color: white;
+  }
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  color: #666;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    background: #f5f5f5;
+  }
+
+  .dark & {
+    color: #ccc;
+
+    &:hover {
+      background: #333;
+    }
+  }
+}
+
+.modalForm {
+  padding: 24px;
+}
+
+.modalForm .formGroup {
+  margin-bottom: 20px;
+
+  label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 500;
+    color: #333;
+
+    .dark & {
+      color: #ccc;
+    }
+  }
+
+  input,
+  select,
+  textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: border-color 0.2s;
+
+    &:focus {
+      outline: none;
+      border-color: #007bff;
+    }
+
+    &.dark {
+      background: #2d2d2d;
+      border-color: #444;
+      color: white;
+
+      &:focus {
+        border-color: #007bff;
+      }
+    }
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 80px;
+  }
+}
+
+.modalActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+
+  button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s;
+  }
+}
+
+.cancelButton {
+  background: #f8f9fa;
+  color: #333;
+  border: 1px solid #ddd !important;
+
+  &:hover {
+    background: #e9ecef;
+  }
+
+  &.dark {
+    background: #333;
+    color: #ccc;
+    border-color: #555 !important;
+
+    &:hover {
+      background: #444;
+    }
+  }
+}
+
+.saveButton {
+  background: #007bff;
+  color: white;
+
+  &:hover {
+    background: #0056b3;
+  }
+
+  &.dark {
+    background: #0056b3;
+
+    &:hover {
+      background: #004494;
+    }
+  }
+}
+// Estados de loading e erro
+.loadingState {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+  font-size: 16px;
+  color: #666;
+}
+
+.errorMessage {
+  background: #fee;
+  border: 1px solid #fcc;
+  border-radius: 6px;
+  padding: 16px;
+  margin: 16px 0;
+  color: #c33;
+  display: flex;
+  justify-content: between;
+  align-items: center;
+
+  &.dark {
+    background: #332;
+    border-color: #633;
+    color: #f66;
+  }
+}
+
+.retryButton {
+  background: #c33;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-left: auto;
+
+  &:hover {
+    background: #a22;
+  }
+}
+
+.emptyState {
+  text-align: center;
+  padding: 40px;
+  color: #666;
+
+  p {
+    margin-bottom: 20px;
+  }
+}
+
+// Botões de ação
+.actionButtons {
+  display: flex;
+  gap: 8px;
+}
+
+.deleteButton {
+  background: #dc3545 !important;
+  color: white !important;
+
+  &:hover {
+    background: #c82333 !important;
+  }
+
+  &.dark {
+    background: #c82333 !important;
+
+    &:hover {
+      background: #a71e2a !important;
+    }
+  }
 }

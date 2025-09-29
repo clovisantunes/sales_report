@@ -1,3 +1,11 @@
+// types/DashBoard.ts
+export interface Metricas {
+  totalVendas: number;
+  vendasMes: number;
+  mediaMensal: number;
+  crescimento: number;
+}
+
 export interface Venda {
   id: string;
   data: string;
@@ -7,13 +15,11 @@ export interface Venda {
   formaContato: string;
   estagio: string;
   tipoProduto: string;
-  resultado: number;
-  comentario: string;
+  resultado: string; 
+  vendedor: string; 
 }
 
-export interface Metricas {
-  totalVendas: number;
-  vendasMes: number;
-  mediaMensal: number;
-  crescimento: number;
+export interface DadosGrafico {
+  meses: string[];
+  vendas: number[];
 }
