@@ -1,5 +1,3 @@
-// components/Users/UserDetails.tsx
-
 import React, { useState, useEffect } from 'react';
 import { FiX, FiEdit, FiCalendar, FiMail, FiUser, FiClock, FiShield } from 'react-icons/fi';
 import type { User, LoginHistory } from '../../types/User';
@@ -73,7 +71,6 @@ const UserDetails: React.FC<UserDetailsProps> = ({
         </div>
 
         <div className={styles.userDetails}>
-          {/* Header com Avatar */}
           <div className={styles.userHeader}>
             <div className={styles.avatarSection}>
               <div className={styles.avatarContainer}>
@@ -121,7 +118,6 @@ const UserDetails: React.FC<UserDetailsProps> = ({
               </div>
             </div>
 
-            {/* Botão de Editar - controlado por permissões */}
             {canEdit && (
               <button onClick={onEdit} className={styles.editButton}>
                 <FiEdit size={16} />
@@ -130,7 +126,6 @@ const UserDetails: React.FC<UserDetailsProps> = ({
             )}
           </div>
 
-          {/* Informações Pessoais */}
           <div className={styles.section}>
             <h3>Informações Pessoais</h3>
             <div className={styles.infoGrid}>
@@ -158,7 +153,7 @@ const UserDetails: React.FC<UserDetailsProps> = ({
                 </div>
               </div>
 
-              {/* Informações adicionais para administradores */}
+  
               {currentUserIsAdmin && (
                 <>
                   <div className={styles.infoItem}>
@@ -179,8 +174,6 @@ const UserDetails: React.FC<UserDetailsProps> = ({
               )}
             </div>
           </div>
-
-          {/* Histórico de Login - apenas para administradores ou próprio usuário */}
           {(currentUserIsAdmin || isCurrentUser) && (
             <div className={styles.section}>
               <h3>Histórico de Login</h3>
@@ -228,7 +221,6 @@ const UserDetails: React.FC<UserDetailsProps> = ({
             </div>
           )}
 
-          {/* Mensagem para usuários não-admin visualizando outros perfis */}
           {!currentUserIsAdmin && !isCurrentUser && (
             <div className={styles.permissionNotice}>
               <FiUser size={20} />

@@ -1,5 +1,3 @@
-// components/Users/Users.tsx
-
 import React, { useState, useEffect } from 'react';
 import { FiUserPlus, FiEdit, FiTrash2, FiSearch, FiFilter, FiUser } from 'react-icons/fi';
 import type { User } from '../../types/User';
@@ -77,7 +75,6 @@ const Users: React.FC<UsersProps> = ({ darkMode = false }) => {
   };
 
   const handleEditUser = (user: Omit<User, 'password'>) => {
-    // Só permite editar se for admin ou se for o próprio usuário
     if (currentUserIsAdmin || user.id === currentUserId) {
       setEditingUser(user);
       setShowForm(true);
@@ -106,13 +103,11 @@ const Users: React.FC<UsersProps> = ({ darkMode = false }) => {
   };
 
   const handleDeleteUser = async (user: Omit<User, 'password'>) => {
-    // Só permite excluir se for admin
     if (!currentUserIsAdmin) {
       alert('Você não tem permissão para excluir usuários');
       return;
     }
 
-    // Não permite excluir a si mesmo
     if (user.id === currentUserId) {
       alert('Você não pode excluir sua própria conta');
       return;
@@ -123,9 +118,7 @@ const Users: React.FC<UsersProps> = ({ darkMode = false }) => {
     }
 
     try {
-      // Aqui você implementaria a exclusão no Firebase
-      // await userService.deleteUser(user.id);
-      alert('Funcionalidade de exclusão será implementada');
+      await userService.deleteUser(user.id);
       loadUsers();
     } catch (error) {
       console.error('Erro ao excluir usuário:', error);
@@ -133,17 +126,14 @@ const Users: React.FC<UsersProps> = ({ darkMode = false }) => {
     }
   };
 
-  // Verifica se o usuário pode editar um usuário específico
   const canEditUser = (user: Omit<User, 'password'>): boolean => {
     return currentUserIsAdmin || user.id === currentUserId;
   };
 
-  // Verifica se o usuário pode excluir um usuário específico
   const canDeleteUser = (user: Omit<User, 'password'>): boolean => {
     return currentUserIsAdmin && user.id !== currentUserId;
   };
 
-  // Filtrar usuários
   const filteredUsers = users.filter(user => {
     const matchesSearch = user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -178,7 +168,6 @@ const Users: React.FC<UsersProps> = ({ darkMode = false }) => {
           )}
         </div>
         
-        {/* Botão Novo Usuário - APENAS para administradores */}
         {currentUserIsAdmin && (
           <button 
             className={styles.addButton}
@@ -189,16 +178,12 @@ const Users: React.FC<UsersProps> = ({ darkMode = false }) => {
           </button>
         )}
       </header>
-
-      {/* Informação de permissões para usuários não-admin */}
       {!currentUserIsAdmin && (
         <div className={styles.permissionInfo}>
           <FiUser size={16} />
           <span>Você está visualizando os usuários do sistema. Apenas administradores podem gerenciar usuários.</span>
         </div>
       )}
-
-      {/* Filtros e Busca */}
       <div className={styles.filters}>
         <div className={styles.searchBox}>
           <FiSearch className={styles.searchIcon} />
@@ -224,8 +209,6 @@ const Users: React.FC<UsersProps> = ({ darkMode = false }) => {
           </select>
         </div>
       </div>
-
-      {/* Lista de Usuários */}
       <div className={styles.usersList}>
         {filteredUsers.length === 0 ? (
           <div className={styles.emptyState}>
@@ -286,7 +269,6 @@ const Users: React.FC<UsersProps> = ({ darkMode = false }) => {
                     Ver Detalhes
                   </button>
                   <div className={styles.actionButtons}>
-                    {/* Botão Editar - aparece para admin ou para o próprio usuário */}
                     {canEditUser(user) && (
                       <button
                         onClick={() => handleEditUser(user)}
@@ -297,7 +279,6 @@ const Users: React.FC<UsersProps> = ({ darkMode = false }) => {
                       </button>
                     )}
                     
-                    {/* Botão Excluir - aparece apenas para admin e não para o próprio usuário */}
                     {canDeleteUser(user) && (
                       <button
                         onClick={() => handleDeleteUser(user)}
@@ -315,17 +296,15 @@ const Users: React.FC<UsersProps> = ({ darkMode = false }) => {
         )}
       </div>
 
-      {/* Modal de Formulário */}
       {showForm && (
         <UserForm
           user={editingUser}
           onSave={handleUserSaved}
           onClose={handleCloseForm}
           darkMode={darkMode}
+          isAdmin={currentUserIsAdmin}
         />
       )}
-
-      {/* Modal de Detalhes */}
       {selectedUser && (
         <UserDetails
           user={selectedUser}

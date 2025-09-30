@@ -1,4 +1,3 @@
-// src/services/productsService.ts
 import { 
   collection, 
   addDoc, 
@@ -17,18 +16,6 @@ import type { Product } from '../../types/Products';
 
 
 class ProductsService {
-  private productToFirestore(product: Omit<Product, 'id'>): any {
-    return {
-      name: product.name,
-      category: product.category,
-      price: product.price,
-      status: product.status,
-      description: product.description,
-      createdAt: Timestamp.fromDate(new Date(product.createdAt.split('/').reverse().join('-'))),
-      updatedAt: Timestamp.now()
-    };
-  }
-
   private firestoreToProduct(docId: string, data: any): Product {
     return {
       id: docId,

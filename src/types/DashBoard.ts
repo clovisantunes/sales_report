@@ -1,4 +1,3 @@
-// types/DashBoard.ts
 export interface Metricas {
   totalVendas: number;
   vendasMes: number;

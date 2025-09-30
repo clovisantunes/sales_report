@@ -1,28 +1,27 @@
-// Light Mode
 $color-primary-bg-light: #ffffff;
-$color-primary-light-light: #f9fafb;
-$color-primary-dark-light: #e5e7eb;
+$color-primary-light-light: #f8f9fa;
+$color-primary-dark-light: #e9ecef;
 
 $color-hover-text-light: #2563eb;
 $color-link-text-light: #1d4ed8;
-$color-title-text-light: #111111;
+$color-title-text-light: #1f2937;
 $color-card-text-light: #374151;
 $color-subtitle-text-light: #6b7280;
 
 $color-cta-title-light: #2563eb;
-$color-card-bg-light: #f3f4f6;
+$color-card-bg-light: #f8f9fa;
 $color-phone-bg-light: #2563eb;
 $color-on-white-bg-light: #ffffff;
 
 $color-bg-button-light: #2563eb;
-$color-secondary-light: #9333ea;
+$color-secondary-light: #7c3aed;
 $color-accent-light: #2563eb;
 
-$color-text-light: #111111;
-$color-text-light-alt: #374151;
+$color-text-light: #374151;
+$color-text-light-alt: #6b7280;
 $color-white-light: #ffffff;
 
-$background-nav-container-light: #f3f4f6;
+$background-nav-container-light: #f8f9fa;
 $background-header-container-light: #ffffff;
 
 $font-size-banner-title-light: 42px;
@@ -34,13 +33,12 @@ $font-size-text-md-light: 14px;
 $font-size-text-sm-light: 12px;
 $font-primary: 'Arial', sans-serif;
 
-
 $color-primary-bg-dark: #0d1117;
 $color-primary-light-dark: #161b22;
 $color-primary-dark-dark: #010409;
 
 $color-hover-text-dark: #25d366;
-$color-link-text-dark: #9ca3af;
+$color-link-text-dark: #c9d1d9;
 $color-title-text-dark: #f0f6fc;
 $color-card-text-dark: #c9d1d9;
 $color-subtitle-text-dark: #8b949e;
@@ -61,3 +59,58 @@ $color-white-dark: #ffffff;
 $background-nav-container-dark: #161b22;
 $background-header-container-dark: #0d1117;
 
+:root {
+  --color-primary-bg: #{$color-primary-bg-light};
+  --color-primary-light: #{$color-primary-light-light};
+  --color-primary-dark: #{$color-primary-dark-light};
+  
+  --color-hover-text: #{$color-hover-text-light};
+  --color-link-text: #{$color-link-text-light};
+  --color-title-text: #{$color-title-text-light};
+  --color-card-text: #{$color-card-text-light};
+  --color-subtitle-text: #{$color-subtitle-text-light};
+  
+  --color-cta-title: #{$color-cta-title-light};
+  --color-card-bg: #{$color-card-bg-light};
+  --color-phone-bg: #{$color-phone-bg-light};
+  --color-on-white-bg: #{$color-on-white-bg-light};
+  
+  --color-bg-button: #{$color-bg-button-light};
+  --color-secondary: #{$color-secondary-light};
+  --color-accent: #{$color-accent-light};
+  
+  --color-text: #{$color-text-light};
+  --color-text-alt: #{$color-text-light-alt};
+  --color-white: #{$color-white-light};
+  
+  --background-nav-container: #{$background-nav-container-light};
+  --background-header-container: #{$background-header-container-light};
+}
+
+[data-theme="dark"] {
+  --color-primary-bg: #{$color-primary-bg-dark};
+  --color-primary-light: #{$color-primary-light-dark};
+  --color-primary-dark: #{$color-primary-dark-dark};
+  
+  --color-hover-text: #{$color-hover-text-dark};
+  --color-link-text: #{$color-link-text-dark};
+  --color-title-text: #{$color-title-text-dark};
+  --color-card-text: #{$color-card-text-dark};
+  --color-subtitle-text: #{$color-subtitle-text-dark};
+  
+  --color-cta-title: #{$color-cta-title-dark};
+  --color-card-bg: #{$color-card-bg-dark};
+  --color-phone-bg: #{$color-phone-bg-dark};
+  --color-on-white-bg: #{$color-on-white-bg-dark};
+  
+  --color-bg-button: #{$color-bg-button-dark};
+  --color-secondary: #{$color-secondary-dark};
+  --color-accent: #{$color-accent-dark};
+  
+  --color-text: #{$color-text-dark};
+  --color-text-alt: #{$color-text-dark-alt};
+  --color-white: #{$color-white-dark};
+  
+  --background-nav-container: #{$background-nav-container-dark};
+  --background-header-container: #{$background-header-container-dark};
+}

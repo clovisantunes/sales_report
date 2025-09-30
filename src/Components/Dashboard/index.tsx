@@ -15,7 +15,6 @@ import type { Venda, Metricas, DadosGrafico } from '../../types/DashBoard';
 import { dashboardService } from '../../services/DashboardService/DashboardService';
 import styles from './styles.module.scss';
 
-// Registrar componentes do Chart.js
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -29,7 +28,7 @@ ChartJS.register(
 interface DashboardProps {
   darkMode: boolean;
   className?: string;
-  users?: any[]; // Para mostrar nome do vendedor
+  users?: any[]; 
 }
 
 const Dashboard: React.FC<DashboardProps> = ({ darkMode, className = "", users = [] }) => {
@@ -94,7 +93,6 @@ const Dashboard: React.FC<DashboardProps> = ({ darkMode, className = "", users =
     return user ? user.name : vendedorId;
   };
 
-  // Configuração do gráfico
   const chartData = {
     labels: dadosGrafico.meses,
     datasets: [
@@ -201,7 +199,6 @@ const Dashboard: React.FC<DashboardProps> = ({ darkMode, className = "", users =
 
   return (
     <div className={`${styles.dashboard} ${darkMode ? styles.dark : ''} ${className}`}>
-      {/* Header com título e botão de atualizar */}
       <div className={styles.dashboardHeader}>
         <h1 className={`${styles.dashboardTitle} ${darkMode ? styles.dark : ''}`}>
           Dashboard de Vendas
@@ -215,7 +212,6 @@ const Dashboard: React.FC<DashboardProps> = ({ darkMode, className = "", users =
         </button>
       </div>
 
-      {/* Métricas */}
       <div className={styles.metricasContainer}>
         <div className={`${styles.metricaCard} ${darkMode ? styles.dark : ''}`}>
           <div className={`${styles.metricaTitulo} ${darkMode ? styles.dark : ''}`}>
@@ -253,8 +249,6 @@ const Dashboard: React.FC<DashboardProps> = ({ darkMode, className = "", users =
           </div>
         </div>
       </div>
-
-      {/* Gráfico */}
       <div className={`${styles.graficoContainer} ${darkMode ? styles.dark : ''}`}>
         <div className={`${styles.graficoTitulo} ${darkMode ? styles.dark : ''}`}>
           Quantidade de Vendas Mensais (Últimos 6 meses)
@@ -263,8 +257,6 @@ const Dashboard: React.FC<DashboardProps> = ({ darkMode, className = "", users =
           <Line data={chartData} options={chartOptions} />
         </div>
       </div>
-
-      {/* Tabela de Vendas Recentes - APENAS AS COLUNAS ESPECIFICADAS */}
       <div className={`${styles.tabelaContainer} ${darkMode ? styles.dark : ''}`}>
         <div className={styles.tabelaHeader}>
           <div className={`${styles.tabelaTitulo} ${darkMode ? styles.dark : ''}`}>

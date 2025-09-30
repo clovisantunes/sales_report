@@ -116,13 +116,10 @@ const Customers: React.FC<CustomersProps> = ({ darkMode, className = "", users =
 
     setSubmitting(true);
     try {
-      // Aqui você implementaria a lógica para salvar as alterações
       console.log('💾 Salvando alterações:', editingCustomer);
       
-      // Simulando salvamento
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      // Recarrega os dados após salvar
       await loadCustomers();
       handleCloseModal();
     } catch (error) {
@@ -413,7 +410,6 @@ const Customers: React.FC<CustomersProps> = ({ darkMode, className = "", users =
         )}
       </div>
 
-      {/* Modal de Edição */}
       {showEditModal && editingCustomer && (
         <div className={`${styles.modalOverlay} ${darkMode ? styles.dark : ''}`}>
           <div className={`${styles.modal} ${darkMode ? styles.dark : ''}`}>

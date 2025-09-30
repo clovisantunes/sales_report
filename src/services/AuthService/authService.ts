@@ -25,7 +25,6 @@ class AuthService {
       console.log('🔐 [DEBUG] Email recebido:', email);
       console.log('🔐 [DEBUG] Password recebido:', password ? '***' : 'vazio');
       
-      // Verificar se o email é válido
       if (!email || typeof email !== 'string' || email.trim() === '') {
         console.error('❌ [DEBUG] Email é inválido:', email);
         return {
@@ -54,18 +53,13 @@ class AuthService {
       
       await this.generateAndStoreToken(user);
       
-      // 🔥 NOVO: Criar/obter perfil do usuário no Firestore
       console.log('📝 [DEBUG] Criando/obtendo perfil do usuário no Firestore...');
       try {
-        const userProfile = await userService.getCurrentUser(user.uid);
-        console.log('✅ [DEBUG] Perfil do usuário no Firestore:', userProfile ? 'encontrado/criado' : 'não criado');
         
-        // Registrar histórico de login
         await userService.recordLogin(user.uid);
         console.log('📊 [DEBUG] Histórico de login registrado');
       } catch (profileError) {
         console.error('⚠️ [DEBUG] Erro ao criar/obter perfil do usuário:', profileError);
-        // Não falha o login se houver erro no perfil, apenas registra
       }
       
       return {
@@ -77,10 +71,7 @@ class AuthService {
         }
       };
     } catch (error: any) {
-      console.error('❌ [DEBUG] Erro completo no login:', error);
-      console.error('❌ [DEBUG] Código do erro:', error.code);
-      console.error('❌ [DEBUG] Mensagem do erro:', error.message);
-      console.error('❌ [DEBUG] Stack:', error.stack);
+
       
       let errorMessage = 'Erro ao fazer login. Tente novamente.';
       
@@ -212,12 +203,10 @@ class AuthService {
     }
   }
 
-  // 🔥 NOVO MÉTODO: Forçar criação do perfil para usuário atual
   async ensureUserProfile(): Promise<void> {
     try {
       const currentUser = this.getCurrentUser();
       if (currentUser) {
-        console.log('🔄 [DEBUG] Garantindo perfil do usuário no Firestore...');
         const userProfile = await userService.getCurrentUser(currentUser.uid);
         console.log('✅ [DEBUG] Perfil garantido:', userProfile ? 'sucesso' : 'falha');
       }

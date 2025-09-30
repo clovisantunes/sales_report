@@ -161,7 +161,6 @@ class SalesService {
         updatedAt: Timestamp.now()
       };
 
-      // Adiciona apenas os campos que foram fornecidos
       if (sale.date !== undefined) updateData.date = sale.date;
       if (sale.companyName !== undefined) updateData.companyName = sale.companyName;
       if (sale.type !== undefined) updateData.type = sale.type;

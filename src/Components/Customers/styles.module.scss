@@ -498,7 +498,6 @@
     font-size: $font-size-text-sm-light;
   }
 
-  // Status do cliente
   .status {
     padding: 6px 12px;
     border-radius: 20px;
@@ -539,7 +538,6 @@
     }
   }
 
-  // Status da venda
   .salesStatus {
     padding: 6px 12px;
     border-radius: 20px;
@@ -624,8 +622,6 @@
     }
   }
 }
-
-// Modal Styles
 .modalOverlay {
   position: fixed;
   top: 0;
@@ -857,13 +853,11 @@
   }
 }
 
-// Animations
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
 
-// Responsive Design
 @media (max-width: 768px) {
   .customers {
     padding: 15px;

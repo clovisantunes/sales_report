@@ -1,5 +1,5 @@
 // services/DashboardService/DashboardService.ts
-import { collection, getDocs, query, where, orderBy } from 'firebase/firestore';
+import { collection, getDocs, query,  orderBy } from 'firebase/firestore';
 import { db } from '../../Firebase/Firebase';
 import type { Sale } from '../../types/Sales';
 import type { Venda, Metricas, DadosGrafico } from '../../types/DashBoard';
@@ -30,10 +30,8 @@ export const dashboardService = {
         } as Sale;
       });
 
-      // Calcular métricas
       const totalVendas = sales.length;
       
-      // Vendas do mês atual
       const hoje = new Date();
       const primeiroDiaMes = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
       const vendasMes = sales.filter(sale => {
@@ -41,7 +39,6 @@ export const dashboardService = {
         return dataVenda >= primeiroDiaMes;
       }).length;
 
-      // Média mensal (últimos 6 meses)
       const seisMesesAtras = new Date();
       seisMesesAtras.setMonth(seisMesesAtras.getMonth() - 6);
       
@@ -53,7 +50,6 @@ export const dashboardService = {
       const mediaMensal = vendasUltimos6Meses.length > 0 ? 
         Math.round(vendasUltimos6Meses.length / 6) : 0;
 
-      // Crescimento vs mês anterior
       const primeiroDiaMesAnterior = new Date(hoje.getFullYear(), hoje.getMonth() - 1, 1);
       const ultimoDiaMesAnterior = new Date(hoje.getFullYear(), hoje.getMonth(), 0);
       
@@ -99,7 +95,6 @@ export const dashboardService = {
         } as Sale;
       });
 
-      // Agrupar vendas por mês (últimos 6 meses)
       const meses = [];
       const vendasPorMes = [];
       
@@ -163,7 +158,6 @@ export const dashboardService = {
         } as Sale;
       });
 
-      // Converter para o formato Venda com APENAS as colunas especificadas
       const vendas: Venda[] = sales.slice(0, 10).map(sale => ({
         id: sale.id,
         data: sale.date,
@@ -186,7 +180,6 @@ export const dashboardService = {
     }
   },
 
-  // Métodos auxiliares
   parseDateString(dateString: string): Date {
     try {
       const [day, month, year] = dateString.split('/');

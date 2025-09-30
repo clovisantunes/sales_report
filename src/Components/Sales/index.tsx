@@ -32,11 +32,9 @@ const Sales: React.FC<SalesProps> = ({ darkMode, className = "", currentUser, us
     productType: '',
     comments: '',
     salesPerson: currentUser?.id || '',
-    // NOVOS CAMPOS
     statusFechado: false,
     ultimoContato: new Date().toLocaleDateString('pt-BR'),
     vendedor: currentUser?.id || '',
-    // CAMPOS DE CONTATO ESPECÍFICOS
     contatoTelefone: '',
     contatoEmail: '',
     contatoWhatsapp: '',
@@ -149,11 +147,9 @@ const Sales: React.FC<SalesProps> = ({ darkMode, className = "", currentUser, us
       productType: '',
       comments: '',
       salesPerson: currentUser?.id || '',
-      // NOVOS CAMPOS
       statusFechado: false,
       ultimoContato: new Date().toLocaleDateString('pt-BR'),
       vendedor: currentUser?.id || '',
-      // CAMPOS DE CONTATO
       contatoTelefone: '',
       contatoEmail: '',
       contatoWhatsapp: '',
@@ -176,11 +172,9 @@ const Sales: React.FC<SalesProps> = ({ darkMode, className = "", currentUser, us
         productType: sale.productType,
         comments: sale.comments,
         salesPerson: sale.salesPerson,
-        // NOVOS CAMPOS
         statusFechado: sale.statusFechado,
         ultimoContato: sale.ultimoContato,
         vendedor: sale.vendedor,
-        // CAMPOS DE CONTATO
         contatoTelefone: sale.contatoTelefone || '',
         contatoEmail: sale.contatoEmail || '',
         contatoWhatsapp: sale.contatoWhatsapp || '',
@@ -240,11 +234,9 @@ const Sales: React.FC<SalesProps> = ({ darkMode, className = "", currentUser, us
         comments: formData.comments,
         salesPerson: formData.salesPerson,
         result: formData.stage === 'fechado' ? 'Fechado' : (formData.stage === 'perdida' ? 'Perdida' : 'Negociação em andamento'),
-        // INCLUINDO OS NOVOS CAMPOS NO ENVIO
         statusFechado: formData.statusFechado,
         ultimoContato: formData.ultimoContato,
         vendedor: formData.vendedor,
-        // CAMPOS DE CONTATO
         contatoTelefone: formData.contatoTelefone,
         contatoEmail: formData.contatoEmail,
         contatoWhatsapp: formData.contatoWhatsapp,
@@ -642,7 +634,6 @@ const Sales: React.FC<SalesProps> = ({ darkMode, className = "", currentUser, us
                 </select>
               </div>
 
-              {/* NOVOS CAMPOS VISÍVEIS NO MODAL */}
               <div className={styles.formRow}>
                 <div className={styles.formGroup}>
                   <label htmlFor="ultimoContato">Último Contato</label>

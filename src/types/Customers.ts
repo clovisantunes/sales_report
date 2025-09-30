@@ -1,4 +1,3 @@
-// types/Customers.ts
 export interface Customer {
   id: string;
   name: string;
@@ -8,7 +7,7 @@ export interface Customer {
   status: 'active' | 'inactive' | 'pending';
   salesStatus: string;
   lastContact: string;
-  salesPerson: string; // ← Mantido
+  salesPerson: string;
   notes: string;
   whatsapp?: string;
   address?: string;

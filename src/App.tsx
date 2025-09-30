@@ -9,6 +9,7 @@ import Products from './Components/Products';
 import { authService } from './services/AuthService/authService';
 import type { User, LoginData } from './types/Auth';
 import Users from './Components/Users';
+import { userService } from './services/userService/userService';
 
 const App: React.FC = () => {
   const [darkMode, setDarkMode] = useState(false);
@@ -30,13 +31,15 @@ useEffect(() => {
         setIsAuthenticated(true);
         
         await authService.ensureUserProfile();
+        const userProfile = await userService.getCurrentUser(currentUser.uid);
         
         const userData: User = {
           id: currentUser.uid,
           name: currentUser.email?.split('@')[0] || 'Usuário',
           email: currentUser.email || '',
           username: currentUser.email?.split('@')[0] || 'usuario',
-          initials: getInitials(currentUser.email || 'US')
+          initials: getInitials(currentUser.email || 'US'),
+          isAdmin: userProfile?.isAdmin || false,
         };
         setUser(userData);
       }
@@ -67,12 +70,16 @@ useEffect(() => {
       const result = await authService.login(loginData.email, loginData.password);
       
       if (result.success && result.user) {
+        const userProfile = await userService.getCurrentUser(result.user.uid);
+        
         const userData: User = {
           id: result.user.uid,
           name: result.user.email?.split('@')[0] || 'Usuário',
           email: result.user.email || '',
           username: result.user.email?.split('@')[0] || 'usuario',
-          initials: getInitials(result.user.email || 'US')
+          initials: getInitials(result.user.email || 'US'),
+
+          isAdmin: userProfile?.isAdmin || false
         };
         
         setUser(userData);
@@ -123,7 +130,7 @@ useEffect(() => {
       case 'customers':
         return <Customers darkMode={darkMode} />;
       case 'products':
-        return <Products darkMode={darkMode} />;
+        return <Products darkMode={darkMode} isAdmin={user?.isAdmin} />;
       case 'users':
         return <Users darkMode={darkMode} />;
       default:

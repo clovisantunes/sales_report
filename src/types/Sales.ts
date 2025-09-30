@@ -1,6 +1,6 @@
 export interface Sale {
   id: string;
-  date: string; // DD/MM/YYYY
+  date: string;
   companyName: string;
   type: string;
   contactName: string;

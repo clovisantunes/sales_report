@@ -1,5 +1,3 @@
-// components/Users/UserForm.tsx
-
 import React, { useState, useEffect } from 'react';
 import { FiX, FiUser, FiMail, FiLock, FiCamera } from 'react-icons/fi';
 import type { User, CreateUserData, UpdateUserData } from '../../types/User';
@@ -11,9 +9,10 @@ interface UserFormProps {
   onSave: () => void;
   onClose: () => void;
   darkMode?: boolean;
+  isAdmin?: boolean;
 }
 
-const UserForm: React.FC<UserFormProps> = ({ user, onSave, onClose }) => {
+const UserForm: React.FC<UserFormProps> = ({ user, onSave, onClose, isAdmin }) => {
   const [formData, setFormData] = useState({
     name: '',
     lastName: '',
@@ -121,7 +120,6 @@ const UserForm: React.FC<UserFormProps> = ({ user, onSave, onClose }) => {
       [field]: value
     }));
     
-    // Limpar erro do campo quando usuário começar a digitar
     if (errors[field]) {
       setErrors(prev => ({
         ...prev,
@@ -183,7 +181,7 @@ const UserForm: React.FC<UserFormProps> = ({ user, onSave, onClose }) => {
               value={formData.email}
               onChange={(e) => handleChange('email', e.target.value)}
               className={errors.email ? styles.error : ''}
-              disabled={isEditing} // Não permitir alterar email em edição
+              disabled={isEditing} 
             />
             {errors.email && <span className={styles.errorText}>{errors.email}</span>}
           </div>
@@ -234,6 +232,7 @@ const UserForm: React.FC<UserFormProps> = ({ user, onSave, onClose }) => {
               placeholder="https://exemplo.com/foto.jpg"
             />
           </div>
+        {isAdmin && (
 
           <div className={styles.checkboxGroup}>
             <label className={styles.checkboxLabel}>
@@ -250,6 +249,7 @@ const UserForm: React.FC<UserFormProps> = ({ user, onSave, onClose }) => {
               Administradores têm acesso completo ao sistema
             </small>
           </div>
+        )}
 
           <div className={styles.formActions}>
             <button

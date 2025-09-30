@@ -7,15 +7,15 @@ import styles from './styles.module.scss';
 interface ProductsProps {
   darkMode: boolean;
   className?: string;
+  isAdmin?: boolean;
 }
 
-const Products: React.FC<ProductsProps> = ({ darkMode, className = "" }) => {
+const Products: React.FC<ProductsProps> = ({ darkMode, className = "", isAdmin }) => {
   const [filters, setFilters] = useState<ProductFilters>({});
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  // Estados para o modal
   const [showModal, setShowModal] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [formData, setFormData] = useState({
@@ -25,7 +25,6 @@ const Products: React.FC<ProductsProps> = ({ darkMode, className = "" }) => {
   });
   const [submitting, setSubmitting] = useState(false);
 
-  // Carregar produtos do Firebase
   useEffect(() => {
     loadProducts();
   }, []);
@@ -114,14 +113,12 @@ const Products: React.FC<ProductsProps> = ({ darkMode, className = "" }) => {
 
     try {
       if (editingProduct) {
-        // Editar produto existente
         await productsService.updateProduct(editingProduct.id, {
           name: formData.name,
           status: formData.status,
           description: formData.description
         });
       } else {
-        // Adicionar novo produto
         await productsService.addProduct({
           name: formData.name,
           category: 'Geral',
@@ -131,7 +128,7 @@ const Products: React.FC<ProductsProps> = ({ darkMode, className = "" }) => {
         });
       }
 
-      // Recarregar a lista de produtos
+
       await loadProducts();
       handleCloseModal();
       
@@ -150,7 +147,7 @@ const Products: React.FC<ProductsProps> = ({ darkMode, className = "" }) => {
 
     try {
       await productsService.deleteProduct(productId);
-      await loadProducts(); // Recarregar a lista
+      await loadProducts(); 
     } catch (err) {
       console.error('Erro ao excluir produto:', err);
       alert('Erro ao excluir produto. Tente novamente.');
@@ -260,7 +257,11 @@ const Products: React.FC<ProductsProps> = ({ darkMode, className = "" }) => {
                   </td>
                   <td>{product.createdAt}</td>
                   <td>
-                    <div className={styles.actionButtons}>
+                    {
+                        !isAdmin ?(
+                          <em>Sem permissão</em>
+                        ):(
+                             <div className={styles.actionButtons}>
                       <button 
                         className={`${styles.actionButton} ${styles.editButton} ${darkMode ? styles.dark : ''}`}
                         onClick={() => handleEditProduct(product.id)}
@@ -276,6 +277,9 @@ const Products: React.FC<ProductsProps> = ({ darkMode, className = "" }) => {
                         Excluir
                       </button>
                     </div>
+                        )
+                    }
+                 
                   </td>
                 </tr>
               ))}
@@ -284,7 +288,6 @@ const Products: React.FC<ProductsProps> = ({ darkMode, className = "" }) => {
         )}
       </div>
 
-      {/* Modal para Adicionar/Editar Produto */}
       {showModal && (
         <div className={`${styles.modalOverlay} ${darkMode ? styles.dark : ''}`}>
           <div className={`${styles.modal} ${darkMode ? styles.dark : ''}`}>

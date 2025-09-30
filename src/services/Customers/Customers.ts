@@ -144,16 +144,12 @@ export const customerService = {
   },
 
   getCustomerStatus(stage: string, statusFechado: boolean): 'active' | 'inactive' | 'pending' {
-    // Se está explicitamente fechado
     if (statusFechado === true) return 'active';
     
-    // Se está no estágio de fechado ou pós-venda
     if (stage === 'fechado' || stage === 'pós venda') return 'active';
     
-    // Se está perdida
     if (stage === 'perdida') return 'inactive';
     
-    // Todos os outros casos são pendentes
     return 'pending';
   },
 
@@ -169,7 +165,6 @@ export const customerService = {
     }
   },
 
-  // Método adicional para buscar cliente direto do Firebase
   async getCustomerByIdDirect(id: string): Promise<Customer | null> {
     try {
       const salesRef = collection(db, 'sales');
