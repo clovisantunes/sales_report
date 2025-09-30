@@ -8,6 +8,7 @@ import Customers from './Components/Customers';
 import Products from './Components/Products';
 import { authService } from './services/AuthService/authService';
 import type { User, LoginData } from './types/Auth';
+import Users from './Components/Users';
 
 const App: React.FC = () => {
   const [darkMode, setDarkMode] = useState(false);
@@ -17,36 +18,39 @@ const App: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const checkAuth = () => {
-      const savedDarkMode = localStorage.getItem('darkMode');
-      
-      const isTokenValid = authService.isTokenValid();
-      
-      if (isTokenValid) {
-        const currentUser = authService.getCurrentUser();
-        if (currentUser) {
-          setIsAuthenticated(true);
-          const userData: User = {
-            id: currentUser.uid,
-            name: currentUser.email?.split('@')[0] || 'Usuário',
-            email: currentUser.email || '',
-            username: currentUser.email?.split('@')[0] || 'usuario',
-            initials: getInitials(currentUser.email || 'US')
-          };
-          setUser(userData);
-        }
+useEffect(() => {
+  const checkAuth = async () => {
+    const savedDarkMode = localStorage.getItem('darkMode');
+    
+    const isTokenValid = authService.isTokenValid();
+    
+    if (isTokenValid) {
+      const currentUser = authService.getCurrentUser();
+      if (currentUser) {
+        setIsAuthenticated(true);
+        
+        await authService.ensureUserProfile();
+        
+        const userData: User = {
+          id: currentUser.uid,
+          name: currentUser.email?.split('@')[0] || 'Usuário',
+          email: currentUser.email || '',
+          username: currentUser.email?.split('@')[0] || 'usuario',
+          initials: getInitials(currentUser.email || 'US')
+        };
+        setUser(userData);
       }
-      
-      if (savedDarkMode) {
-        setDarkMode(JSON.parse(savedDarkMode));
-      }
-      
-      setLoading(false);
-    };
+    }
+    
+    if (savedDarkMode) {
+      setDarkMode(JSON.parse(savedDarkMode));
+    }
+    
+    setLoading(false);
+  };
 
-    checkAuth();
-  }, []);
+  checkAuth();
+}, []);
 
   const getInitials = (email: string): string => {
     if (!email || typeof email !== 'string') return 'US';
@@ -120,8 +124,8 @@ const App: React.FC = () => {
         return <Customers darkMode={darkMode} />;
       case 'products':
         return <Products darkMode={darkMode} />;
-      case 'settings':
-        return <div>Configurações - Em breve</div>;
+      case 'users':
+        return <Users darkMode={darkMode} />;
       default:
         return <Dashboard darkMode={darkMode} />;
     }

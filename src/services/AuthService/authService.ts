@@ -3,6 +3,8 @@ import {
 } from 'firebase/auth';
 import type { User } from 'firebase/auth';
 import { auth } from '../../Firebase/Firebase'; 
+import { userService } from '../userService/userService'; 
+
 const TOKEN_EXPIRY_TIME = 24 * 60 * 60 * 1000;
 
 export interface AuthResponse {
@@ -17,55 +19,69 @@ export interface AuthResponse {
 }
 
 class AuthService {
-async login(email: string, password: string): Promise<AuthResponse> {
-  try {
-    console.log('🔐 [DEBUG] Iniciando login no authService');
-    console.log('🔐 [DEBUG] Email recebido:', email);
-    console.log('🔐 [DEBUG] Password recebido:', password ? '***' : 'vazio');
-    
-    // Verificar se o email é válido
-    if (!email || typeof email !== 'string' || email.trim() === '') {
-      console.error('❌ [DEBUG] Email é inválido:', email);
-      return {
-        success: false,
-        error: 'Email é obrigatório',
-        errorCode: 'auth/missing-email'
-      };
-    }
-
-    if (!password || typeof password !== 'string' || password.trim() === '') {
-      console.error('❌ [DEBUG] Password é inválido');
-      return {
-        success: false,
-        error: 'Senha é obrigatória',
-        errorCode: 'auth/missing-password'
-      };
-    }
-
-    console.log('🔐 [DEBUG] Chamando Firebase Auth...');
-    
-    const { signInWithEmailAndPassword } = await import('firebase/auth');
-    const userCredential = await signInWithEmailAndPassword(auth, email.trim(), password);
-    const user = userCredential.user;
-    
-    console.log('✅ [DEBUG] Login bem-sucedido no Firebase:', user.email);
-    
-    await this.generateAndStoreToken(user);
-    
-    return {
-      success: true,
-      user: {
-        uid: user.uid,
-        email: user.email,
-        displayName: user.displayName || user.email?.split('@')[0] || 'Usuário'
+  async login(email: string, password: string): Promise<AuthResponse> {
+    try {
+      console.log('🔐 [DEBUG] Iniciando login no authService');
+      console.log('🔐 [DEBUG] Email recebido:', email);
+      console.log('🔐 [DEBUG] Password recebido:', password ? '***' : 'vazio');
+      
+      // Verificar se o email é válido
+      if (!email || typeof email !== 'string' || email.trim() === '') {
+        console.error('❌ [DEBUG] Email é inválido:', email);
+        return {
+          success: false,
+          error: 'Email é obrigatório',
+          errorCode: 'auth/missing-email'
+        };
       }
-    };
-  } catch (error: any) {
-    console.error('❌ [DEBUG] Erro completo no login:', error);
-    console.error('❌ [DEBUG] Código do erro:', error.code);
-    console.error('❌ [DEBUG] Mensagem do erro:', error.message);
-    console.error('❌ [DEBUG] Stack:', error.stack);
-    
+
+      if (!password || typeof password !== 'string' || password.trim() === '') {
+        console.error('❌ [DEBUG] Password é inválido');
+        return {
+          success: false,
+          error: 'Senha é obrigatória',
+          errorCode: 'auth/missing-password'
+        };
+      }
+
+      console.log('🔐 [DEBUG] Chamando Firebase Auth...');
+      
+      const { signInWithEmailAndPassword } = await import('firebase/auth');
+      const userCredential = await signInWithEmailAndPassword(auth, email.trim(), password);
+      const user = userCredential.user;
+      
+      console.log('✅ [DEBUG] Login bem-sucedido no Firebase:', user.email);
+      
+      await this.generateAndStoreToken(user);
+      
+      // 🔥 NOVO: Criar/obter perfil do usuário no Firestore
+      console.log('📝 [DEBUG] Criando/obtendo perfil do usuário no Firestore...');
+      try {
+        const userProfile = await userService.getCurrentUser(user.uid);
+        console.log('✅ [DEBUG] Perfil do usuário no Firestore:', userProfile ? 'encontrado/criado' : 'não criado');
+        
+        // Registrar histórico de login
+        await userService.recordLogin(user.uid);
+        console.log('📊 [DEBUG] Histórico de login registrado');
+      } catch (profileError) {
+        console.error('⚠️ [DEBUG] Erro ao criar/obter perfil do usuário:', profileError);
+        // Não falha o login se houver erro no perfil, apenas registra
+      }
+      
+      return {
+        success: true,
+        user: {
+          uid: user.uid,
+          email: user.email,
+          displayName: user.displayName || user.email?.split('@')[0] || 'Usuário'
+        }
+      };
+    } catch (error: any) {
+      console.error('❌ [DEBUG] Erro completo no login:', error);
+      console.error('❌ [DEBUG] Código do erro:', error.code);
+      console.error('❌ [DEBUG] Mensagem do erro:', error.message);
+      console.error('❌ [DEBUG] Stack:', error.stack);
+      
       let errorMessage = 'Erro ao fazer login. Tente novamente.';
       
       switch (error.code) {
@@ -193,6 +209,20 @@ async login(email: string, password: string): Promise<AuthResponse> {
         error: errorMessage,
         errorCode: error.code
       };
+    }
+  }
+
+  // 🔥 NOVO MÉTODO: Forçar criação do perfil para usuário atual
+  async ensureUserProfile(): Promise<void> {
+    try {
+      const currentUser = this.getCurrentUser();
+      if (currentUser) {
+        console.log('🔄 [DEBUG] Garantindo perfil do usuário no Firestore...');
+        const userProfile = await userService.getCurrentUser(currentUser.uid);
+        console.log('✅ [DEBUG] Perfil garantido:', userProfile ? 'sucesso' : 'falha');
+      }
+    } catch (error) {
+      console.error('❌ [DEBUG] Erro ao garantir perfil do usuário:', error);
     }
   }
 }
