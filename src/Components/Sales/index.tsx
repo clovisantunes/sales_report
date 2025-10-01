@@ -23,6 +23,8 @@ const Sales: React.FC<SalesProps> = ({ darkMode, className = "", currentUser, us
   const [editingSale, setEditingSale] = useState<Sale | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
+
+  
   const [formData, setFormData] = useState({
     date: new Date().toLocaleDateString('pt-BR'),
     company: '',
@@ -272,10 +274,14 @@ const Sales: React.FC<SalesProps> = ({ darkMode, className = "", currentUser, us
     return true;
   });
 
-  const getUserName = (userId: string) => {
-    const user = users.find(u => u.id === userId);
-    return user ? user.name : 'N/A';
-  };
+ const getUserName = (userId: string, sale?: Sale) => {
+  if (sale?.sellerInfo?.fullName) {
+    return sale.sellerInfo.fullName;
+  }
+  
+  const user = users.find(u => u.id === userId);
+  return user ? `${user.name} ${user.lastName}` : userId;
+};
 
   return (
     <div className={`${styles.sales} ${darkMode ? styles.dark : ''} ${className}`}>
@@ -471,7 +477,7 @@ const Sales: React.FC<SalesProps> = ({ darkMode, className = "", currentUser, us
                   <td className={`${styles.resultado} ${styles[getResultClass(sale.stage)]} ${darkMode ? styles.dark : ''}`}>
                     {getResultLabel(sale.stage)}
                   </td>
-                  <td>{getUserName(sale.salesPerson)}</td>
+                  <td>{getUserName(sale.salesPerson, sale)}</td>
                   <td className={styles.comments} title={sale.comments}>
                     {sale.comments}
                   </td>

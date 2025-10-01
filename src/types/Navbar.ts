@@ -1,12 +1,11 @@
-export interface User {
-  name: string;
-  email: string;
-  avatar?: string;
-  initials: string;
-}
-
 export interface NavbarProps {
-  user: User;
+  user: {
+    name: string;
+    lastName?: string;
+    email?: string;
+    avatar?: string;
+    initials?: string; 
+  };
   onLogout: () => void;
   appName?: string;
   className?: string;

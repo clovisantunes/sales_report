@@ -1,217 +1,258 @@
 // services/DashboardService/DashboardService.ts
-import { collection, getDocs, query,  orderBy } from 'firebase/firestore';
-import { db } from '../../Firebase/Firebase';
-import type { Sale } from '../../types/Sales';
 import type { Venda, Metricas, DadosGrafico } from '../../types/DashBoard';
+import { salesService } from '../SalesService/SalesService';
+import { userService } from '../userService/userService'; // Importar o serviço de usuários
 
 export const dashboardService = {
   async getMetricas(): Promise<Metricas> {
     try {
-      console.log('📊 Buscando métricas do dashboard...');
+      const todasVendas = await salesService.getSales();
       
-      const salesRef = collection(db, 'sales');
-      const q = query(salesRef, orderBy('createdAt', 'desc'));
-      const salesSnapshot = await getDocs(q);
+      // Filtrar apenas vendas FECHADAS (considera vendas reais)
+      const vendasFechadas = todasVendas.filter(venda => 
+        venda.stage === 'fechado'
+      );
+
+      console.log('📊 Total de vendas:', todasVendas.length);
+      console.log('✅ Vendas fechadas:', vendasFechadas.length);
+      console.log('❌ Vendas em prospecção/negociação:', todasVendas.length - vendasFechadas.length);
+
+      // Vendas do mês atual (fechadas)
+      const dataAtual = new Date();
+      const mesAtual = dataAtual.getMonth();
+      const anoAtual = dataAtual.getFullYear();
       
-      const sales = salesSnapshot.docs.map(doc => {
-        const data = doc.data();
-        return {
-          id: doc.id,
-          date: data.date || '',
-          companyName: data.companyName || '',
-          type: data.type || '',
-          contactName: data.contactName || '',
-          contactMethod: data.contactMethod || 'email',
-          stage: data.stage || 'prospecção',
-          productType: data.productType || '',
-          salesPerson: data.salesPerson || '',
-          vendedor: data.vendedor || '',
-          createdAt: data.createdAt?.toDate?.() || new Date()
-        } as Sale;
+      const vendasMesAtual = vendasFechadas.filter(venda => {
+        try {
+          const dataVenda = new Date(venda.date.split('/').reverse().join('-'));
+          return dataVenda.getMonth() === mesAtual && 
+                 dataVenda.getFullYear() === anoAtual;
+        } catch {
+          return false;
+        }
       });
 
-      const totalVendas = sales.length;
-      
-      const hoje = new Date();
-      const primeiroDiaMes = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
-      const vendasMes = sales.filter(sale => {
-        const dataVenda = this.parseDateString(sale.date);
-        return dataVenda >= primeiroDiaMes;
-      }).length;
-
-      const seisMesesAtras = new Date();
-      seisMesesAtras.setMonth(seisMesesAtras.getMonth() - 6);
-      
-      const vendasUltimos6Meses = sales.filter(sale => {
-        const dataVenda = this.parseDateString(sale.date);
-        return dataVenda >= seisMesesAtras;
+      // Vendas do mês anterior (fechadas)
+      const vendasMesAnterior = vendasFechadas.filter(venda => {
+        try {
+          const dataVenda = new Date(venda.date.split('/').reverse().join('-'));
+          const mesVenda = dataVenda.getMonth();
+          const anoVenda = dataVenda.getFullYear();
+          
+          let mesAnterior = mesAtual - 1;
+          let anoAnterior = anoAtual;
+          if (mesAnterior < 0) {
+            mesAnterior = 11;
+            anoAnterior = anoAtual - 1;
+          }
+          
+          return mesVenda === mesAnterior && anoVenda === anoAnterior;
+        } catch {
+          return false;
+        }
       });
-      
-      const mediaMensal = vendasUltimos6Meses.length > 0 ? 
-        Math.round(vendasUltimos6Meses.length / 6) : 0;
 
-      const primeiroDiaMesAnterior = new Date(hoje.getFullYear(), hoje.getMonth() - 1, 1);
-      const ultimoDiaMesAnterior = new Date(hoje.getFullYear(), hoje.getMonth(), 0);
-      
-      const vendasMesAnterior = sales.filter(sale => {
-        const dataVenda = this.parseDateString(sale.date);
-        return dataVenda >= primeiroDiaMesAnterior && dataVenda <= ultimoDiaMesAnterior;
-      }).length;
+      // Calcular crescimento
+      const crescimento = vendasMesAnterior.length > 0 
+        ? ((vendasMesAtual.length - vendasMesAnterior.length) / vendasMesAnterior.length) * 100
+        : vendasMesAtual.length > 0 ? 100 : 0;
 
-      const crescimento = vendasMesAnterior > 0 ? 
-        ((vendasMes - vendasMesAnterior) / vendasMesAnterior) * 100 : 0;
+      // Calcular média mensal (últimos 6 meses)
+      const ultimos6Meses = this.getUltimos6Meses();
+      const vendasUltimos6Meses = vendasFechadas.filter(venda => {
+        try {
+          const dataVenda = new Date(venda.date.split('/').reverse().join('-'));
+          const mesVenda = dataVenda.getMonth() + 1;
+          const anoVenda = dataVenda.getFullYear();
+          const mesAnoVenda = `${mesVenda}/${anoVenda}`;
+          return ultimos6Meses.includes(mesAnoVenda);
+        } catch {
+          return false;
+        }
+      });
 
-      const metricas: Metricas = {
-        totalVendas,
-        vendasMes,
-        mediaMensal,
-        crescimento: Math.round(crescimento * 10) / 10
+      const mediaMensal = Math.round(vendasUltimos6Meses.length / 6);
+
+      return {
+        totalVendas: vendasFechadas.length, // Apenas vendas fechadas
+        vendasMes: vendasMesAtual.length,   // Apenas vendas fechadas do mês
+        mediaMensal: mediaMensal,           // Média de vendas fechadas
+        crescimento: Math.round(crescimento * 100) / 100
       };
-
-      console.log('✅ Métricas calculadas:', metricas);
-      return metricas;
-
     } catch (error) {
-      console.error('❌ Erro ao buscar métricas:', error);
-      throw error;
-    }
-  },
-
-  async getDadosGrafico(): Promise<DadosGrafico> {
-    try {
-      console.log('📈 Buscando dados para gráfico...');
-      
-      const salesRef = collection(db, 'sales');
-      const q = query(salesRef, orderBy('createdAt', 'desc'));
-      const salesSnapshot = await getDocs(q);
-      
-      const sales = salesSnapshot.docs.map(doc => {
-        const data = doc.data();
-        return {
-          id: doc.id,
-          date: data.date || '',
-          stage: data.stage || 'prospecção',
-          createdAt: data.createdAt?.toDate?.() || new Date()
-        } as Sale;
-      });
-
-      const meses = [];
-      const vendasPorMes = [];
-      
-      for (let i = 5; i >= 0; i--) {
-        const data = new Date();
-        data.setMonth(data.getMonth() - i);
-        
-        const mes = data.toLocaleDateString('pt-BR', { month: 'short' });
-        const ano = data.getFullYear();
-        const mesAno = `${mes}/${ano}`;
-        
-        const primeiroDia = new Date(data.getFullYear(), data.getMonth(), 1);
-        const ultimoDia = new Date(data.getFullYear(), data.getMonth() + 1, 0);
-        
-        const vendasMes = sales.filter(sale => {
-          const dataVenda = this.parseDateString(sale.date);
-          return dataVenda >= primeiroDia && dataVenda <= ultimoDia;
-        }).length;
-        
-        meses.push(mesAno);
-        vendasPorMes.push(vendasMes);
-      }
-
-      const dadosGrafico: DadosGrafico = {
-        meses,
-        vendas: vendasPorMes
+      console.error('Erro ao calcular métricas:', error);
+      return {
+        totalVendas: 0,
+        vendasMes: 0,
+        mediaMensal: 0,
+        crescimento: 0
       };
-
-      console.log('✅ Dados do gráfico:', dadosGrafico);
-      return dadosGrafico;
-
-    } catch (error) {
-      console.error('❌ Erro ao buscar dados do gráfico:', error);
-      throw error;
     }
   },
 
   async getVendasRecentes(): Promise<Venda[]> {
     try {
-      console.log('📋 Buscando vendas recentes...');
+      const todasVendas = await salesService.getSales();
       
-      const salesRef = collection(db, 'sales');
-      const q = query(salesRef, orderBy('createdAt', 'desc'));
-      const salesSnapshot = await getDocs(q);
+      const todosUsuarios = await userService.getAllUsers();
+      console.log('👥 [DASHBOARD] Usuários carregados:', todosUsuarios.length);
       
-      const sales = salesSnapshot.docs.map(doc => {
-        const data = doc.data();
+      const vendasOrdenadas = todasVendas
+        .sort((a, b) => {
+          try {
+            const dataA = new Date(a.date.split('/').reverse().join('-'));
+            const dataB = new Date(b.date.split('/').reverse().join('-'));
+            return dataB.getTime() - dataA.getTime();
+          } catch {
+            return 0;
+          }
+        })
+        .slice(0, 10);
+
+      return vendasOrdenadas.map(venda => {
+        const vendedor = todosUsuarios.find(u => u.id === venda.salesPerson);
+        const nomeVendedor = vendedor ? `${vendedor.name} ${vendedor.lastName}` : venda.salesPerson;
+        
+        console.log(`👤 [DASHBOARD] Venda ${venda.id}: Vendedor ${venda.salesPerson} -> ${nomeVendedor}`);
+        
         return {
-          id: doc.id,
-          date: data.date || '',
-          companyName: data.companyName || '',
-          type: data.type || '',
-          contactName: data.contactName || '',
-          contactMethod: data.contactMethod || 'email',
-          stage: data.stage || 'prospecção',
-          productType: data.productType || '',
-          salesPerson: data.salesPerson || '',
-          vendedor: data.vendedor || '',
-          result: data.result || '',
-          createdAt: data.createdAt?.toDate?.().toLocaleDateString('pt-BR') || ''
-        } as Sale;
+          id: venda.id,
+          data: venda.date,
+          empresa: venda.companyName,
+          tipo: venda.type,
+          nomeContato: venda.contactName,
+          formaContato: venda.contactMethod,
+          estagio: venda.stage,
+          tipoProduto: venda.productType,
+          resultado: this.getResultadoLabel(venda.stage),
+          vendedor: nomeVendedor,
+          vendedorId: venda.salesPerson 
+        };
+      });
+    } catch (error) {
+      console.error('Erro ao buscar vendas recentes:', error);
+      return [];
+    }
+  },
+
+  async getDadosGrafico(): Promise<DadosGrafico> {
+    try {
+      const todasVendas = await salesService.getSales();
+      const ultimos6Meses = this.getUltimos6Meses();
+      
+      const vendasFechadas = todasVendas.filter(venda => 
+        venda.stage === 'fechado'
+      );
+
+      const vendasPorMes = ultimos6Meses.map(mes => {
+        const [mesStr, anoStr] = mes.split('/');
+        const mesNum = parseInt(mesStr) - 1;
+        const anoNum = parseInt(anoStr);
+
+        const vendasNoMes = vendasFechadas.filter(venda => {
+          try {
+            const dataVenda = new Date(venda.date.split('/').reverse().join('-'));
+            return dataVenda.getMonth() === mesNum && 
+                   dataVenda.getFullYear() === anoNum;
+          } catch {
+            return false;
+          }
+        });
+
+        return vendasNoMes.length;
       });
 
-      const vendas: Venda[] = sales.slice(0, 10).map(sale => ({
-        id: sale.id,
-        data: sale.date,
-        empresa: sale.companyName,
-        tipo: sale.type,
-        nomeContato: sale.contactName,
-        formaContato: this.getFormaContatoLabel(sale.contactMethod),
-        estagio: this.mapEstagio(sale.stage),
-        tipoProduto: sale.productType,
-        resultado: sale.result,
-        vendedor: sale.vendedor || sale.salesPerson
-      }));
-
-      console.log('✅ Vendas recentes:', vendas.length);
-      return vendas;
-
+      return {
+        meses: ultimos6Meses.map(mes => {
+          const [mesNum, ano] = mes.split('/');
+          const nomesMeses = [
+            'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun',
+            'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'
+          ];
+          return `${nomesMeses[parseInt(mesNum) - 1]}/${ano}`;
+        }),
+        vendas: vendasPorMes
+      };
     } catch (error) {
-      console.error('❌ Erro ao buscar vendas recentes:', error);
-      throw error;
+      console.error('Erro ao gerar dados do gráfico:', error);
+      return { meses: [], vendas: [] };
     }
   },
 
-  parseDateString(dateString: string): Date {
+  async getEstatisticasVendedores(): Promise<any> {
     try {
-      const [day, month, year] = dateString.split('/');
-      return new Date(Number(year), Number(month) - 1, Number(day));
+      const todasVendas = await salesService.getSales();
+      const todosUsuarios = await userService.getAllUsers();
+      
+      const vendasFechadas = todasVendas.filter(venda => venda.stage === 'fechado');
+      
+      const vendasPorVendedor = vendasFechadas.reduce((acc, venda) => {
+        const vendedorId = venda.salesPerson;
+        if (!acc[vendedorId]) {
+          acc[vendedorId] = [];
+        }
+        acc[vendedorId].push(venda);
+        return acc;
+      }, {} as Record<string, any[]>);
+
+      const estatisticas = Object.entries(vendasPorVendedor).map(([vendedorId, vendas]) => {
+        const usuario = todosUsuarios.find(u => u.id === vendedorId);
+        const nomeVendedor = usuario ? `${usuario.name} ${usuario.lastName}` : `Vendedor ${vendedorId}`;
+        
+        const dataAtual = new Date();
+        const vendasEsteMes = vendas.filter(venda => {
+          try {
+            const dataVenda = new Date(venda.date.split('/').reverse().join('-'));
+            return dataVenda.getMonth() === dataAtual.getMonth() && 
+                   dataVenda.getFullYear() === dataAtual.getFullYear();
+          } catch {
+            return false;
+          }
+        });
+
+        return {
+          vendedorId,
+          nomeVendedor,
+          totalVendas: vendas.length,
+          vendasEsteMes: vendasEsteMes.length,
+          email: usuario?.email || 'N/A'
+        };
+      });
+
+      return estatisticas.sort((a, b) => b.totalVendas - a.totalVendas);
     } catch (error) {
-      console.warn('Erro ao converter data:', dateString);
-      return new Date();
+      console.error('Erro ao buscar estatísticas de vendedores:', error);
+      return [];
     }
   },
 
-  getFormaContatoLabel(contactMethod: string): string {
-    const labels = {
-      'presencial': 'Presencial',
-      'telefone': 'Telefone',
-      'email': 'Email',
-      'whatsapp': 'WhatsApp'
-    };
-    return labels[contactMethod as keyof typeof labels] || contactMethod;
+  getUltimos6Meses(): string[] {
+    const meses = [];
+    const dataAtual = new Date();
+    
+    for (let i = 5; i >= 0; i--) {
+      const data = new Date(dataAtual.getFullYear(), dataAtual.getMonth() - i, 1);
+      const mes = data.getMonth() + 1;
+      const ano = data.getFullYear();
+      meses.push(`${mes}/${ano}`);
+    }
+    
+    return meses;
   },
 
-  mapEstagio(stage: string): string {
-    const mapping = {
-      'prospecção': 'prospect',
-      'apresentada proposta': 'negociacao',
-      'negociar': 'negociacao',
-      'fechar proposta': 'negociacao',
-      'fechado': 'fechado',
-      'pós venda': 'fechado',
-      'visita manutenção': 'fechado',
-      'renegociar contrato': 'negociacao',
-      'perdida': 'perdido'
+  getResultadoLabel(estagio: string): string {
+    const resultados = {
+      'fechado': 'Fechado',
+      'perdida': 'Perdida',
+      'prospecção': 'Em prospecção',
+      'negociar': 'Em negociação',
+      'apresentada proposta': 'Proposta apresentada',
+      'fechar proposta': 'Fechando proposta',
+      'pós venda': 'Pós-venda',
+      'visita manutenção': 'Visita manutenção',
+      'renegociar contrato': 'Renegociar contrato'
     };
-    return mapping[stage as keyof typeof mapping] || 'prospect';
+    
+    return resultados[estagio as keyof typeof resultados] || estagio;
   }
 };

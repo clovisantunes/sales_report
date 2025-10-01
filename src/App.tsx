@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Login from './Pages/Auth';
+import type { User } from './types/User';
 import Navbar from './Components/NavBar';
 import Sidebar from './Components/Siderbar';
 import Dashboard from './Components/Dashboard';
@@ -7,7 +8,7 @@ import Sales from './Components/Sales';
 import Customers from './Components/Customers';
 import Products from './Components/Products';
 import { authService } from './services/AuthService/authService';
-import type { User, LoginData } from './types/Auth';
+import type {  LoginData } from './types/Auth';
 import Users from './Components/Users';
 import { userService } from './services/userService/userService';
 
@@ -17,52 +18,65 @@ const App: React.FC = () => {
   const [activeSection, setActiveSection] = useState('dashboard');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState<User | null>(null);
+  const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-useEffect(() => {
-  const checkAuth = async () => {
-    const savedDarkMode = localStorage.getItem('darkMode');
-    
-    const isTokenValid = authService.isTokenValid();
-    
-    if (isTokenValid) {
-      const currentUser = authService.getCurrentUser();
-      if (currentUser) {
-        setIsAuthenticated(true);
-        
-        await authService.ensureUserProfile();
-        const userProfile = await userService.getCurrentUser(currentUser.uid);
-        
-        const userData: User = {
-          id: currentUser.uid,
-          name: currentUser.email?.split('@')[0] || 'Usuário',
-          email: currentUser.email || '',
-          username: currentUser.email?.split('@')[0] || 'usuario',
-          initials: getInitials(currentUser.email || 'US'),
-          isAdmin: userProfile?.isAdmin || false,
-        };
-        setUser(userData);
+  useEffect(() => {
+    const checkAuth = async () => {
+      const savedDarkMode = localStorage.getItem('darkMode');
+      
+      const isTokenValid = authService.isTokenValid();
+      
+      if (isTokenValid) {
+        const currentUser = authService.getCurrentUser();
+        if (currentUser) {
+          setIsAuthenticated(true);
+          
+          await authService.ensureUserProfile();
+          const userProfile = await userService.getCurrentUser(currentUser.uid);
+          
+          const allUsers = await userService.getAllUsers();
+          setUsers(allUsers);
+          
+          console.log('👤 [APP] Perfil do usuário atual:', userProfile);
+          console.log('👥 [APP] Total de usuários carregados:', allUsers.length);
+          
+          const userData: User = {
+            id: currentUser.uid,
+            name: userProfile?.name || currentUser.email?.split('@')[0] || 'Usuário',
+            lastName: userProfile?.lastName || '',
+            email: currentUser.email || '',
+            initials: getInitials(userProfile?.name, userProfile?.lastName),
+            isAdmin: userProfile?.isAdmin || false,
+            profilePhoto: userProfile?.profilePhoto || '',
+            createdAt: userProfile?.createdAt ? new Date(userProfile.createdAt) : new Date(), 
+            updatedAt: userProfile?.updatedAt ? new Date(userProfile.updatedAt) : new Date()  
+          };
+          setUser(userData);
+        }
       }
-    }
-    
-    if (savedDarkMode) {
-      setDarkMode(JSON.parse(savedDarkMode));
-    }
-    
-    setLoading(false);
-  };
+      
+      if (savedDarkMode) {
+        setDarkMode(JSON.parse(savedDarkMode));
+      }
+      
+      setLoading(false);
+    };
 
-  checkAuth();
-}, []);
+    checkAuth();
+  }, []);
 
-  const getInitials = (email: string): string => {
-    if (!email || typeof email !== 'string') return 'US';
+  const getInitials = (name?: string, lastName?: string): string => {
+    if (!name) return 'US';
     
-    const username = email.split('@')[0];
-    if (username.length >= 2) {
-      return username.substring(0, 2).toUpperCase();
+    const firstInitial = name.charAt(0).toUpperCase();
+    
+    if (lastName) {
+      const lastInitial = lastName.charAt(0).toUpperCase();
+      return `${firstInitial}${lastInitial}`;
     }
-    return username.toUpperCase() + 'U';
+    
+    return firstInitial + 'U';
   };
 
   const handleLogin = async (loginData: LoginData): Promise<boolean> => {
@@ -72,14 +86,22 @@ useEffect(() => {
       if (result.success && result.user) {
         const userProfile = await userService.getCurrentUser(result.user.uid);
         
+        const allUsers = await userService.getAllUsers();
+        setUsers(allUsers);
+        
+        console.log('👤 [APP LOGIN] Perfil do usuário:', userProfile);
+        console.log('👥 [APP LOGIN] Total de usuários carregados:', allUsers.length);
+        
         const userData: User = {
           id: result.user.uid,
-          name: result.user.email?.split('@')[0] || 'Usuário',
+          name: userProfile?.name || result.user.email?.split('@')[0] || 'Usuário',
+          lastName: userProfile?.lastName || '',
           email: result.user.email || '',
-          username: result.user.email?.split('@')[0] || 'usuario',
-          initials: getInitials(result.user.email || 'US'),
-
-          isAdmin: userProfile?.isAdmin || false
+          initials: getInitials(userProfile?.name, userProfile?.lastName),
+          isAdmin: userProfile?.isAdmin || false,
+          profilePhoto: userProfile?.profilePhoto || '',
+          createdAt: userProfile?.createdAt ? new Date(userProfile.createdAt) : new Date(),
+          updatedAt: userProfile?.updatedAt ? new Date(userProfile.updatedAt) : new Date()
         };
         
         setUser(userData);
@@ -100,6 +122,7 @@ useEffect(() => {
     try {
       await authService.logout();
       setUser(null);
+      setUsers([]); 
       setIsAuthenticated(false);
       setActiveSection('dashboard');
     } catch (error) {
@@ -124,9 +147,9 @@ useEffect(() => {
   const renderContent = () => {
     switch (activeSection) {
       case 'dashboard':
-        return <Dashboard darkMode={darkMode} />;
+        return <Dashboard darkMode={darkMode} users={users} />;
       case 'sales':
-        return <Sales darkMode={darkMode} currentUser={user} users={user ? [user] : []} />;
+        return <Sales darkMode={darkMode} currentUser={user} users={users} />;
       case 'customers':
         return <Customers darkMode={darkMode} />;
       case 'products':
@@ -134,7 +157,7 @@ useEffect(() => {
       case 'users':
         return <Users darkMode={darkMode} />;
       default:
-        return <Dashboard darkMode={darkMode} />;
+        return <Dashboard darkMode={darkMode} users={users} />;
     }
   };
 
@@ -171,10 +194,24 @@ useEffect(() => {
     );
   }
 
+  console.log('👤 [APP RENDER] Dados do usuário para Navbar:', {
+    name: user?.name,
+    lastName: user?.lastName,
+    email: user?.email,
+    profilePhoto: user?.profilePhoto,
+    initials: user?.initials
+  });
+
   return (
     <div className={darkMode ? 'dark-theme' : ''}>
       <Navbar 
-        user={user!}
+        user={{
+          name: user?.name || 'Usuário',
+          lastName: user?.lastName || '',
+          email: user?.email || '',
+          avatar: user?.profilePhoto || '',
+          initials: user?.initials || 'US' 
+        }}
         onLogout={handleLogout}
         appName="Relatorio de Vendas"
         darkMode={darkMode}

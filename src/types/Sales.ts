@@ -19,6 +19,19 @@ export interface Sale {
   contatoEmail?: string;
   contatoWhatsapp?: string;
   contatoPresencial?: string; 
+    sellerInfo?: {
+    name: string;
+    lastName: string;
+    email: string;
+    fullName: string;
+  };
+  
+  vendedorInfo?: {
+    name: string;
+    lastName: string;
+    email: string;
+    fullName: string;
+  };
 }
 
 export interface SalesFilters {

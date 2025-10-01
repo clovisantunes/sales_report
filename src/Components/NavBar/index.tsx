@@ -25,6 +25,33 @@ const Navbar: React.FC<NavbarProps> = ({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  const generateInitials = (name: string, lastName?: string): string => {
+    if (!name) return 'U';
+    
+    const firstInitial = name.charAt(0).toUpperCase();
+    
+    if (lastName) {
+      const lastInitial = lastName.charAt(0).toUpperCase();
+      return `${firstInitial}${lastInitial}`;
+    }
+    
+    return firstInitial;
+  };
+
+  const getFullName = (name: string, lastName?: string): string => {
+    if (!name) return 'Usuário';
+    
+    if (lastName) {
+      return `${name} ${lastName}`;
+    }
+    
+    return name;
+  };
+
+  const userInitials = user.initials || generateInitials(user.name, user.lastName);
+  const userFullName = getFullName(user.name, user.lastName);
+  const userEmail = user.email || '';
+
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
@@ -48,7 +75,6 @@ const Navbar: React.FC<NavbarProps> = ({
       <div className={`${styles.logo} ${darkMode ? styles.dark : ''}`}>
         <div className={styles.logoIcon}>   
             <img src={logoImage} alt="Logo" className={styles.logoImage} />
-
         </div>
         <span className={styles.logoText}>{appName}</span>
       </div>
@@ -64,11 +90,11 @@ const Navbar: React.FC<NavbarProps> = ({
           {user.avatar ? (
             <img 
               src={user.avatar} 
-              alt={user.name} 
+              alt={userFullName} 
               className={styles.avatarImage}
             />
           ) : (
-            <span>{user.initials}</span>
+            <span className={styles.avatarInitials}>{userInitials}</span>
           )}
         </button>
 
@@ -77,8 +103,14 @@ const Navbar: React.FC<NavbarProps> = ({
           role="menu"
         >
           <div className={`${styles.userInfo} ${darkMode ? styles.dark : ''}`}>
-            <div className={`${styles.userName} ${darkMode ? styles.dark : ''}`}>{user.name}</div>
-            <div className={`${styles.userEmail} ${darkMode ? styles.dark : ''}`}>{user.email}</div>
+            <div className={`${styles.userName} ${darkMode ? styles.dark : ''}`}>
+              {userFullName}
+            </div>
+            {userEmail && (
+              <div className={`${styles.userEmail} ${darkMode ? styles.dark : ''}`}>
+                {userEmail}
+              </div>
+            )}
           </div>
 
           <div className={`${styles.menuItem} ${darkMode ? styles.dark : ''}`}>
@@ -98,6 +130,7 @@ const Navbar: React.FC<NavbarProps> = ({
               </label>
             </div>
           </div>       
+          
           <button 
             className={`${styles.menuItem} ${darkMode ? styles.dark : ''}`}
             onClick={() => handleMenuItemClick('notifications')}

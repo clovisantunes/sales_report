@@ -65,6 +65,8 @@ const Dashboard: React.FC<DashboardProps> = ({ darkMode, className = "", users =
       setDadosGrafico(graficoData);
       
       console.log('✅ Dashboard carregado com sucesso');
+      console.log('📊 Métricas:', metricasData);
+      console.log('📈 Gráfico dados:', graficoData);
     } catch (error) {
       console.error('❌ Erro ao carregar dashboard:', error);
       setError('Erro ao carregar dados do dashboard. Tente novamente.');
@@ -79,10 +81,15 @@ const Dashboard: React.FC<DashboardProps> = ({ darkMode, className = "", users =
 
   const getEstagioLabel = (estagio: string) => {
     const labels = {
-      prospect: 'Prospecção',
-      negociacao: 'Negociação',
-      fechado: 'Fechado',
-      perdido: 'Perdido'
+      'prospecção': 'Prospecção',
+      'apresentada proposta': 'Proposta Apresentada',
+      'negociar': 'Em Negociação',
+      'fechar proposta': 'Fechar Proposta',
+      'fechado': 'Fechado',
+      'pós venda': 'Pós Venda',
+      'visita manutenção': 'Visita Manutenção',
+      'renegociar contrato': 'Renegociar Contrato',
+      'perdida': 'Perdida'
     };
     return labels[estagio as keyof typeof labels] || estagio;
   };
@@ -90,22 +97,28 @@ const Dashboard: React.FC<DashboardProps> = ({ darkMode, className = "", users =
   const getVendedorName = (vendedorId: string) => {
     if (!users || users.length === 0) return vendedorId;
     const user = users.find(u => u.id === vendedorId);
-    return user ? user.name : vendedorId;
+    return user ? `${user.name} ${user.lastName}` : vendedorId;
+  };
+
+  const getLinhaTabelaClasse = (estagio: string) => {
+    if (estagio === 'fechado') return styles.linhaFechada;
+    if (estagio === 'perdida') return styles.linhaPerdida;
+    return '';
   };
 
   const chartData = {
     labels: dadosGrafico.meses,
     datasets: [
       {
-        label: 'Vendas por Mês',
+        label: 'Vendas Fechadas por Mês',
         data: dadosGrafico.vendas,
-        borderColor: darkMode ? '#60a5fa' : '#2563eb',
-        backgroundColor: darkMode ? 'rgba(96, 165, 250, 0.1)' : 'rgba(37, 99, 235, 0.1)',
+        borderColor: darkMode ? '#10b981' : '#059669',
+        backgroundColor: darkMode ? 'rgba(16, 185, 129, 0.1)' : 'rgba(5, 150, 105, 0.1)',
         borderWidth: 3,
         fill: true,
         tension: 0.4,
-        pointBackgroundColor: darkMode ? '#60a5fa' : '#2563eb',
-        pointBorderColor: darkMode ? '#1e40af' : '#1e3a8a',
+        pointBackgroundColor: darkMode ? '#10b981' : '#059669',
+        pointBorderColor: darkMode ? '#047857' : '#065f46',
         pointBorderWidth: 2,
         pointRadius: 5,
         pointHoverRadius: 7,
@@ -140,7 +153,7 @@ const Dashboard: React.FC<DashboardProps> = ({ darkMode, className = "", users =
         displayColors: false,
         callbacks: {
           label: function(context) {
-            return `Vendas: ${context.parsed.y}`;
+            return `Vendas Fechadas: ${context.parsed.y}`;
           }
         }
       }
@@ -191,7 +204,12 @@ const Dashboard: React.FC<DashboardProps> = ({ darkMode, className = "", users =
       <div className={`${styles.dashboard} ${darkMode ? styles.dark : ''} ${className}`}>
         <div className={styles.errorState}>
           <p>{error}</p>
-          <button onClick={loadDashboardData}>Tentar Novamente</button>
+          <button 
+            className={`${styles.retryButton} ${darkMode ? styles.dark : ''}`}
+            onClick={loadDashboardData}
+          >
+            Tentar Novamente
+          </button>
         </div>
       </div>
     );
@@ -212,22 +230,23 @@ const Dashboard: React.FC<DashboardProps> = ({ darkMode, className = "", users =
         </button>
       </div>
 
+      {/* Métricas - Agora mostram apenas vendas FECHADAS */}
       <div className={styles.metricasContainer}>
         <div className={`${styles.metricaCard} ${darkMode ? styles.dark : ''}`}>
           <div className={`${styles.metricaTitulo} ${darkMode ? styles.dark : ''}`}>
-            Total de Vendas Geral
+            Total de Vendas Fechadas
           </div>
           <div className={`${styles.metricaValor} ${darkMode ? styles.dark : ''}`}>
             {formatarNumero(metricas.totalVendas)}
           </div>
           <div className={`${styles.metricaInfo} ${darkMode ? styles.dark : ''}`}>
-            Quantidade total de vendas
+            Vendas concluídas com sucesso
           </div>
         </div>
 
         <div className={`${styles.metricaCard} ${darkMode ? styles.dark : ''}`}>
           <div className={`${styles.metricaTitulo} ${darkMode ? styles.dark : ''}`}>
-            Vendas do Mês
+            Vendas Fechadas Este Mês
           </div>
           <div className={`${styles.metricaValor} ${darkMode ? styles.dark : ''}`}>
             {formatarNumero(metricas.vendasMes)}
@@ -239,31 +258,35 @@ const Dashboard: React.FC<DashboardProps> = ({ darkMode, className = "", users =
 
         <div className={`${styles.metricaCard} ${darkMode ? styles.dark : ''}`}>
           <div className={`${styles.metricaTitulo} ${darkMode ? styles.dark : ''}`}>
-            Média Mensal
+            Média Mensal de Vendas
           </div>
           <div className={`${styles.metricaValor} ${darkMode ? styles.dark : ''}`}>
             {formatarNumero(metricas.mediaMensal)}
           </div>
           <div className={`${styles.metricaInfo} ${darkMode ? styles.dark : ''}`}>
-            Média de vendas por mês
+            Média de vendas fechadas (últimos 6 meses)
           </div>
         </div>
       </div>
+
+      {/* Gráfico - Agora mostra apenas vendas FECHADAS */}
       <div className={`${styles.graficoContainer} ${darkMode ? styles.dark : ''}`}>
         <div className={`${styles.graficoTitulo} ${darkMode ? styles.dark : ''}`}>
-          Quantidade de Vendas Mensais (Últimos 6 meses)
+          Vendas Fechadas Mensais (Últimos 6 meses)
         </div>
         <div className={styles.graficoWrapper}>
           <Line data={chartData} options={chartOptions} />
         </div>
       </div>
+
+      {/* Tabela - Mostra todas as vendas, mas destaca as fechadas */}
       <div className={`${styles.tabelaContainer} ${darkMode ? styles.dark : ''}`}>
         <div className={styles.tabelaHeader}>
           <div className={`${styles.tabelaTitulo} ${darkMode ? styles.dark : ''}`}>
             Vendas Recentes
           </div>
           <div className={styles.tabelaInfo}>
-            Mostrando {vendas.length} vendas mais recentes
+            Mostrando {vendas.length} vendas mais recentes (todos os estágios)
           </div>
         </div>
         <div className={styles.tableWrapper}>
@@ -283,7 +306,7 @@ const Dashboard: React.FC<DashboardProps> = ({ darkMode, className = "", users =
             </thead>
             <tbody>
               {vendas.map((venda) => (
-                <tr key={venda.id}>
+                <tr key={venda.id} className={getLinhaTabelaClasse(venda.estagio)}>
                   <td>{venda.data}</td>
                   <td className={styles.empresa}>{venda.empresa}</td>
                   <td>{venda.tipo}</td>

@@ -8,6 +8,7 @@ export interface User {
   isAdmin: boolean;
   createdAt: Date;
   updatedAt: Date;
+  initials?: string;
 }
 
 export interface LoginHistory {
