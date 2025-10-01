@@ -255,7 +255,77 @@
     font-size: $font-size-text-md-light;
   }
 }
+.emptyState {
+  text-align: center;
+  padding: 60px 40px;
+  color: $color-card-text-light;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 
+  .dark & {
+    color: $color-card-text-dark;
+  }
+}
+
+.emptyStateIcon {
+  margin-bottom: 20px;
+  color: $color-primary-dark-light;
+  opacity: 0.7;
+
+  .dark & {
+    color: $color-primary-dark-dark;
+  }
+
+  svg {
+    width: 80px;
+    height: 80px;
+  }
+}
+
+.emptyStateTitle {
+  font-size: $font-size-subtitle-light;
+  font-weight: 600;
+  color: $color-title-text-light;
+  margin-bottom: 12px;
+
+  .dark & {
+    color: $color-title-text-dark;
+  }
+}
+
+.emptyStateDescription {
+  font-size: $font-size-text-md-light;
+  line-height: 1.5;
+  margin-bottom: 24px;
+  max-width: 400px;
+  opacity: 0.8;
+}
+
+.emptyStateButton {
+  background: $color-bg-button-light;
+  color: $color-white-light;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: $font-size-text-md-light;
+
+  &:hover {
+    background: $color-hover-text-light;
+  }
+
+  &.dark {
+    background: $color-bg-button-dark;
+
+    &:hover {
+      background: $color-hover-text-dark;
+    }
+  }
+}
 .actionButtons {
   display: flex;
   gap: 8px;
