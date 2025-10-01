@@ -1,0 +1,278 @@
+@import '../../Styles/theme.scss';
+
+.exportContainer {
+  position: relative;
+  display: inline-block;
+}
+
+.exportButton {
+  background: linear-gradient(135deg, $color-bg-button-light, $color-secondary-light);
+  color: $color-white-light;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+  font-size: $font-size-text-md-light;
+
+  &.dark {
+    background: linear-gradient(135deg, $color-bg-button-dark, $color-accent-dark);
+  }
+
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba($color-bg-button-light, 0.3);
+
+    &.dark {
+      box-shadow: 0 8px 20px rgba($color-bg-button-dark, 0.4);
+    }
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+
+  &.exporting {
+    pointer-events: none;
+  }
+}
+
+.exportModal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+
+  &.dark {
+    background: rgba(0, 0, 0, 0.7);
+  }
+}
+
+.modalContent {
+  background: $color-on-white-bg-light;
+  border-radius: 16px;
+  padding: 0;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  animation: modalSlideIn 0.2s ease-out;
+
+  .dark & {
+    background: $color-card-bg-dark;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+  }
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 24px 0;
+  margin-bottom: 16px;
+
+  h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: $color-title-text-light;
+
+    .dark & {
+      color: $color-title-text-dark;
+    }
+  }
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  color: $color-subtitle-text-light;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+
+  .dark & {
+    color: $color-subtitle-text-dark;
+  }
+
+  &:hover {
+    background: $color-primary-light-light;
+    color: $color-text-light;
+
+    .dark & {
+      background: $color-primary-light-dark;
+      color: $color-text-dark;
+    }
+  }
+}
+
+.exportInfo {
+  padding: 0 24px 20px;
+  border-bottom: 1px solid $color-primary-dark-light;
+
+  .dark & {
+    border-bottom-color: $color-primary-dark-dark;
+  }
+
+  p {
+    margin: 0 0 8px;
+    font-size: $font-size-text-md-light;
+    color: $color-card-text-light;
+
+    .dark & {
+      color: $color-card-text-dark;
+    }
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
+
+.exportOptions {
+  padding: 20px 24px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.optionButton {
+  background: $color-primary-light-light;
+  border: 2px solid $color-primary-light-light;
+  border-radius: 12px;
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-align: left;
+  width: 100%;
+
+  .dark & {
+    background: $color-primary-light-dark;
+    border-color: $color-primary-light-dark;
+  }
+
+  &:hover:not(:disabled) {
+    border-color: $color-bg-button-light;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+    .dark & {
+      border-color: $color-bg-button-dark;
+    }
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+  }
+}
+
+.optionIcon {
+  color: $color-bg-button-light;
+  flex-shrink: 0;
+
+  .dark & {
+    color: $color-bg-button-dark;
+  }
+}
+
+.optionText {
+  flex: 1;
+
+  strong {
+    display: block;
+    font-size: $font-size-text-md-light;
+    font-weight: 600;
+    color: $color-title-text-light;
+    margin-bottom: 4px;
+
+    .dark & {
+      color: $color-title-text-dark;
+    }
+  }
+
+  span {
+    font-size: $font-size-text-sm-light;
+    color: $color-subtitle-text-light;
+
+    .dark & {
+      color: $color-subtitle-text-dark;
+    }
+  }
+}
+
+.exportingOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.9);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 16px;
+  gap: 12px;
+
+  .dark & {
+    background: rgba(22, 27, 34, 0.9);
+  }
+
+  p {
+    margin: 0;
+    font-size: $font-size-text-md-light;
+    color: $color-text-light;
+
+    .dark & {
+      color: $color-text-dark;
+    }
+  }
+}
+
+.spinner {
+  width: 24px;
+  height: 24px;
+  border: 2px solid transparent;
+  border-top: 2px solid $color-bg-button-light;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+
+  .dark & {
+    border-top-color: $color-bg-button-dark;
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

@@ -5,6 +5,7 @@ import { salesService } from '../../services/SalesService/SalesService';
 import { productsService } from '../../services/ProductService/ProductService';
 import type { Product } from '../../types/Products';
 import styles from './styles.module.scss';
+import ExportButton from '../ExportButton';
 
 interface SalesProps {
   darkMode: boolean;
@@ -278,18 +279,28 @@ const Sales: React.FC<SalesProps> = ({ darkMode, className = "", currentUser, us
 
   return (
     <div className={`${styles.sales} ${darkMode ? styles.dark : ''} ${className}`}>
-      <div className={styles.salesHeader}>
-        <h1 className={`${styles.salesTitle} ${darkMode ? styles.dark : ''}`}>
-          Gerenciamento de Vendas
-        </h1>
-        <button 
-          className={`${styles.addButton} ${darkMode ? styles.dark : ''}`}
-          onClick={handleAddSale}
-        >
-          <FiPlus size={16} />
-          Nova Venda
-        </button>
-      </div>
+
+<div className={styles.salesHeader}>
+  <h1 className={`${styles.salesTitle} ${darkMode ? styles.dark : ''}`}>
+    Gerenciamento de Vendas
+  </h1>
+  <div className={styles.headerActions}>
+    <ExportButton
+      sales={filteredSales}
+      users={users}
+      products={products}
+      darkMode={darkMode}
+      disabled={filteredSales.length === 0}
+    />
+    <button 
+      className={`${styles.addButton} ${darkMode ? styles.dark : ''}`}
+      onClick={handleAddSale}
+    >
+      <FiPlus size={16} />
+      Nova Venda
+    </button>
+  </div>
+</div>
 
   <div className={`${styles.filtersContainer} ${darkMode ? styles.dark : ''}`}>
         <h3 className={`${styles.filtersTitle} ${darkMode ? styles.dark : ''}`}>Filtros</h3>
