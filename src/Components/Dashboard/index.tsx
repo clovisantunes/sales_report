@@ -219,7 +219,7 @@ const Dashboard: React.FC<DashboardProps> = ({ darkMode, className = "", users =
     <div className={`${styles.dashboard} ${darkMode ? styles.dark : ''} ${className}`}>
       <div className={styles.dashboardHeader}>
         <h1 className={`${styles.dashboardTitle} ${darkMode ? styles.dark : ''}`}>
-          Dashboard de Vendas
+          Dashboard
         </h1>
         <button 
           className={`${styles.refreshButton} ${darkMode ? styles.dark : ''}`}

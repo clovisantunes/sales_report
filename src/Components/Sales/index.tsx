@@ -288,7 +288,7 @@ const Sales: React.FC<SalesProps> = ({ darkMode, className = "", currentUser, us
 
 <div className={styles.salesHeader}>
   <h1 className={`${styles.salesTitle} ${darkMode ? styles.dark : ''}`}>
-    Gerenciamento de Vendas
+    Gerenciamento de Visitas
   </h1>
   <div className={styles.headerActions}>
     <ExportButton
@@ -303,7 +303,7 @@ const Sales: React.FC<SalesProps> = ({ darkMode, className = "", currentUser, us
       onClick={handleAddSale}
     >
       <FiPlus size={16} />
-      Nova Venda
+      Nova Visita
     </button>
   </div>
 </div>
@@ -410,12 +410,12 @@ const Sales: React.FC<SalesProps> = ({ darkMode, className = "", currentUser, us
 
       <div className={`${styles.salesTableContainer} ${darkMode ? styles.dark : ''}`}>
         <div className={`${styles.tableTitle} ${darkMode ? styles.dark : ''}`}>
-          Registro de Vendas ({filteredSales.length} resultados)
+          Registro de Visitas ({filteredSales.length} resultados)
         </div>
         
         {loading ? (
           <div className={styles.loadingState}>
-            <div>Carregando vendas...</div>
+            <div>Carregando visitas...</div>
           </div>
         ) : filteredSales.length === 0 ? (
          <div className={styles.emptyState}>
