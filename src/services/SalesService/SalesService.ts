@@ -31,7 +31,6 @@ class SalesService {
       lifes: sale.lifes || 0,
       
       statusFechado: sale.statusFechado || false,
-      ultimoContato: sale.ultimoContato || '',
       vendedor: sale.vendedor || '',
       contatoTelefone: sale.contatoTelefone || '',
       contatoEmail: sale.contatoEmail || '',
@@ -74,7 +73,6 @@ class SalesService {
       lifes: data.lifes || 0,
       
       statusFechado: data.statusFechado || false,
-      ultimoContato: data.ultimoContato || '',
       vendedor: data.vendedor || '',
       contatoTelefone: data.contatoTelefone || '',
       contatoEmail: data.contatoEmail || '',
@@ -175,7 +173,6 @@ class SalesService {
         comments: sale.comments || '',
         result: sale.result || '',
         statusFechado: sale.statusFechado || false,
-        ultimoContato: sale.ultimoContato || '',
         vendedor: sale.vendedor || '',
         contatoTelefone: sale.contatoTelefone || '',
         contatoEmail: sale.contatoEmail || '',
@@ -211,7 +208,6 @@ class SalesService {
         comments: sale.comments || '',
         result: sale.result || '',
         statusFechado: sale.statusFechado || false,
-        ultimoContato: sale.ultimoContato || '',
         vendedor: sale.vendedor || '',
         contatoTelefone: sale.contatoTelefone || '',
         contatoEmail: sale.contatoEmail || '',
@@ -245,7 +241,6 @@ class SalesService {
       if (sale.lifes !== undefined) updateData.lifes = sale.lifes || 0;
       
       if (sale.statusFechado !== undefined) updateData.statusFechado = sale.statusFechado;
-      if (sale.ultimoContato !== undefined) updateData.ultimoContato = sale.ultimoContato || '';
       if (sale.vendedor !== undefined) updateData.vendedor = sale.vendedor || '';
       if (sale.contatoTelefone !== undefined) updateData.contatoTelefone = sale.contatoTelefone || '';
       if (sale.contatoEmail !== undefined) updateData.contatoEmail = sale.contatoEmail || '';
