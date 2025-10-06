@@ -592,6 +592,7 @@ const Sales: React.FC<SalesProps> = ({ darkMode, className = "", currentUser, us
                   className={darkMode ? styles.dark : ''}
                 />
               </div>
+
               <div className={styles.formGroup}>
                 <label htmlFor="lifes">Número de Vidas</label>
                 <input
@@ -604,6 +605,7 @@ const Sales: React.FC<SalesProps> = ({ darkMode, className = "", currentUser, us
                   className={darkMode ? styles.dark : ''}
                 />
               </div>
+
               <div className={styles.formRow}>
                 <div className={styles.formGroup}>
                   <label htmlFor="stage">Estágio *</label>
@@ -680,6 +682,7 @@ const Sales: React.FC<SalesProps> = ({ darkMode, className = "", currentUser, us
                   </select>
                 </div>
               </div>
+
               <div className={styles.formRow}>
                 <div className={styles.formGroup}>
                   <label htmlFor="contactName">Nome do Contato *</label>
@@ -696,6 +699,7 @@ const Sales: React.FC<SalesProps> = ({ darkMode, className = "", currentUser, us
                   />
                 </div>
               </div>
+
               <div className={styles.formRow}>
                 <div className={styles.formGroup}>
                   <label htmlFor="contatoEmail">E-mail</label>
@@ -740,6 +744,7 @@ const Sales: React.FC<SalesProps> = ({ darkMode, className = "", currentUser, us
                   />
                 </div>
               </div>
+
               <div className={styles.formGroup}>
                 <label htmlFor="comments">Comentário</label>
                 <textarea
@@ -753,6 +758,7 @@ const Sales: React.FC<SalesProps> = ({ darkMode, className = "", currentUser, us
                   className={darkMode ? styles.dark : ''}
                 />
               </div>
+
               <div className={styles.modalActions}>
                 <button
                   type="button"
