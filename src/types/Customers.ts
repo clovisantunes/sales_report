@@ -6,7 +6,6 @@ export interface Customer {
   phone: string;
   status: 'active' | 'inactive' | 'pending';
   salesStatus: string;
-  lastContact: string;
   salesPerson: string;
   notes: string;
   whatsapp?: string;

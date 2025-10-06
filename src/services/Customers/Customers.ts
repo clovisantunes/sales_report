@@ -34,7 +34,8 @@ export const customerService = {
           contatoWhatsapp: data.contatoWhatsapp || '',
           contatoPresencial: data.contatoPresencial || '',
           createdAt: data.createdAt?.toDate?.().toLocaleDateString('pt-BR') || '',
-          updatedAt: data.updatedAt?.toDate?.().toLocaleDateString('pt-BR') || ''
+          updatedAt: data.updatedAt?.toDate?.().toLocaleDateString('pt-BR') || '',
+          lifes: data.lifes || 0
         } as Sale;
       });
 
@@ -89,7 +90,8 @@ export const customerService = {
           contatoWhatsapp: data.contatoWhatsapp || '',
           contatoPresencial: data.contatoPresencial || '',
           createdAt: data.createdAt?.toDate?.().toLocaleDateString('pt-BR') || '',
-          updatedAt: data.updatedAt?.toDate?.().toLocaleDateString('pt-BR') || ''
+          updatedAt: data.updatedAt?.toDate?.().toLocaleDateString('pt-BR') || '',
+          lifes: data.lifes || 0
         } as Sale;
       });
 
@@ -114,12 +116,11 @@ export const customerService = {
       phone: sale.contatoTelefone || '',
       status: this.getCustomerStatus(sale.stage, sale.statusFechado),
       salesStatus: sale.stage || 'prospecção',
-      lastContact: sale.ultimoContato || sale.date || '',
       salesPerson: sale.vendedor || sale.salesPerson || '',
       notes: sale.comments || '',
       whatsapp: sale.contatoWhatsapp || '',
       address: sale.contatoPresencial || '',
-      contactMethod: sale.contactMethod || 'email'
+      contactMethod: sale.contactMethod || 'email',
     };
 
     console.log('🔧 Convertendo venda para cliente:', {
@@ -130,7 +131,6 @@ export const customerService = {
         contatoTelefone: sale.contatoTelefone,
         stage: sale.stage,
         statusFechado: sale.statusFechado,
-        ultimoContato: sale.ultimoContato,
         vendedor: sale.vendedor,
         salesPerson: sale.salesPerson,
         contatoWhatsapp: sale.contatoWhatsapp,
@@ -194,7 +194,6 @@ export const customerService = {
         lifes: data.lifes || 0,
         cnpj: data.cnpj || 'N/A',
         statusFechado: data.statusFechado || false,
-        ultimoContato: data.ultimoContato || '',
         vendedor: data.vendedor || '',
         contatoTelefone: data.contatoTelefone || '',
         contatoEmail: data.contatoEmail || '',

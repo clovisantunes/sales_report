@@ -53,7 +53,13 @@ const Sales: React.FC<SalesProps> = ({ darkMode, className = "", currentUser, us
     try {
       setLoading(true);
       const salesData = await salesService.getSales();
-      setSales(salesData);
+      // Ordenar vendas por data (mais recente primeiro)
+      const sortedSales = salesData.sort((a, b) => {
+        const dateA = new Date(a.date.split('/').reverse().join('-'));
+        const dateB = new Date(b.date.split('/').reverse().join('-'));
+        return dateB.getTime() - dateA.getTime(); // Mais recente primeiro
+      });
+      setSales(sortedSales);
     } catch (error) {
       console.error('Erro ao carregar vendas:', error);
     } finally {
@@ -668,7 +674,7 @@ const Sales: React.FC<SalesProps> = ({ darkMode, className = "", currentUser, us
                   </select>
                 </div>
 
-        
+                
               </div>
 
               <div className={styles.formGroup}>

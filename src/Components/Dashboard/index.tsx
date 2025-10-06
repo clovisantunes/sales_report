@@ -87,140 +87,128 @@ const Dashboard: React.FC<DashboardProps> = ({ darkMode, className = "", users =
     }
   };
 
-  const calcularMetricas = (sales: Sale[]): Metricas => {
-    console.log('🔍 Calculando métricas para', sales.length, 'vendas');
-    
-    const vendasFechadas = sales.filter(sale => {
-      console.log('Venda:', sale.id, 'Stage:', sale.stage, 'Date:', sale.date);
-      return sale.stage === 'finalizado';
-    });
-    
-    console.log('✅ Vendas fechadas:', vendasFechadas.length);
+ const calcularMetricas = (sales: Sale[]): Metricas => {
+  console.log('🔍 Calculando métricas para', sales.length, 'vendas');
+  
+  const vendasFechadas = sales.filter(sale => {
+    console.log('Venda:', sale.id, 'Stage:', sale.stage, 'Date:', sale.date);
+    return sale.stage === 'finalizado';
+  });
 
-    const hoje = new Date();
-    const mesAtual = hoje.getMonth() + 1;
-    const anoAtual = hoje.getFullYear();
-    
-    console.log('📅 Mês atual:', mesAtual, 'Ano atual:', anoAtual);
-    
-    const vendasMesAtual = vendasFechadas.filter(sale => {
-      try {
-        const [dia, mes, ano] = sale.date.split('/').map(Number);
-        console.log('📆 Analisando venda:', sale.id, 'Data:', dia, mes, ano);
-        return mes === mesAtual && ano === anoAtual;
-      } catch (error) {
-        console.error('Erro ao processar data:', sale.date);
-        return false;
-      }
-    }).length;
-
-    // Mês anterior
-    let mesAnterior = mesAtual - 1;
-    let anoAnterior = anoAtual;
-    if (mesAnterior === 0) {
-      mesAnterior = 12;
-      anoAnterior = anoAtual - 1;
+  const hoje = new Date();
+  const mesAtual = hoje.getMonth() + 1;
+  const anoAtual = hoje.getFullYear();
+  
+  const vendasMesAtual = vendasFechadas.filter(sale => {
+    try {
+      // CORREÇÃO: Data tem 3 partes - DD/MM/AAAA
+      const [dia, mes, ano] = sale.date.split('/').map(Number);
+      return mes === mesAtual && ano === anoAtual;
+    } catch (error) {
+      console.error('Erro ao processar data:', sale.date);
+      return false;
     }
+  }).length;
 
-    const vendasMesAnterior = vendasFechadas.filter(sale => {
+  // Mês anterior
+  let mesAnterior = mesAtual - 1;
+  let anoAnterior = anoAtual;
+  if (mesAnterior === 0) {
+    mesAnterior = 12;
+    anoAnterior = anoAtual - 1;
+  }
+
+  const vendasMesAnterior = vendasFechadas.filter(sale => {
+    try {
+      // CORREÇÃO: Data tem 3 partes - DD/MM/AAAA
+      const [dia, mes, ano] = sale.date.split('/').map(Number);
+      return mes === mesAnterior && ano === anoAnterior;
+    } catch {
+      return false;
+    }
+  }).length;
+
+  const crescimento = vendasMesAnterior > 0 
+    ? ((vendasMesAtual - vendasMesAnterior) / vendasMesAnterior) * 100 
+    : vendasMesAtual > 0 ? 100 : 0;
+
+  // Calcular média dos últimos 6 meses
+  const ultimos6Meses = Array.from({ length: 6 }, (_, i) => {
+    const date = new Date();
+    date.setMonth(date.getMonth() - i);
+    return { mes: date.getMonth() + 1, ano: date.getFullYear() };
+  });
+
+  const vendasUltimos6Meses = ultimos6Meses.map(({ mes, ano }) => {
+    const count = vendasFechadas.filter(sale => {
       try {
-        const [dia, mes, ano] = sale.date.split('/').map(Number);
-        return mes === mesAnterior && ano === anoAnterior;
+        // CORREÇÃO: Data tem 3 partes - DD/MM/AAAA
+        const [dia, saleMes, saleAno] = sale.date.split('/').map(Number);
+        return saleMes === mes && saleAno === ano;
       } catch {
         return false;
       }
     }).length;
+    return count;
+  });
 
-    console.log('📊 Vendas mês atual:', vendasMesAtual, 'Vendas mês anterior:', vendasMesAnterior);
+  const totalVendasUltimos6Meses = vendasUltimos6Meses.reduce((a, b) => a + b, 0);
+  const mediaMensal = totalVendasUltimos6Meses / 6;
 
-    const crescimento = vendasMesAnterior > 0 
-      ? ((vendasMesAtual - vendasMesAnterior) / vendasMesAnterior) * 100 
-      : vendasMesAtual > 0 ? 100 : 0;
-
-    // Calcular média dos últimos 6 meses
-    const ultimos6Meses = Array.from({ length: 6 }, (_, i) => {
-      const date = new Date();
-      date.setMonth(date.getMonth() - i);
-      return { mes: date.getMonth() + 1, ano: date.getFullYear() };
-    });
-
-    console.log('📅 Últimos 6 meses:', ultimos6Meses);
-
-    const vendasUltimos6Meses = ultimos6Meses.map(({ mes, ano }) => {
-      const count = vendasFechadas.filter(sale => {
-        try {
-          const [dia, saleMes, saleAno] = sale.date.split('/').map(Number);
-          return saleMes === mes && saleAno === ano;
-        } catch {
-          return false;
-        }
-      }).length;
-      console.log(`📈 Vendas em ${mes}/${ano}:`, count);
-      return count;
-    });
-
-    const totalVendasUltimos6Meses = vendasUltimos6Meses.reduce((a, b) => a + b, 0);
-    const mediaMensal = totalVendasUltimos6Meses / 6;
-
-    console.log('📐 Média mensal:', mediaMensal);
-
-    return {
-      totalVendas: vendasFechadas.length,
-      vendasMes: vendasMesAtual,
-      mediaMensal: Math.round(mediaMensal * 10) / 10,
-      crescimento: Math.round(crescimento * 10) / 10
-    };
+  return {
+    totalVendas: vendasFechadas.length,
+    vendasMes: vendasMesAtual,
+    mediaMensal: Math.round(mediaMensal * 10) / 10,
+    crescimento: Math.round(crescimento * 10) / 10
   };
+};
 
-  const calcularDadosGrafico = (sales: Sale[]): DadosGrafico => {
-    const meses: string[] = [];
-    const vendasPorMes: number[] = [];
-    
-    const hoje = new Date();
-    
-    for (let i = 5; i >= 0; i--) {
-      const date = new Date();
-      date.setMonth(date.getMonth() - i);
-      
-      const mes = date.toLocaleDateString('pt-BR', { month: 'short' });
-      const ano = date.getFullYear();
-      const mesNumero = date.getMonth() + 1;
-      const anoCurto = ano.toString().slice(2);
-      
-      meses.push(`${mes}/${anoCurto}`);
-      
-      const vendasNoMes = sales.filter(sale => {
-        if (sale.stage !== 'finalizado') return false;
+const calcularDadosGrafico = (sales: Sale[]): DadosGrafico => {
+  const meses: string[] = [];
+  const vendasPorMes: number[] = [];
         
-        try {
-          const [dia, saleMes, saleAno] = sale.date.split('/').map(Number);
-          return saleMes === mesNumero && saleAno === ano;
-        } catch {
-          return false;
-        }
-      }).length;
-      
-      console.log(`📊 Gráfico - ${mes}/${anoCurto}: ${vendasNoMes} vendas`);
-      vendasPorMes.push(vendasNoMes);
-    }
+  for (let i = 5; i >= 0; i--) {
+    const date = new Date();
+    date.setMonth(date.getMonth() - i);
     
-    return {
-      meses,
-      vendas: vendasPorMes
-    };
+    const mes = date.toLocaleDateString('pt-BR', { month: 'short' });
+    const ano = date.getFullYear();
+    const mesNumero = date.getMonth() + 1;
+    const anoCurto = ano.toString().slice(2);
+    
+    meses.push(`${mes}/${anoCurto}`);
+    
+    const vendasNoMes = sales.filter(sale => {
+      if (sale.stage !== 'finalizado') return false;
+      
+      try {
+        // CORREÇÃO: Data tem 3 partes - DD/MM/AAAA
+        const [dia, saleMes, saleAno] = sale.date.split('/').map(Number);
+        return saleMes === mesNumero && saleAno === ano;
+      } catch {
+        return false;
+      }
+    }).length;
+    
+    vendasPorMes.push(vendasNoMes);
+  }
+  
+  return {
+    meses,
+    vendas: vendasPorMes
   };
+};
 
   const formatarNumero = (numero: number) => {
     return new Intl.NumberFormat('pt-BR').format(numero);
   };
-
   const getEstagioLabel = (estagio: string) => {
     const labels = {
       'prospecção': 'Prospecção',
       'apresentada proposta': 'Proposta Apresentada',
       'negociar': 'Em Negociação',
       'fechar proposta': 'Fechar Proposta',
-      'fechado': 'Fechado', // CORRIGIDO
+      'fechado': 'Finalizado', 
       'pós venda': 'Pós Venda',
       'visita manutenção': 'Visita Manutenção',
       'renegociar contrato': 'Renegociar Contrato',
@@ -236,7 +224,7 @@ const Dashboard: React.FC<DashboardProps> = ({ darkMode, className = "", users =
   };
 
   const getLinhaTabelaClasse = (estagio: string) => {
-    if (estagio === 'fechado') return styles.linhaFechada; // CORRIGIDO
+    if (estagio === 'finalizado') return styles.linhaFechada; 
     if (estagio === 'perdida') return styles.linhaPerdida;
     return '';
   };

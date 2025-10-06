@@ -24,7 +24,6 @@ export class ExportService {
           'Resultado': this.getResultLabel(sale.stage),
           'Vendedor': user ? user.name : 'N/A',
           'Vendedor Responsável': vendedor ? vendedor.name : 'N/A',
-          'Último Contato': sale.ultimoContato,
           'Status Fechado': sale.statusFechado ? 'Sim' : 'Não',
           'Comentários': sale.comments || '',
           'Telefone': sale.contatoTelefone || '',
