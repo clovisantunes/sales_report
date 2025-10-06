@@ -101,8 +101,7 @@ const Dashboard: React.FC<DashboardProps> = ({ darkMode, className = "", users =
   
   const vendasMesAtual = vendasFechadas.filter(sale => {
     try {
-      // CORREÇÃO: Data tem 3 partes - DD/MM/AAAA
-      const [dia, mes, ano] = sale.date.split('/').map(Number);
+      const [ mes, ano] = sale.date.split('/').map(Number);
       return mes === mesAtual && ano === anoAtual;
     } catch (error) {
       console.error('Erro ao processar data:', sale.date);
@@ -110,7 +109,6 @@ const Dashboard: React.FC<DashboardProps> = ({ darkMode, className = "", users =
     }
   }).length;
 
-  // Mês anterior
   let mesAnterior = mesAtual - 1;
   let anoAnterior = anoAtual;
   if (mesAnterior === 0) {
@@ -120,8 +118,7 @@ const Dashboard: React.FC<DashboardProps> = ({ darkMode, className = "", users =
 
   const vendasMesAnterior = vendasFechadas.filter(sale => {
     try {
-      // CORREÇÃO: Data tem 3 partes - DD/MM/AAAA
-      const [dia, mes, ano] = sale.date.split('/').map(Number);
+      const [ mes, ano] = sale.date.split('/').map(Number);
       return mes === mesAnterior && ano === anoAnterior;
     } catch {
       return false;
@@ -132,7 +129,6 @@ const Dashboard: React.FC<DashboardProps> = ({ darkMode, className = "", users =
     ? ((vendasMesAtual - vendasMesAnterior) / vendasMesAnterior) * 100 
     : vendasMesAtual > 0 ? 100 : 0;
 
-  // Calcular média dos últimos 6 meses
   const ultimos6Meses = Array.from({ length: 6 }, (_, i) => {
     const date = new Date();
     date.setMonth(date.getMonth() - i);
@@ -142,8 +138,7 @@ const Dashboard: React.FC<DashboardProps> = ({ darkMode, className = "", users =
   const vendasUltimos6Meses = ultimos6Meses.map(({ mes, ano }) => {
     const count = vendasFechadas.filter(sale => {
       try {
-        // CORREÇÃO: Data tem 3 partes - DD/MM/AAAA
-        const [dia, saleMes, saleAno] = sale.date.split('/').map(Number);
+        const [ saleMes, saleAno] = sale.date.split('/').map(Number);
         return saleMes === mes && saleAno === ano;
       } catch {
         return false;
@@ -182,8 +177,7 @@ const calcularDadosGrafico = (sales: Sale[]): DadosGrafico => {
       if (sale.stage !== 'finalizado') return false;
       
       try {
-        // CORREÇÃO: Data tem 3 partes - DD/MM/AAAA
-        const [dia, saleMes, saleAno] = sale.date.split('/').map(Number);
+        const [ saleMes, saleAno] = sale.date.split('/').map(Number);
         return saleMes === mesNumero && saleAno === ano;
       } catch {
         return false;
@@ -391,7 +385,6 @@ const calcularDadosGrafico = (sales: Sale[]): DadosGrafico => {
         </div>
       </div>
 
-      {/* Gráfico - Mostra apenas vendas FECHADAS */}
       <div className={`${styles.graficoContainer} ${darkMode ? styles.dark : ''}`}>
         <div className={`${styles.graficoTitulo} ${darkMode ? styles.dark : ''}`}>
           Vendas Fechadas Mensais (Últimos 6 meses)
@@ -410,7 +403,6 @@ const calcularDadosGrafico = (sales: Sale[]): DadosGrafico => {
         </div>
       </div>
 
-      {/* Tabela - Mostra todas as vendas, mas destaca as fechadas */}
       <div className={`${styles.tabelaContainer} ${darkMode ? styles.dark : ''}`}>
         <div className={styles.tabelaHeader}>
           <div className={`${styles.tabelaTitulo} ${darkMode ? styles.dark : ''}`}>

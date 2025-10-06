@@ -382,11 +382,7 @@ const Customers: React.FC<CustomersProps> = ({ darkMode, className = "", users =
                         {getSalesStatusLabel(customer.salesStatus)}
                       </span>
                     </td>
-                    <td>
-                      <span className={styles.lastContact}>
-                        {customer.lastContact || 'Não informado'}
-                      </span>
-                    </td>
+                  
                     <td>
                       <span className={styles.salesPerson}>
                         {getUserName(customer.salesPerson)}
