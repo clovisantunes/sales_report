@@ -191,6 +191,8 @@ export const customerService = {
         comments: data.comments || '',
         salesPerson: data.salesPerson || '',
         result: data.result || '',
+        lifes: data.lifes || 0,
+        cnpj: data.cnpj || 'N/A',
         statusFechado: data.statusFechado || false,
         ultimoContato: data.ultimoContato || '',
         vendedor: data.vendedor || '',

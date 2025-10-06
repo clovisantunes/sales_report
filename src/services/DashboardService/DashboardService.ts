@@ -8,9 +8,8 @@ export const dashboardService = {
     try {
       const todasVendas = await salesService.getSales();
       
-      // Filtrar apenas vendas FECHADAS (considera vendas reais)
       const vendasFechadas = todasVendas.filter(venda => 
-        venda.stage === 'fechado'
+        venda.stage === 'finalizado'
       );
 
       console.log('📊 Total de vendas:', todasVendas.length);
@@ -141,7 +140,7 @@ export const dashboardService = {
       const ultimos6Meses = this.getUltimos6Meses();
       
       const vendasFechadas = todasVendas.filter(venda => 
-        venda.stage === 'fechado'
+        venda.stage === 'finalizado'
       );
 
       const vendasPorMes = ultimos6Meses.map(mes => {
@@ -184,7 +183,7 @@ export const dashboardService = {
       const todasVendas = await salesService.getSales();
       const todosUsuarios = await userService.getAllUsers();
       
-      const vendasFechadas = todasVendas.filter(venda => venda.stage === 'fechado');
+      const vendasFechadas = todasVendas.filter(venda => venda.stage === 'finalizado');
       
       const vendasPorVendedor = vendasFechadas.reduce((acc, venda) => {
         const vendedorId = venda.salesPerson;
