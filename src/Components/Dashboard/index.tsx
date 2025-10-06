@@ -218,9 +218,6 @@ const Dashboard: React.FC<DashboardProps> = ({ darkMode, className = "", users =
   return (
     <div className={`${styles.dashboard} ${darkMode ? styles.dark : ''} ${className}`}>
       <div className={styles.dashboardHeader}>
-        <h1 className={`${styles.dashboardTitle} ${darkMode ? styles.dark : ''}`}>
-          Dashboard
-        </h1>
         <button 
           className={`${styles.refreshButton} ${darkMode ? styles.dark : ''}`}
           onClick={loadDashboardData}
@@ -229,8 +226,6 @@ const Dashboard: React.FC<DashboardProps> = ({ darkMode, className = "", users =
           {loading ? 'Atualizando...' : 'Atualizar Dados'}
         </button>
       </div>
-
-      {/* Métricas - Agora mostram apenas vendas FECHADAS */}
       <div className={styles.metricasContainer}>
         <div className={`${styles.metricaCard} ${darkMode ? styles.dark : ''}`}>
           <div className={`${styles.metricaTitulo} ${darkMode ? styles.dark : ''}`}>

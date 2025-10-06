@@ -27,6 +27,9 @@ class SalesService {
       salesPerson: sale.salesPerson,
       result: sale.result || '',
       
+      cnpj: sale.cnpj || '',
+      lifes: sale.lifes || 0,
+      
       statusFechado: sale.statusFechado || false,
       ultimoContato: sale.ultimoContato || '',
       vendedor: sale.vendedor || '',
@@ -67,6 +70,9 @@ class SalesService {
       salesPerson: data.salesPerson,
       result: data.result || '',
       
+      cnpj: data.cnpj || '',
+      lifes: data.lifes || 0,
+      
       statusFechado: data.statusFechado || false,
       ultimoContato: data.ultimoContato || '',
       vendedor: data.vendedor || '',
@@ -80,7 +86,6 @@ class SalesService {
     };
   }
 
-  // NOVO: Método para enriquecer vendas com informações dos vendedores
   private async enrichSalesWithSellerInfo(sales: Sale[]): Promise<Sale[]> {
     try {
       console.log('👥 [SALES SERVICE] Buscando usuários para enriquecer vendas...');
@@ -100,7 +105,9 @@ class SalesService {
           salesPersonId: sale.salesPerson,
           salesPersonName: sellerInfo ? `${sellerInfo.name} ${sellerInfo.lastName}` : 'N/A',
           vendedorId: sale.vendedor,
-          vendedorName: sellerInfoVendedor ? `${sellerInfoVendedor.name} ${sellerInfoVendedor.lastName}` : 'N/A'
+          vendedorName: sellerInfoVendedor ? `${sellerInfoVendedor.name} ${sellerInfoVendedor.lastName}` : 'N/A',
+          cnpj: sale.cnpj,
+          lifes: sale.lifes
         });
         
         return {
@@ -124,7 +131,7 @@ class SalesService {
       return enrichedSales;
     } catch (error) {
       console.error('❌ [SALES SERVICE] Erro ao enriquecer vendas com informações do vendedor:', error);
-      return sales; // Retorna as vendas sem enriquecimento em caso de erro
+      return sales; 
     }
   }
 
@@ -138,7 +145,13 @@ class SalesService {
       const sales: Sale[] = [];
       querySnapshot.forEach((doc) => {
         const data = doc.data();
-        sales.push(this.firestoreToSale(doc.id, data));
+        const sale = this.firestoreToSale(doc.id, data);
+        console.log(`📄 [SALES SERVICE] Venda ${doc.id}:`, {
+          cnpj: sale.cnpj,
+          lifes: sale.lifes,
+          company: sale.companyName
+        });
+        sales.push(sale);
       });
       
       console.log(`✅ [SALES SERVICE] ${sales.length} vendas carregadas do Firestore`);
@@ -168,6 +181,8 @@ class SalesService {
         contatoEmail: sale.contatoEmail || '',
         contatoWhatsapp: sale.contatoWhatsapp || '',
         contatoPresencial: sale.contatoPresencial || '',
+        cnpj: sale.cnpj || 'N/A',
+        lifes: sale.lifes || 0,
         createdAt: new Date().toLocaleDateString('pt-BR')
       };
 
@@ -202,6 +217,8 @@ class SalesService {
         contatoEmail: sale.contatoEmail || '',
         contatoWhatsapp: sale.contatoWhatsapp || '',
         contatoPresencial: sale.contatoPresencial || '',
+        cnpj: sale.cnpj || '',
+        lifes: sale.lifes || 0,
         updatedAt: new Date().toLocaleDateString('pt-BR')
       };
 
@@ -223,6 +240,9 @@ class SalesService {
       if (sale.comments !== undefined) updateData.comments = sale.comments || '';
       if (sale.salesPerson !== undefined) updateData.salesPerson = sale.salesPerson;
       if (sale.result !== undefined) updateData.result = sale.result || '';
+      
+      if (sale.cnpj !== undefined) updateData.cnpj = sale.cnpj || '';
+      if (sale.lifes !== undefined) updateData.lifes = sale.lifes || 0;
       
       if (sale.statusFechado !== undefined) updateData.statusFechado = sale.statusFechado;
       if (sale.ultimoContato !== undefined) updateData.ultimoContato = sale.ultimoContato || '';
@@ -253,7 +273,6 @@ class SalesService {
     }
   }
 
-  // NOVO: Método para buscar estatísticas de vendas por vendedor
   async getSalesBySeller(): Promise<{ sellerId: string; sellerName: string; salesCount: number; sales: Sale[] }[]> {
     try {
       const sales = await this.getSales();
@@ -284,8 +303,5 @@ class SalesService {
     }
   }
 }
-
-// Remova a função standalone pois agora está integrada na classe
-// export const enrichSalesWithSellerInfo = async (sales: Sale[]): Promise<Sale[]> => { ... }
 
 export const salesService = new SalesService();

@@ -5,12 +5,14 @@ export interface Sale {
   type: string;
   contactName: string;
   contactMethod: 'presencial' | 'telefone' | 'email' | 'whatsapp';
-  stage: 'prospecção' | 'apresentada proposta' | 'negociar' | 'fechar proposta' | 'fechado' | 'pós venda' | 'visita manutenção' | 'renegociar contrato' | 'perdida';
+  stage: 'prospecção' | 'apresentada proposta' | 'negociar' | 'fechar proposta' | 'finalizado' | 'pós venda' | 'visita manutenção' | 'renegociar contrato' | 'perdida';
   productType: string;
   comments: string;
   salesPerson: string;
   createdAt?: string;
   updatedAt?: string;
+  cnpj?: string;
+  lifes: number;
   result: string;
   statusFechado: boolean;
   ultimoContato: string; 

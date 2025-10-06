@@ -23,20 +23,20 @@ const Sales: React.FC<SalesProps> = ({ darkMode, className = "", currentUser, us
   const [editingSale, setEditingSale] = useState<Sale | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
-
-  
   const [formData, setFormData] = useState({
     date: new Date().toLocaleDateString('pt-BR'),
     company: '',
-    type: 'Novo cliente',
+    type: 'Em negociação',
     contactName: '',
     contactMethod: 'email' as 'presencial' | 'telefone' | 'email' | 'whatsapp',
-    stage: 'prospecção' as 'prospecção' | 'apresentada proposta' | 'negociar' | 'fechar proposta' | 'fechado' | 'pós venda' | 'visita manutenção' | 'renegociar contrato' | 'perdida',
+    stage: 'apresentada proposta' as 'prospecção' | 'apresentada proposta' | 'negociar' | 'fechar proposta' | 'finalizado' | 'pós venda' | 'visita manutenção' | 'renegociar contrato' | 'perdida',
     productType: '',
     comments: '',
     salesPerson: currentUser?.id || '',
     statusFechado: false,
+    lifes: 0,
     ultimoContato: new Date().toLocaleDateString('pt-BR'),
+    cnpj: '',
     vendedor: currentUser?.id || '',
     contatoTelefone: '',
     contatoEmail: '',
@@ -72,7 +72,6 @@ const Sales: React.FC<SalesProps> = ({ darkMode, className = "", currentUser, us
 
   const getTypeLabel = (type: string) => {
     const labels = {
-      'Novo cliente': 'Novo cliente',
       'Em negociação': 'Em negociação'
     };
     return labels[type as keyof typeof labels] || type;
@@ -91,10 +90,10 @@ const Sales: React.FC<SalesProps> = ({ darkMode, className = "", currentUser, us
   const getStageLabel = (stage: string) => {
     const labels = {
       'prospecção': 'Prospecção',
-      'apresentada proposta': 'Apresentada proposta',
+      'apresentada proposta': 'Em negociação',
       'negociar': 'Negociar',
       'fechar proposta': 'Fechar proposta',
-      'fechado': 'Fechado',
+      'finalizado': 'Finalizado',
       'pós venda': 'Pós venda',
       'visita manutenção': 'Visita manutenção',
       'renegociar contrato': 'Renegociar contrato',
@@ -105,27 +104,26 @@ const Sales: React.FC<SalesProps> = ({ darkMode, className = "", currentUser, us
 
   const getProductTypeLabel = (productName: string) => {
     const product = products.find(p => p.name === productName);
-    
     if (product) {
       return product.name;
     }
-    
+
     const fallbackLabels = {
       'medicina do trabalho': 'Medicina do Trabalho',
-      'assistencia medica': 'Assistência Médica', 
+      'assistencia medica': 'Assistência Médica',
     };
-    
+
     return fallbackLabels[productName as keyof typeof fallbackLabels] || productName;
   };
 
   const getResultClass = (stage: string) => {
-    if (stage === 'fechado') return 'fechado';
+    if (stage === 'finalizado') return 'fechado';
     if (stage === 'perdida') return 'perdida';
     return 'em-andamento';
   };
 
   const getResultLabel = (stage: string) => {
-    if (stage === 'fechado') return 'Fechado';
+    if (stage === 'finalizado') return 'Fechado';
     if (stage === 'perdida') return 'Perdida';
     return 'Negociação em andamento';
   };
@@ -143,12 +141,14 @@ const Sales: React.FC<SalesProps> = ({ darkMode, className = "", currentUser, us
     setFormData({
       date: new Date().toLocaleDateString('pt-BR'),
       company: '',
-      type: 'Novo cliente',
+      type: 'Em negociação',
       contactName: '',
       contactMethod: 'email',
-      stage: 'prospecção',
+      stage: 'apresentada proposta',
+      cnpj: '',
       productType: '',
       comments: '',
+      lifes: 0,
       salesPerson: currentUser?.id || '',
       statusFechado: false,
       ultimoContato: new Date().toLocaleDateString('pt-BR'),
@@ -172,11 +172,13 @@ const Sales: React.FC<SalesProps> = ({ darkMode, className = "", currentUser, us
         contactName: sale.contactName,
         contactMethod: sale.contactMethod,
         stage: sale.stage,
+        lifes: sale.lifes,
         productType: sale.productType,
         comments: sale.comments,
         salesPerson: sale.salesPerson,
         statusFechado: sale.statusFechado,
         ultimoContato: sale.ultimoContato,
+        cnpj: sale.cnpj || '',
         vendedor: sale.vendedor,
         contatoTelefone: sale.contatoTelefone || '',
         contatoEmail: sale.contatoEmail || '',
@@ -217,7 +219,7 @@ const Sales: React.FC<SalesProps> = ({ darkMode, className = "", currentUser, us
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!formData.company || !formData.contactName || !formData.productType) {
       alert('Por favor, preencha todos os campos obrigatórios.');
       return;
@@ -229,14 +231,16 @@ const Sales: React.FC<SalesProps> = ({ darkMode, className = "", currentUser, us
       const saleData = {
         date: formData.date,
         companyName: formData.company,
-        type: formData.type,
+        type: 'Em negociação',
         contactName: formData.contactName,
         contactMethod: formData.contactMethod,
         stage: formData.stage,
+        cnpj: formData.cnpj,
         productType: formData.productType,
         comments: formData.comments,
         salesPerson: formData.salesPerson,
-        result: formData.stage === 'fechado' ? 'Fechado' : (formData.stage === 'perdida' ? 'Perdida' : 'Negociação em andamento'),
+        lifes: formData.lifes,
+        result: formData.stage === 'finalizado' ? 'Finalizado' : (formData.stage === 'perdida' ? 'Perdida' : 'Negociação em andamento'),
         statusFechado: formData.statusFechado,
         ultimoContato: formData.ultimoContato,
         vendedor: formData.vendedor,
@@ -254,7 +258,7 @@ const Sales: React.FC<SalesProps> = ({ darkMode, className = "", currentUser, us
 
       await loadSales();
       handleCloseModal();
-      
+
     } catch (error) {
       console.error('Erro ao salvar venda:', error);
       alert('Erro ao salvar venda. Tente novamente.');
@@ -274,58 +278,57 @@ const Sales: React.FC<SalesProps> = ({ darkMode, className = "", currentUser, us
     return true;
   });
 
- const getUserName = (userId: string, sale?: Sale) => {
-  if (sale?.sellerInfo?.fullName) {
-    return sale.sellerInfo.fullName;
-  }
-  
-  const user = users.find(u => u.id === userId);
-  return user ? `${user.name} ${user.lastName}` : userId;
-};
+  const getUserName = (userId: string, sale?: Sale) => {
+    if (sale?.sellerInfo?.fullName) {
+      return sale.sellerInfo.fullName;
+    }
+
+    const user = users.find(u => u.id === userId);
+    return user ? `${user.name} ${user.lastName}` : userId;
+  };
 
   return (
     <div className={`${styles.sales} ${darkMode ? styles.dark : ''} ${className}`}>
 
-<div className={styles.salesHeader}>
-  <h1 className={`${styles.salesTitle} ${darkMode ? styles.dark : ''}`}>
-    Gerenciamento de Visitas
-  </h1>
-  <div className={styles.headerActions}>
-    <ExportButton
-      sales={filteredSales}
-      users={users}
-      products={products}
-      darkMode={darkMode}
-      disabled={filteredSales.length === 0}
-    />
-    <button 
-      className={`${styles.addButton} ${darkMode ? styles.dark : ''}`}
-      onClick={handleAddSale}
-    >
-      <FiPlus size={16} />
-      Nova Visita
-    </button>
-  </div>
-</div>
+      <div className={styles.salesHeader}>
+        <h1 className={`${styles.salesTitle} ${darkMode ? styles.dark : ''}`}>
+          Gerenciamento
+        </h1>
+        <div className={styles.headerActions}>
+          <ExportButton
+            sales={filteredSales}
+            users={users}
+            products={products}
+            darkMode={darkMode}
+            disabled={filteredSales.length === 0}
+          />
+          <button
+            className={`${styles.addButton} ${darkMode ? styles.dark : ''}`}
+            onClick={handleAddSale}
+          >
+            <FiPlus size={16} />
+            Nova Visita
+          </button>
+        </div>
+      </div>
 
-  <div className={`${styles.filtersContainer} ${darkMode ? styles.dark : ''}`}>
+      <div className={`${styles.filtersContainer} ${darkMode ? styles.dark : ''}`}>
         <h3 className={`${styles.filtersTitle} ${darkMode ? styles.dark : ''}`}>Filtros</h3>
         <div className={styles.filtersGrid}>
           <div className={styles.filterGroup}>
             <label>Tipo</label>
-            <select 
+            <select
               value={filters.type || ''}
               onChange={(e) => handleFilterChange('type', e.target.value)}
             >
               <option value="">Todos os tipos</option>
-              <option value="Novo cliente">Novo cliente</option>
               <option value="Em negociação">Em negociação</option>
             </select>
           </div>
 
           <div className={styles.filterGroup}>
             <label>Forma de Contato</label>
-            <select 
+            <select
               value={filters.contactMethod || ''}
               onChange={(e) => handleFilterChange('contactMethod', e.target.value)}
             >
@@ -339,16 +342,16 @@ const Sales: React.FC<SalesProps> = ({ darkMode, className = "", currentUser, us
 
           <div className={styles.filterGroup}>
             <label>Estágio</label>
-            <select 
+            <select
               value={filters.stage || ''}
               onChange={(e) => handleFilterChange('stage', e.target.value)}
             >
               <option value="">Todos os estágios</option>
               <option value="prospecção">Prospecção</option>
-              <option value="apresentada proposta">Apresentada proposta</option>
+              <option value="apresentada proposta">Em negociação</option>
               <option value="negociar">Negociar</option>
               <option value="fechar proposta">Fechar proposta</option>
-              <option value="fechado">Fechado</option>
+              <option value="finalizado">Finalizado</option>
               <option value="pós venda">Pós venda</option>
               <option value="visita manutenção">Visita manutenção</option>
               <option value="renegociar contrato">Renegociar contrato</option>
@@ -358,7 +361,7 @@ const Sales: React.FC<SalesProps> = ({ darkMode, className = "", currentUser, us
 
           <div className={styles.filterGroup}>
             <label>Tipo de Produto</label>
-            <select 
+            <select
               value={filters.productType || ''}
               onChange={(e) => handleFilterChange('productType', e.target.value)}
             >
@@ -371,7 +374,7 @@ const Sales: React.FC<SalesProps> = ({ darkMode, className = "", currentUser, us
 
           <div className={styles.filterGroup}>
             <label>Vendedor</label>
-            <select 
+            <select
               value={filters.salesPerson || ''}
               onChange={(e) => handleFilterChange('salesPerson', e.target.value)}
             >
@@ -384,8 +387,8 @@ const Sales: React.FC<SalesProps> = ({ darkMode, className = "", currentUser, us
 
           <div className={styles.filterGroup}>
             <label>Data Início</label>
-            <input 
-              type="date" 
+            <input
+              type="date"
               value={filters.startDate || ''}
               onChange={(e) => handleFilterChange('startDate', e.target.value)}
             />
@@ -393,8 +396,8 @@ const Sales: React.FC<SalesProps> = ({ darkMode, className = "", currentUser, us
 
           <div className={styles.filterGroup}>
             <label>Data Fim</label>
-            <input 
-              type="date" 
+            <input
+              type="date"
               value={filters.endDate || ''}
               onChange={(e) => handleFilterChange('endDate', e.target.value)}
             />
@@ -410,39 +413,39 @@ const Sales: React.FC<SalesProps> = ({ darkMode, className = "", currentUser, us
 
       <div className={`${styles.salesTableContainer} ${darkMode ? styles.dark : ''}`}>
         <div className={`${styles.tableTitle} ${darkMode ? styles.dark : ''}`}>
-          Registro de Visitas ({filteredSales.length} resultados)
+          Registro ({filteredSales.length} resultados)
         </div>
-        
+
         {loading ? (
           <div className={styles.loadingState}>
-            <div>Carregando visitas...</div>
+            <div>Carregando Negociações...</div>
           </div>
         ) : filteredSales.length === 0 ? (
-         <div className={styles.emptyState}>
-  <div className={styles.emptyStateIcon}>
-    <svg width="80" height="80" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M3 9H21M9 21V9M5 5H19C20.1046 5 21 5.89543 21 7V17C21 18.1046 20.1046 19 19 19H5C3.89543 19 3 18.1046 3 17V7C3 5.89543 3.89543 5 5 5Z" 
-            stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-      <path d="M15 13C15 14.6569 13.6569 16 12 16C10.3431 16 9 14.6569 9 13C9 11.3431 10.3431 10 12 10C13.6569 10 15 11.3431 15 13Z" 
-            stroke="currentColor" strokeWidth="1.5"/>
-    </svg>
-  </div>
-  <h3 className={styles.emptyStateTitle}>Nenhuma venda encontrada</h3>
-  <p className={styles.emptyStateDescription}>
-    {Object.keys(filters).length > 0 
-      ? "Tente ajustar os filtros para ver mais resultados."
-      : "Comece adicionando sua primeira venda usando o botão acima."
-    }
-  </p>
-  {Object.keys(filters).length > 0 && (
-    <button 
-      className={`${styles.emptyStateButton} ${darkMode ? styles.dark : ''}`}
-      onClick={clearFilters}
-    >
-      Limpar Filtros
-    </button>
-  )}
-</div>
+          <div className={styles.emptyState}>
+            <div className={styles.emptyStateIcon}>
+              <svg width="80" height="80" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M3 9H21M9 21V9M5 5H19C20.1046 5 21 5.89543 21 7V17C21 18.1046 20.1046 19 19 19H5C3.89543 19 3 18.1046 3 17V7C3 5.89543 3.89543 5 5 5Z"
+                  stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M15 13C15 14.6569 13.6569 16 12 16C10.3431 16 9 14.6569 9 13C9 11.3431 10.3431 10 12 10C13.6569 10 15 11.3431 15 13Z"
+                  stroke="currentColor" strokeWidth="1.5" />
+              </svg>
+            </div>
+            <h3 className={styles.emptyStateTitle}>Nenhuma venda encontrada</h3>
+            <p className={styles.emptyStateDescription}>
+              {Object.keys(filters).length > 0
+                ? "Tente ajustar os filtros para ver mais resultados."
+                : "Comece adicionando sua primeira venda usando o botão acima."
+              }
+            </p>
+            {Object.keys(filters).length > 0 && (
+              <button
+                className={`${styles.emptyStateButton} ${darkMode ? styles.dark : ''}`}
+                onClick={clearFilters}
+              >
+                Limpar Filtros
+              </button>
+            )}
+          </div>
         ) : (
           <table className={styles.salesTable}>
             <thead>
@@ -450,12 +453,12 @@ const Sales: React.FC<SalesProps> = ({ darkMode, className = "", currentUser, us
                 <th>Data</th>
                 <th>Nome da Empresa</th>
                 <th>Tipo</th>
-                <th>Nome Contato</th>
-                <th>Forma de Contato</th>
                 <th>Estágio</th>
                 <th>Tipo de Produto</th>
                 <th>Resultado</th>
                 <th>Vendedor</th>
+                <th>Nome Contato</th>
+                <th>Forma de Contato</th>
                 <th>Comentário</th>
                 <th>Ações</th>
               </tr>
@@ -466,8 +469,6 @@ const Sales: React.FC<SalesProps> = ({ darkMode, className = "", currentUser, us
                   <td>{sale.date}</td>
                   <td><strong>{sale.companyName}</strong></td>
                   <td>{getTypeLabel(sale.type)}</td>
-                  <td>{sale.contactName}</td>
-                  <td>{getContactMethodLabel(sale.contactMethod)}</td>
                   <td>
                     <span className={`${styles.stage} ${styles[sale.stage]}`}>
                       {getStageLabel(sale.stage)}
@@ -478,18 +479,20 @@ const Sales: React.FC<SalesProps> = ({ darkMode, className = "", currentUser, us
                     {getResultLabel(sale.stage)}
                   </td>
                   <td>{getUserName(sale.salesPerson, sale)}</td>
+                  <td>{sale.contactName}</td>
+                  <td>{getContactMethodLabel(sale.contactMethod)}</td>
                   <td className={styles.comments} title={sale.comments}>
                     {sale.comments}
                   </td>
                   <td>
                     <div className={styles.actionButtons}>
-                      <button 
+                      <button
                         className={`${styles.actionButton} ${styles.editButton} ${darkMode ? styles.dark : ''}`}
                         onClick={() => handleEditSale(sale.id)}
                       >
                         <FiEdit2 size={14} />
                       </button>
-                      <button 
+                      <button
                         className={`${styles.actionButton} ${styles.deleteButton} ${darkMode ? styles.dark : ''}`}
                         onClick={() => handleDeleteSale(sale.id)}
                       >
@@ -511,7 +514,7 @@ const Sales: React.FC<SalesProps> = ({ darkMode, className = "", currentUser, us
               <h2 className={`${styles.modalTitle} ${darkMode ? styles.dark : ''}`}>
                 {editingSale ? 'Editar Venda' : 'Nova Venda'}
               </h2>
-              <button 
+              <button
                 className={`${styles.closeButton} ${darkMode ? styles.dark : ''}`}
                 onClick={handleCloseModal}
                 disabled={submitting}
@@ -529,10 +532,16 @@ const Sales: React.FC<SalesProps> = ({ darkMode, className = "", currentUser, us
                     id="date"
                     name="date"
                     value={formData.date.split('/').reverse().join('-')}
-                    onChange={(e) => setFormData(prev => ({
-                      ...prev,
-                      date: new Date(e.target.value).toLocaleDateString('pt-BR')
-                    }))}
+                    onChange={(e) => {
+                      const selectedDate = e.target.value;
+                      if (selectedDate) {
+                        const [year, month, day] = selectedDate.split('-');
+                        setFormData(prev => ({
+                          ...prev,
+                          date: `${day}/${month}/${year}`
+                        }));
+                      }
+                    }}
                     required
                     disabled={submitting}
                     className={darkMode ? styles.dark : ''}
@@ -547,10 +556,9 @@ const Sales: React.FC<SalesProps> = ({ darkMode, className = "", currentUser, us
                     value={formData.type}
                     onChange={handleFormChange}
                     required
-                    disabled={submitting}
+                    disabled={true}
                     className={darkMode ? styles.dark : ''}
                   >
-                    <option value="Novo cliente">Novo cliente</option>
                     <option value="Em negociação">Em negociação</option>
                   </select>
                 </div>
@@ -571,41 +579,31 @@ const Sales: React.FC<SalesProps> = ({ darkMode, className = "", currentUser, us
                 />
               </div>
 
-              <div className={styles.formRow}>
-                <div className={styles.formGroup}>
-                  <label htmlFor="contactName">Nome do Contato *</label>
-                  <input
-                    type="text"
-                    id="contactName"
-                    name="contactName"
-                    value={formData.contactName}
-                    onChange={handleFormChange}
-                    placeholder="Digite o nome do contato"
-                    required
-                    disabled={submitting}
-                    className={darkMode ? styles.dark : ''}
-                  />
-                </div>
-
-                <div className={styles.formGroup}>
-                  <label htmlFor="contactMethod">Forma de Contato *</label>
-                  <select
-                    id="contactMethod"
-                    name="contactMethod"
-                    value={formData.contactMethod}
-                    onChange={handleFormChange}
-                    required
-                    disabled={submitting}
-                    className={darkMode ? styles.dark : ''}
-                  >
-                    <option value="email">Email</option>
-                    <option value="telefone">Telefone</option>
-                    <option value="presencial">Presencial</option>
-                    <option value="whatsapp">WhatsApp</option>
-                  </select>
-                </div>
+              <div className={styles.formGroup}>
+                <label htmlFor="cnpj">CNPJ</label>
+                <input
+                  type="text"
+                  id="cnpj"
+                  name="cnpj"
+                  value={formData.cnpj}
+                  onChange={handleFormChange}
+                  placeholder="Digite o CNPJ"
+                  disabled={submitting}
+                  className={darkMode ? styles.dark : ''}
+                />
               </div>
-
+              <div className={styles.formGroup}>
+                <label htmlFor="lifes">Número de Vidas</label>
+                <input
+                  type="number"
+                  id="lifes"
+                  name="lifes"
+                  value={formData.lifes}
+                  onChange={handleFormChange}
+                  disabled={submitting}
+                  className={darkMode ? styles.dark : ''}
+                />
+              </div>
               <div className={styles.formRow}>
                 <div className={styles.formGroup}>
                   <label htmlFor="stage">Estágio *</label>
@@ -618,11 +616,10 @@ const Sales: React.FC<SalesProps> = ({ darkMode, className = "", currentUser, us
                     disabled={submitting}
                     className={darkMode ? styles.dark : ''}
                   >
-                    <option value="prospecção">Prospecção</option>
-                    <option value="apresentada proposta">Apresentada proposta</option>
+                    <option value="apresentada proposta">Em negociação</option>
                     <option value="negociar">Negociar</option>
                     <option value="fechar proposta">Fechar proposta</option>
-                    <option value="fechado">Fechado</option>
+                    <option value="finalizado">Finalizado</option>
                     <option value="pós venda">Pós venda</option>
                     <option value="visita manutenção">Visita manutenção</option>
                     <option value="renegociar contrato">Renegociar contrato</option>
@@ -647,24 +644,6 @@ const Sales: React.FC<SalesProps> = ({ darkMode, className = "", currentUser, us
                     ))}
                   </select>
                 </div>
-              </div>
-
-              <div className={styles.formGroup}>
-                <label htmlFor="salesPerson">Vendedor *</label>
-                <select
-                  id="salesPerson"
-                  name="salesPerson"
-                  value={formData.salesPerson}
-                  onChange={handleFormChange}
-                  required
-                  disabled={submitting}
-                  className={darkMode ? styles.dark : ''}
-                >
-                  <option value="">Selecione um vendedor</option>
-                  {users.map(user => (
-                    <option key={user.id} value={user.id}>{user.name}</option>
-                  ))}
-                </select>
               </div>
 
               <div className={styles.formRow}>
@@ -703,19 +682,21 @@ const Sales: React.FC<SalesProps> = ({ darkMode, className = "", currentUser, us
               </div>
               <div className={styles.formRow}>
                 <div className={styles.formGroup}>
-                  <label htmlFor="contatoTelefone">Telefone</label>
+                  <label htmlFor="contactName">Nome do Contato *</label>
                   <input
-                    type="tel"
-                    id="contatoTelefone"
-                    name="contatoTelefone"
-                    value={formData.contatoTelefone}
+                    type="text"
+                    id="contactName"
+                    name="contactName"
+                    value={formData.contactName}
                     onChange={handleFormChange}
-                    placeholder="(00) 00000-0000"
+                    placeholder="Digite o nome do contato"
+                    required
                     disabled={submitting}
                     className={darkMode ? styles.dark : ''}
                   />
                 </div>
-
+              </div>
+              <div className={styles.formRow}>
                 <div className={styles.formGroup}>
                   <label htmlFor="contatoEmail">E-mail</label>
                   <input
@@ -729,11 +710,8 @@ const Sales: React.FC<SalesProps> = ({ darkMode, className = "", currentUser, us
                     className={darkMode ? styles.dark : ''}
                   />
                 </div>
-              </div>
-
-              <div className={styles.formRow}>
                 <div className={styles.formGroup}>
-                  <label htmlFor="contatoWhatsapp">WhatsApp</label>
+                  <label htmlFor="contatoWhatsapp">Telefone/WhatsApp</label>
                   <input
                     type="text"
                     id="contatoWhatsapp"
@@ -745,9 +723,11 @@ const Sales: React.FC<SalesProps> = ({ darkMode, className = "", currentUser, us
                     className={darkMode ? styles.dark : ''}
                   />
                 </div>
+              </div>
 
+              <div className={styles.formRow}>
                 <div className={styles.formGroup}>
-                  <label htmlFor="contatoPresencial">Local Presencial</label>
+                  <label htmlFor="contatoPresencial">Endereço:</label>
                   <input
                     type="text"
                     id="contatoPresencial"
@@ -760,21 +740,6 @@ const Sales: React.FC<SalesProps> = ({ darkMode, className = "", currentUser, us
                   />
                 </div>
               </div>
-
-              <div className={styles.formGroup}>
-                <label className={styles.checkboxLabel}>
-                  <input
-                    type="checkbox"
-                    id="statusFechado"
-                    name="statusFechado"
-                    checked={formData.statusFechado}
-                    onChange={handleFormChange}
-                    disabled={submitting}
-                  />
-                  <span>Status Fechado</span>
-                </label>
-              </div>
-
               <div className={styles.formGroup}>
                 <label htmlFor="comments">Comentário</label>
                 <textarea
@@ -788,7 +753,6 @@ const Sales: React.FC<SalesProps> = ({ darkMode, className = "", currentUser, us
                   className={darkMode ? styles.dark : ''}
                 />
               </div>
-
               <div className={styles.modalActions}>
                 <button
                   type="button"

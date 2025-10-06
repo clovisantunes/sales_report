@@ -189,18 +189,12 @@ const App: React.FC = () => {
       <Login 
         onLogin={handleLogin}
         darkMode={darkMode}
-        appName="Relatorio de Vendas"
+        appName="Relatorio de Visitas"
       />
     );
   }
 
-  console.log('👤 [APP RENDER] Dados do usuário para Navbar:', {
-    name: user?.name,
-    lastName: user?.lastName,
-    email: user?.email,
-    profilePhoto: user?.profilePhoto,
-    initials: user?.initials
-  });
+
 
   return (
     <div className={darkMode ? 'dark-theme' : ''}>
@@ -213,7 +207,7 @@ const App: React.FC = () => {
           initials: user?.initials || 'US' 
         }}
         onLogout={handleLogout}
-        appName="Relatorio de Vendas"
+        appName="Relatorio de Visitas"
         darkMode={darkMode}
         onDarkModeToggle={handleDarkModeToggle}
       />
@@ -227,7 +221,7 @@ const App: React.FC = () => {
       />
 
       <div style={{ 
-        marginLeft: sidebarExpanded ? '250px' : '70px',
+        marginLeft: sidebarExpanded ? '200px' : '70px',
         transition: 'margin-left 0.3s ease',
         minHeight: '100vh',
         padding: '20px',

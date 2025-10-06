@@ -23,7 +23,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   const [currentTime, setCurrentTime] = useState(new Date());
 
   const menuItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: FiHome },
+    { id: 'dashboard', label: 'Inicio', icon: FiHome },
     { id: 'sales', label: 'Vendas', icon: FiDollarSign },
     { id: 'customers', label: 'Clientes', icon: FiUsers },
     { id: 'products', label: 'Produtos', icon: FiPackage },
