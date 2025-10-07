@@ -150,12 +150,7 @@ const Sales: React.FC<SalesProps> = ({ darkMode, className = "", currentUser, us
     setClickedSale(null);
   };
 
-  const getTypeLabel = (type: string) => {
-    const labels = {
-      'Em negociação': 'Em negociação'
-    };
-    return labels[type as keyof typeof labels] || type;
-  };
+ 
 
   const getContactMethodLabel = (method: string) => {
     const labels = {
