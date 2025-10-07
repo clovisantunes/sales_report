@@ -48,10 +48,15 @@ const SaleDetailsModal: React.FC<SaleDetailsModalProps> = ({
               <span className={styles.label}>Empresa:</span>
               <span className={styles.value}>{sale.companyName}</span>
             </div>
-            {sale.cnpj && (
+            {sale.cnpj ? (
               <div className={styles.detailItem}>
                 <span className={styles.label}>CNPJ:</span>
                 <span className={styles.value}>{sale.cnpj}</span>
+              </div>
+            ) : (
+              <div className={styles.detailItem}>
+               <span className={styles.label}>CNPJ:</span>
+               <span className={styles.value}>Não informado</span>
               </div>
             )}
             {sale.lifes && sale.lifes > 0 && (
