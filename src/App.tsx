@@ -7,8 +7,9 @@ import Dashboard from './Components/Dashboard';
 import Sales from './Components/Sales';
 import Customers from './Components/Customers';
 import Products from './Components/Products';
+import Prospections from './Components/Prospections';
 import { authService } from './services/AuthService/authService';
-import type {  LoginData } from './types/Auth';
+import type { LoginData } from './types/Auth';
 import Users from './Components/Users';
 import { userService } from './services/userService/userService';
 
@@ -154,6 +155,8 @@ const App: React.FC = () => {
         return <Customers darkMode={darkMode} />;
       case 'products':
         return <Products darkMode={darkMode} isAdmin={user?.isAdmin} />;
+      case 'prospections': 
+        return <Prospections darkMode={darkMode} currentUser={user} users={users} />;
       case 'users':
         return <Users darkMode={darkMode} />;
       default:
@@ -193,8 +196,6 @@ const App: React.FC = () => {
       />
     );
   }
-
-
 
   return (
     <div className={darkMode ? 'dark-theme' : ''}>

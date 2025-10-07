@@ -101,7 +101,7 @@ const Dashboard: React.FC<DashboardProps> = ({ darkMode, className = "", users =
   
   const vendasMesAtual = vendasFechadas.filter(sale => {
     try {
-      const [ mes, ano] = sale.date.split('/').map(Number);
+      const [ _, mes, ano] = sale.date.split('/').map(Number);
       return mes === mesAtual && ano === anoAtual;
     } catch (error) {
       console.error('Erro ao processar data:', sale.date);
@@ -118,7 +118,7 @@ const Dashboard: React.FC<DashboardProps> = ({ darkMode, className = "", users =
 
   const vendasMesAnterior = vendasFechadas.filter(sale => {
     try {
-      const [ mes, ano] = sale.date.split('/').map(Number);
+      const [ _, mes, ano] = sale.date.split('/').map(Number);
       return mes === mesAnterior && ano === anoAnterior;
     } catch {
       return false;
@@ -138,7 +138,7 @@ const Dashboard: React.FC<DashboardProps> = ({ darkMode, className = "", users =
   const vendasUltimos6Meses = ultimos6Meses.map(({ mes, ano }) => {
     const count = vendasFechadas.filter(sale => {
       try {
-        const [ saleMes, saleAno] = sale.date.split('/').map(Number);
+        const [ _, saleMes, saleAno] = sale.date.split('/').map(Number);
         return saleMes === mes && saleAno === ano;
       } catch {
         return false;
@@ -177,7 +177,7 @@ const calcularDadosGrafico = (sales: Sale[]): DadosGrafico => {
       if (sale.stage !== 'finalizado') return false;
       
       try {
-        const [ saleMes, saleAno] = sale.date.split('/').map(Number);
+        const [ _, saleMes, saleAno] = sale.date.split('/').map(Number);
         return saleMes === mesNumero && saleAno === ano;
       } catch {
         return false;
