@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { FiPlus, FiX, FiEdit2, FiTrash2 } from 'react-icons/fi';
+import React, { useState, useEffect, useRef } from 'react';
+import { FiPlus, FiX, FiEdit2, FiTrash2, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 import type { Sale, SalesFilters } from '../../types/Sales';
 import { salesService } from '../../services/SalesService/SalesService';
 import { productsService } from '../../services/ProductService/ProductService';
 import type { Product } from '../../types/Products';
 import styles from './styles.module.scss';
 import ExportButton from '../ExportButton';
+import SaleDetailsModal from '../SaleDetailsModal';
 
 interface SalesProps {
   darkMode: boolean;
@@ -22,6 +23,14 @@ const Sales: React.FC<SalesProps> = ({ darkMode, className = "", currentUser, us
   const [showModal, setShowModal] = useState(false);
   const [editingSale, setEditingSale] = useState<Sale | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(20);
+  const [hoveredSale, setHoveredSale] = useState<Sale | null>(null);
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
+  const [hoverPosition, setHoverPosition] = useState({ x: 0, y: 0 });
+  const hoverTimeoutRef = useRef<number | null>(null);
+  const [clickedSale, setClickedSale] = useState<Sale | null>(null);
+  const [showClickedModal, setShowClickedModal] = useState(false);
 
   const [formData, setFormData] = useState({
     date: new Date().toLocaleDateString('pt-BR'),
@@ -53,11 +62,10 @@ const Sales: React.FC<SalesProps> = ({ darkMode, className = "", currentUser, us
     try {
       setLoading(true);
       const salesData = await salesService.getSales();
-      // Ordenar vendas por data (mais recente primeiro)
       const sortedSales = salesData.sort((a, b) => {
         const dateA = new Date(a.date.split('/').reverse().join('-'));
         const dateB = new Date(b.date.split('/').reverse().join('-'));
-        return dateB.getTime() - dateA.getTime(); // Mais recente primeiro
+        return dateB.getTime() - dateA.getTime();
       });
       setSales(sortedSales);
     } catch (error) {
@@ -74,6 +82,72 @@ const Sales: React.FC<SalesProps> = ({ darkMode, className = "", currentUser, us
     } catch (error) {
       console.error('Erro ao carregar produtos:', error);
     }
+  };
+
+  // Funções de paginação
+  const goToNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const goToPrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const goToPage = (pageNumber: number) => {
+    setCurrentPage(pageNumber);
+  };
+
+  // Funções de hover
+  const handleMouseEnter = (sale: Sale, event: React.MouseEvent) => {
+    const rect = event.currentTarget.getBoundingClientRect();
+    setHoverPosition({
+      x: rect.left + rect.width / 2,
+      y: rect.top
+    });
+
+    hoverTimeoutRef.current = window.setTimeout(() => {
+      setHoveredSale(sale);
+      setShowDetailsModal(true);
+    }, 2000);
+  };
+
+  const handleMouseLeave = () => {
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
+      hoverTimeoutRef.current = null;
+    }
+    setShowDetailsModal(false);
+    setHoveredSale(null);
+  };
+
+  const handleCloseDetailsModal = () => {
+    setShowDetailsModal(false);
+    setHoveredSale(null);
+  };
+
+  // Funções de clique
+  const handleRowClick = (sale: Sale, event: React.MouseEvent) => {
+    if ((event.target as HTMLElement).closest('button')) {
+      return;
+    }
+
+    const rect = event.currentTarget.getBoundingClientRect();
+    setHoverPosition({
+      x: rect.left + rect.width / 2,
+      y: rect.top
+    });
+    
+    setClickedSale(sale);
+    setShowClickedModal(true);
+  };
+
+  const handleCloseClickedModal = () => {
+    setShowClickedModal(false);
+    setClickedSale(null);
   };
 
   const getTypeLabel = (type: string) => {
@@ -135,10 +209,12 @@ const Sales: React.FC<SalesProps> = ({ darkMode, className = "", currentUser, us
 
   const handleFilterChange = (key: keyof SalesFilters, value: string) => {
     setFilters(prev => ({ ...prev, [key]: value }));
+    setCurrentPage(1);
   };
 
   const clearFilters = () => {
     setFilters({});
+    setCurrentPage(1);
   };
 
   const handleAddSale = () => {
@@ -283,6 +359,12 @@ const Sales: React.FC<SalesProps> = ({ darkMode, className = "", currentUser, us
     return true;
   });
 
+  // Cálculos de paginação
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentSales = filteredSales.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(filteredSales.length / itemsPerPage);
+
   const getUserName = (userId: string, sale?: Sale) => {
     if (sale?.sellerInfo?.fullName) {
       return sale.sellerInfo.fullName;
@@ -321,17 +403,6 @@ const Sales: React.FC<SalesProps> = ({ darkMode, className = "", currentUser, us
         <h3 className={`${styles.filtersTitle} ${darkMode ? styles.dark : ''}`}>Filtros</h3>
         <div className={styles.filtersGrid}>
           <div className={styles.filterGroup}>
-            <label>Tipo</label>
-            <select
-              value={filters.type || ''}
-              onChange={(e) => handleFilterChange('type', e.target.value)}
-            >
-              <option value="">Todos os tipos</option>
-              <option value="Em negociação">Em negociação</option>
-            </select>
-          </div>
-
-          <div className={styles.filterGroup}>
             <label>Forma de Contato</label>
             <select
               value={filters.contactMethod || ''}
@@ -352,10 +423,8 @@ const Sales: React.FC<SalesProps> = ({ darkMode, className = "", currentUser, us
               onChange={(e) => handleFilterChange('stage', e.target.value)}
             >
               <option value="">Todos os estágios</option>
-              <option value="prospecção">Prospecção</option>
               <option value="apresentada proposta">Apresentada proposta</option>
               <option value="negociar">Negociar</option>
-              <option value="fechar proposta">Fechar proposta</option>
               <option value="finalizado">Finalizado</option>
               <option value="pós venda">Pós venda</option>
               <option value="visita manutenção">Visita manutenção</option>
@@ -417,8 +486,16 @@ const Sales: React.FC<SalesProps> = ({ darkMode, className = "", currentUser, us
       </div>
 
       <div className={`${styles.salesTableContainer} ${darkMode ? styles.dark : ''}`}>
-        <div className={`${styles.tableTitle} ${darkMode ? styles.dark : ''}`}>
-          Registro ({filteredSales.length} resultados)
+        <div className={styles.tableHeader}>
+          <div className={`${styles.tableTitle} ${darkMode ? styles.dark : ''}`}>
+            Registro ({filteredSales.length} resultados)
+          </div>
+          
+          {filteredSales.length > 0 && (
+            <div className={`${styles.paginationInfo} ${darkMode ? styles.dark : ''}`}>
+              Mostrando {indexOfFirstItem + 1}-{Math.min(indexOfLastItem, filteredSales.length)} de {filteredSales.length}
+            </div>
+          )}
         </div>
 
         {loading ? (
@@ -452,67 +529,142 @@ const Sales: React.FC<SalesProps> = ({ darkMode, className = "", currentUser, us
             )}
           </div>
         ) : (
-          <table className={styles.salesTable}>
-            <thead>
-              <tr>
-                <th>Data</th>
-                <th>Nome da Empresa</th>
-                <th>Tipo</th>
-                <th>Estágio</th>
-                <th>Tipo de Produto</th>
-                <th>Resultado</th>
-                <th>Vendedor</th>
-                <th>Nome Contato</th>
-                <th>Forma de Contato</th>
-                <th>Primeiro Contato</th>
-                <th>Comentário</th>
-                <th>Ações</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredSales.map((sale) => (
-                <tr key={sale.id}>
-                  <td>{sale.date}</td>
-                  <td><strong>{sale.companyName}</strong></td>
-                  <td>{getTypeLabel(sale.type)}</td>
-                  <td>
-                    <span className={`${styles.stage} ${styles[sale.stage]}`}>
-                      {getStageLabel(sale.stage)}
-                    </span>
-                  </td>
-                  <td>{getProductTypeLabel(sale.productType)}</td>
-                  <td className={`${styles.resultado} ${styles[getResultClass(sale.stage)]} ${darkMode ? styles.dark : ''}`}>
-                    {getResultLabel(sale.stage)}
-                  </td>
-                  <td>{getUserName(sale.salesPerson, sale)}</td>
-                  <td>{sale.contactName}</td>
-                  <td>{getContactMethodLabel(sale.contactMethod)}</td>
-                  <td>{getContactMethodLabel(sale.contactMethod || 'email')}</td>
-                  <td className={styles.comments} title={sale.comments}>
-                    {sale.comments}
-                  </td>
-                  <td>
-                    <div className={styles.actionButtons}>
-                      <button
-                        className={`${styles.actionButton} ${styles.editButton} ${darkMode ? styles.dark : ''}`}
-                        onClick={() => handleEditSale(sale.id)}
-                      >
-                        <FiEdit2 size={14} />
-                      </button>
-                      <button
-                        className={`${styles.actionButton} ${styles.deleteButton} ${darkMode ? styles.dark : ''}`}
-                        onClick={() => handleDeleteSale(sale.id)}
-                      >
-                        <FiTrash2 size={14} />
-                      </button>
-                    </div>
-                  </td>
+          <>
+            <table className={styles.salesTable}>
+              <thead>
+                <tr>
+                  <th>Data</th>
+                  <th>Nome da Empresa</th>
+                  <th>Estágio</th>
+                  <th>Tipo de Produto</th>
+                  <th>Resultado</th>
+                  <th>Vendedor</th>
+                  <th>Ações</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {currentSales.map((sale) => (
+                  <tr 
+                    key={sale.id}
+                    onMouseEnter={(e) => handleMouseEnter(sale, e)}
+                    onMouseLeave={handleMouseLeave}
+                    onClick={(e) => handleRowClick(sale, e)}
+                    className={`${styles.saleRow} ${styles.clickable}`}
+                  >
+                    <td>{sale.date}</td>
+                    <td><strong>{sale.companyName}</strong></td>
+                    <td>
+                      <span className={`${styles.stage} ${styles[sale.stage]}`}>
+                        {getStageLabel(sale.stage)}
+                      </span>
+                    </td>
+                    <td>{getProductTypeLabel(sale.productType)}</td>
+                    <td className={`${styles.resultado} ${styles[getResultClass(sale.stage)]} ${darkMode ? styles.dark : ''}`}>
+                      {getResultLabel(sale.stage)}
+                    </td>
+                    <td>{getUserName(sale.salesPerson, sale)}</td>
+                    
+                    <td>
+                      <div className={styles.actionButtons}>
+                        <button
+                          className={`${styles.actionButton} ${styles.editButton} ${darkMode ? styles.dark : ''}`}
+                          onClick={() => handleEditSale(sale.id)}
+                        >
+                          <FiEdit2 size={14} />
+                        </button>
+                        <button
+                          className={`${styles.actionButton} ${styles.deleteButton} ${darkMode ? styles.dark : ''}`}
+                          onClick={() => handleDeleteSale(sale.id)}
+                        >
+                          <FiTrash2 size={14} />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+
+            {totalPages > 1 && (
+              <div className={`${styles.pagination} ${darkMode ? styles.dark : ''}`}>
+                <button
+                  className={`${styles.paginationButton} ${currentPage === 1 ? styles.disabled : ''}`}
+                  onClick={goToPrevPage}
+                  disabled={currentPage === 1}
+                >
+                  <FiChevronLeft size={16} />
+                  Anterior
+                </button>
+
+                <div className={styles.paginationNumbers}>
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                    <button
+                      key={page}
+                      className={`${styles.pageNumber} ${currentPage === page ? styles.active : ''}`}
+                      onClick={() => goToPage(page)}
+                    >
+                      {page}
+                    </button>
+                  ))}
+                </div>
+
+                <button
+                  className={`${styles.paginationButton} ${currentPage === totalPages ? styles.disabled : ''}`}
+                  onClick={goToNextPage}
+                  disabled={currentPage === totalPages}
+                >
+                  Próxima
+                  <FiChevronRight size={16} />
+                </button>
+              </div>
+            )}
+          </>
         )}
       </div>
+
+      {showDetailsModal && hoveredSale && (
+        <div 
+          className={styles.detailsModalWrapper}
+          style={{
+            position: 'fixed',
+            top: hoverPosition.y,
+            left: hoverPosition.x,
+            zIndex: 1000
+          }}
+        >
+          <SaleDetailsModal
+            sale={hoveredSale}
+            darkMode={darkMode}
+            onClose={handleCloseDetailsModal}
+            getUserName={getUserName}
+            getContactMethodLabel={getContactMethodLabel}
+            getProductTypeLabel={getProductTypeLabel}
+            getStageLabel={getStageLabel}
+          />
+        </div>
+      )}
+
+      {showClickedModal && clickedSale && (
+        <div 
+          className={styles.detailsModalWrapper}
+          style={{
+            position: 'fixed',
+            top: hoverPosition.y,
+            left: hoverPosition.x,
+            zIndex: 1000
+          }}
+        >
+          <SaleDetailsModal
+            sale={clickedSale}
+            darkMode={darkMode}
+            onClose={handleCloseClickedModal}
+            getUserName={getUserName}
+            getContactMethodLabel={getContactMethodLabel}
+            getProductTypeLabel={getProductTypeLabel}
+            getStageLabel={getStageLabel}
+          />
+        </div>
+      )}
 
       {showModal && (
         <div className={`${styles.modalOverlay} ${darkMode ? styles.dark : ''}`}>
@@ -673,8 +825,6 @@ const Sales: React.FC<SalesProps> = ({ darkMode, className = "", currentUser, us
                     <option value="telefone">Ligação</option>
                   </select>
                 </div>
-
-                
               </div>
 
               <div className={styles.formGroup}>

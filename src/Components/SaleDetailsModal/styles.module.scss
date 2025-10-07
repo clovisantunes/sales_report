@@ -1,0 +1,321 @@
+@import '../../Styles/theme.scss';
+
+.detailsModal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 500px;
+  max-width: 90vw;
+  max-height: 80vh;
+  background: $color-on-white-bg-light;
+  border-radius: 12px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  z-index: 1001;
+  border: 2px solid $color-primary-dark-light;
+  animation: modalFadeIn 0.3s ease-out;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+
+  &.dark {
+    background: $color-card-bg-dark;
+    border-color: $color-primary-dark-dark;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+  }
+
+  .modalHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px;
+    border-bottom: 1px solid $color-primary-dark-light;
+    background: $color-primary-light-light;
+    flex-shrink: 0;
+
+    .dark & {
+      border-bottom-color: $color-primary-dark-dark;
+      background: $color-primary-light-dark;
+    }
+
+    .modalTitle {
+      font-size: $font-size-text-xl-light;
+      font-weight: 700;
+      color: $color-title-text-light;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+
+      .dark & {
+        color: $color-title-text-dark;
+      }
+    }
+
+    .closeButton {
+      background: none;
+      border: none;
+      color: $color-card-text-light;
+      cursor: pointer;
+      padding: 8px;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      .dark & {
+        color: $color-card-text-dark;
+      }
+
+      &:hover {
+        background: $color-primary-dark-light;
+        color: $color-white-light;
+        transform: scale(1.1);
+
+        .dark & {
+          background: $color-primary-dark-dark;
+        }
+      }
+    }
+  }
+
+  .modalContent {
+    padding: 24px;
+    overflow-y: auto;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .section {
+    .sectionTitle {
+      font-size: $font-size-text-lg-light;
+      font-weight: 600;
+      color: $color-title-text-light;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid $color-primary-dark-light;
+
+      .dark & {
+        color: $color-title-text-dark;
+        border-bottom-color: $color-primary-dark-dark;
+      }
+    }
+  }
+
+  .detailGrid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+
+    @media (min-width: 480px) {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .detailItem {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    .label {
+      font-size: $font-size-text-sm-light;
+      color: $color-card-text-light;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+
+      .dark & {
+        color: $color-card-text-dark;
+      }
+    }
+
+    .value {
+      font-size: $font-size-text-md-light;
+      color: $color-title-text-light;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 500;
+
+      .dark & {
+        color: $color-title-text-dark;
+      }
+
+      &.stage {
+        padding: 4px 12px;
+        border-radius: 20px;
+        background: $color-primary-light-light;
+        font-size: $font-size-text-sm-light;
+        font-weight: 600;
+        justify-content: center;
+
+        .dark & {
+          background: $color-primary-light-dark;
+        }
+      }
+
+      &.result {
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: $font-size-text-sm-light;
+        font-weight: 600;
+        justify-content: center;
+        text-align: center;
+
+        &.success {
+          background: #d1fae5;
+          color: #059669;
+          
+          .dark & {
+            background: #065f46;
+            color: #34d399;
+          }
+        }
+
+        &.error {
+          background: #fee2e2;
+          color: #dc2626;
+          
+          .dark & {
+            background: #7f1d1d;
+            color: #fca5a5;
+          }
+        }
+
+        &.warning {
+          background: #fef3c7;
+          color: #d97706;
+          
+          .dark & {
+            background: #78350f;
+            color: #fbbf24;
+          }
+        }
+      }
+    }
+  }
+
+  .comments {
+    background: $color-primary-light-light;
+    padding: 16px;
+    border-radius: 8px;
+    font-size: $font-size-text-md-light;
+    color: $color-card-text-light;
+    line-height: 1.5;
+    border-left: 4px solid $color-bg-button-light;
+
+    .dark & {
+      background: $color-primary-light-dark;
+      color: $color-card-text-dark;
+      border-left-color: $color-bg-button-dark;
+    }
+  }
+
+  .modalActions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: auto;
+    padding-top: 20px;
+    border-top: 1px solid $color-primary-dark-light;
+    flex-shrink: 0;
+
+    .dark & {
+      border-top-color: $color-primary-dark-dark;
+    }
+
+    .closeActionButton {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      border: 1px solid $color-primary-dark-light;
+      background: $color-white-light;
+      color: $color-text-light;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: $font-size-text-md-light;
+      font-weight: 500;
+
+      &:hover {
+        background: $color-primary-dark-light;
+        color: $color-white-light;
+        transform: translateY(-1px);
+      }
+
+      &.dark {
+        background: $color-primary-light-dark;
+        border-color: $color-primary-dark-dark;
+        color: $color-text-dark;
+
+        &:hover {
+          background: $color-primary-dark-dark;
+          color: $color-white-light;
+        }
+      }
+    }
+  }
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+// Overlay para o modal
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &.dark {
+    background: rgba(0, 0, 0, 0.7);
+  }
+}
+
+// Para o modal de hover (mantém o comportamento original)
+.detailsModal.hoverModal {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  animation: slideDown 0.3s ease-out;
+
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateX(-50%) translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+  }
+}
+
+.detailsModalWrapper {
+  pointer-events: none;
+  
+  > div {
+    pointer-events: auto;
+  }
+}

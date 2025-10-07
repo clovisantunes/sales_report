@@ -13,6 +13,7 @@ import {
 import type { SidebarProps } from '../../types/Sidebar';
 import styles from './styles.module.scss';
 
+
 const Sidebar: React.FC<SidebarProps> = ({ 
   isExpanded, 
   onToggle, 
@@ -28,7 +29,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     { id: 'sales', label: 'Vendas', icon: FiDollarSign },
     { id: 'customers', label: 'Clientes', icon: FiUsers },
     { id: 'products', label: 'Produtos', icon: FiPackage },
-    { id: 'prospections', label: 'Prospecções', icon: FiTrendingUp }, // Novo item
+    { id: 'prospections', label: 'Prospecções', icon: FiTrendingUp }, 
     { id: 'users', label: 'Usuários', icon: FiUser }, 
   ];
 

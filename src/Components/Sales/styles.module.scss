@@ -159,7 +159,7 @@
 
 .salesTableContainer {
   background: $color-on-white-bg-light;
-  padding: 25px;
+  padding: 15px;
   border-radius: 12px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   overflow-x: auto;
@@ -190,7 +190,7 @@
     background: $color-primary-light-light;
     color: $color-title-text-light;
     font-weight: 600;
-    padding: 15px 12px;
+    padding: 8px 4px;
     text-align: left;
     border-bottom: 2px solid $color-primary-dark-light;
     font-size: $font-size-text-md-light;
@@ -202,12 +202,31 @@
       border-bottom-color: $color-primary-dark-dark;
     }
   }
+.saleRow {
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background: $color-primary-light-light !important;
 
+    &.dark {
+      background: $color-primary-light-dark !important;
+    }
+  }
+
+  &.clickable {
+    cursor: pointer;
+    
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+  }
+}
   td {
     padding: 12px;
     border-bottom: 1px solid $color-primary-dark-light;
     color: $color-card-text-light;
-    font-size: $font-size-text-md-light;
+    font-size: $font-size-text-sm-light;
 
     &.dark {
       border-bottom-color: $color-primary-dark-dark;
@@ -834,5 +853,329 @@
   .salesHeader .addButton {
     width: 100%;
     justify-content: center;
+  }
+}
+// Estilos de Paginação
+.tableHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 15px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+.paginationInfo {
+  font-size: $font-size-text-sm-light;
+  color: $color-card-text-light;
+  font-weight: 500;
+  
+  &.dark {
+    color: $color-card-text-dark;
+  }
+}
+
+.pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 30px;
+  padding: 20px 0;
+  border-top: 1px solid $color-primary-dark-light;
+
+  &.dark {
+    border-top-color: $color-primary-dark-dark;
+  }
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 15px;
+  }
+}
+
+.paginationButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border: 1px solid $color-primary-dark-light;
+  background: $color-white-light;
+  color: $color-text-light;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: $font-size-text-sm-light;
+  font-weight: 500;
+  min-width: 100px;
+  justify-content: center;
+
+  &:hover:not(.disabled) {
+    background: $color-primary-light-light;
+    border-color: $color-bg-button-light;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  &.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: $color-primary-light-light;
+    
+    &:hover {
+      transform: none;
+      box-shadow: none;
+      background: $color-primary-light-light;
+      border-color: $color-primary-dark-light;
+    }
+  }
+
+  &.dark {
+    background: $color-primary-light-dark;
+    border-color: $color-primary-dark-dark;
+    color: $color-text-dark;
+
+    &:hover:not(.disabled) {
+      background: $color-primary-bg-dark;
+      border-color: $color-bg-button-dark;
+    }
+
+    &.disabled {
+      background: $color-primary-bg-dark;
+      
+      &:hover {
+        background: $color-primary-bg-dark;
+        border-color: $color-primary-dark-dark;
+      }
+    }
+  }
+}
+
+.paginationNumbers {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+
+  @media (max-width: 480px) {
+    gap: 4px;
+  }
+}
+
+.pageNumber {
+  padding: 8px 12px;
+  border: 1px solid $color-primary-dark-light;
+  background: $color-white-light;
+  color: $color-text-light;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: $font-size-text-sm-light;
+  font-weight: 500;
+  min-width: 40px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover:not(.active) {
+    background: $color-primary-light-light;
+    border-color: $color-bg-button-light;
+    transform: translateY(-1px);
+  }
+
+  &.active {
+    background: $color-bg-button-light;
+    color: $color-white-light;
+    border-color: $color-bg-button-light;
+    transform: scale(1.05);
+    box-shadow: 0 2px 8px rgba($color-bg-button-light, 0.3);
+  }
+
+  &.dark {
+    background: $color-primary-light-dark;
+    border-color: $color-primary-dark-dark;
+    color: $color-text-dark;
+
+    &:hover:not(.active) {
+      background: $color-primary-bg-dark;
+      border-color: $color-bg-button-dark;
+    }
+
+    &.active {
+      background: $color-bg-button-dark;
+      color: $color-white-light;
+      border-color: $color-bg-button-dark;
+      box-shadow: 0 2px 8px rgba($color-bg-button-dark, 0.3);
+    }
+  }
+
+  @media (max-width: 480px) {
+    padding: 6px 10px;
+    min-width: 36px;
+    height: 32px;
+    font-size: $font-size-text-sm-light;
+  }
+}
+
+.saleRow {
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background: $color-primary-light-light !important;
+
+    &.dark {
+      background: $color-primary-light-dark !important;
+    }
+  }
+
+  &.clickable {
+    cursor: pointer;
+    
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+  }
+}
+
+// Loading state específico para tabela
+.loadingState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  color: $color-card-text-light;
+
+  .loadingSpinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid $color-primary-light-light;
+    border-top: 3px solid $color-bg-button-light;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 15px;
+  }
+
+  &.dark {
+    color: $color-card-text-dark;
+
+    .loadingSpinner {
+      border-color: $color-primary-light-dark;
+      border-top-color: $color-bg-button-dark;
+    }
+  }
+}
+
+// Empty state específico para tabela
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+
+  .emptyStateIcon {
+    font-size: 48px;
+    margin-bottom: 15px;
+    color: $color-card-text-light;
+
+    &.dark {
+      color: $color-card-text-dark;
+    }
+  }
+
+  .emptyStateTitle {
+    font-size: $font-size-text-xl-light;
+    font-weight: 600;
+    color: $color-title-text-light;
+    margin-bottom: 10px;
+
+    &.dark {
+      color: $color-title-text-dark;
+    }
+  }
+
+  .emptyStateDescription {
+    color: $color-card-text-light;
+    margin-bottom: 20px;
+    font-size: $font-size-text-lg-light;
+
+    &.dark {
+      color: $color-card-text-dark;
+    }
+  }
+
+  .emptyStateButton {
+    background: $color-bg-button-light;
+    color: $color-white-light;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    &.dark {
+      background: $color-bg-button-dark;
+    }
+
+    &:hover {
+      background: $color-hover-text-light;
+      transform: translateY(-1px);
+
+      &.dark {
+        background: $color-hover-text-dark;
+      }
+    }
+  }
+}
+
+// Animação do spinner
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+// Responsividade para a tabela
+@media (max-width: 768px) {
+  .pagination {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .paginationNumbers {
+    order: -1;
+    margin-bottom: 10px;
+  }
+
+  .tableHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .paginationInfo {
+    align-self: flex-start;
+  }
+}
+
+@media (max-width: 480px) {
+  .paginationButton {
+    min-width: 80px;
+    padding: 8px 12px;
+    font-size: $font-size-text-sm-light;
+  }
+
+  .pageNumber {
+    min-width: 32px;
+    height: 32px;
+    padding: 4px 8px;
+    font-size: $font-size-text-sm-light;
   }
 }

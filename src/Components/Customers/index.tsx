@@ -202,15 +202,13 @@ const Customers: React.FC<CustomersProps> = ({ darkMode, className = "", users =
               value={filters.salesStatus || ''}
               onChange={(e) => handleFilterChange('salesStatus', e.target.value)}
             >
-              <option value="">Todos os status</option>
-              <option value="prospecção">Prospecção</option>
-              <option value="apresentada proposta">Proposta Apresentada</option>
-              <option value="negociar">Em Negociação</option>
-              <option value="fechar proposta">Fechar Proposta</option>
-              <option value="fechado">Fechado</option>
-              <option value="pós venda">Pós Venda</option>
-              <option value="visita manutenção">Visita Manutenção</option>
-              <option value="renegociar contrato">Renegociar Contrato</option>
+                 <option value="">Todos os estágios</option>
+              <option value="apresentada proposta">Apresentada proposta</option>
+              <option value="negociar">Negociar</option>
+              <option value="finalizado">Finalizado</option>
+              <option value="pós venda">Pós venda</option>
+              <option value="visita manutenção">Visita manutenção</option>
+              <option value="renegociar contrato">Renegociar contrato</option>
               <option value="perdida">Perdida</option>
             </select>
           </div>
@@ -308,7 +306,6 @@ const Customers: React.FC<CustomersProps> = ({ darkMode, className = "", users =
                   <th>Contato</th>
                   <th>Status</th>
                   <th>Status da Venda</th>
-                  <th>Último Contato</th>
                   <th>Vendedor</th>
                   <th>Ações</th>
                 </tr>
