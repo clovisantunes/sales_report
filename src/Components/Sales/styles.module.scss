@@ -1179,3 +1179,110 @@
     font-size: $font-size-text-sm-light;
   }
 }
+
+.searchContainer {
+  background: $color-on-white-bg-light;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+
+  &.dark {
+    background: $color-card-bg-dark;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  }
+}
+
+.searchGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  position: relative;
+  max-width: 400px;
+
+  label {
+    font-size: $font-size-text-md-light;
+    color: $color-title-text-light;
+    font-weight: 600;
+
+    &.dark {
+      color: $color-title-text-dark;
+    }
+  }
+
+  input {
+    padding: 12px 45px 12px 16px;
+    border: 1px solid $color-primary-dark-light;
+    border-radius: 8px;
+    background: $color-white-light;
+    color: $color-text-light;
+    font-size: $font-size-text-md-light;
+    transition: all 0.3s ease;
+    width: 100%;
+
+    &:focus {
+      outline: none;
+      border-color: $color-bg-button-light;
+      box-shadow: 0 0 0 3px rgba($color-bg-button-light, 0.1);
+    }
+
+    &.dark {
+      background: $color-primary-light-dark;
+      border-color: $color-primary-dark-dark;
+      color: $color-text-dark;
+
+      &:focus {
+        border-color: $color-bg-button-dark;
+        box-shadow: 0 0 0 3px rgba($color-bg-button-dark, 0.2);
+      }
+    }
+
+    &::placeholder {
+      color: $color-card-text-light;
+
+      .dark & {
+        color: $color-card-text-dark;
+      }
+    }
+  }
+
+  .clearSearch {
+    position: absolute;
+    right: 12px;
+    top: 38px;
+    background: none;
+    border: none;
+    color: $color-card-text-light;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover {
+      background: $color-primary-light-light;
+      color: $color-title-text-light;
+    }
+
+    .dark & {
+      color: $color-card-text-dark;
+
+      &:hover {
+        background: $color-primary-light-dark;
+        color: $color-title-text-dark;
+      }
+    }
+  }
+}
+
+.filtersContainer {
+  margin-bottom: 30px;
+}
+
+@media (max-width: 768px) {
+  .searchGroup {
+    max-width: 100%;
+  }
+}

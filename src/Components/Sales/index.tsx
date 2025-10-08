@@ -84,7 +84,7 @@ const Sales: React.FC<SalesProps> = ({ darkMode, className = "", currentUser, us
     }
   };
 
-  // Funções de paginação
+
   const goToNextPage = () => {
     if (currentPage < totalPages) {
       setCurrentPage(currentPage + 1);
@@ -101,7 +101,7 @@ const Sales: React.FC<SalesProps> = ({ darkMode, className = "", currentUser, us
     setCurrentPage(pageNumber);
   };
 
-  // Funções de hover
+
   const handleMouseEnter = (sale: Sale, event: React.MouseEvent) => {
     const rect = event.currentTarget.getBoundingClientRect();
     setHoverPosition({
@@ -129,7 +129,7 @@ const Sales: React.FC<SalesProps> = ({ darkMode, className = "", currentUser, us
     setHoveredSale(null);
   };
 
-  // Funções de clique
+
   const handleRowClick = (sale: Sale, event: React.MouseEvent) => {
     if ((event.target as HTMLElement).closest('button')) {
       return;
@@ -343,7 +343,12 @@ const Sales: React.FC<SalesProps> = ({ darkMode, className = "", currentUser, us
     }
   };
 
+const [searchTerm, setSearchTerm] = useState('');
+
   const filteredSales = sales.filter(sale => {
+    if (searchTerm && !sale.companyName.toLowerCase().includes(searchTerm.toLowerCase())) {
+    return false;
+  }
     if (filters.stage && sale.stage !== filters.stage) return false;
     if (filters.salesPerson && sale.salesPerson !== filters.salesPerson) return false;
     if (filters.productType && sale.productType !== filters.productType) return false;
@@ -351,10 +356,10 @@ const Sales: React.FC<SalesProps> = ({ darkMode, className = "", currentUser, us
     if (filters.contactMethod && sale.contactMethod !== filters.contactMethod) return false;
     if (filters.startDate && new Date(sale.date.split('/').reverse().join('-')) < new Date(filters.startDate)) return false;
     if (filters.endDate && new Date(sale.date.split('/').reverse().join('-')) > new Date(filters.endDate)) return false;
+    
     return true;
   });
 
-  // Cálculos de paginação
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentSales = filteredSales.slice(indexOfFirstItem, indexOfLastItem);
@@ -368,6 +373,11 @@ const Sales: React.FC<SalesProps> = ({ darkMode, className = "", currentUser, us
     const user = users.find(u => u.id === userId);
     return user ? `${user.name} ${user.lastName}` : userId;
   };
+
+const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  setSearchTerm(e.target.value);
+  setCurrentPage(1); 
+};
 
   return (
     <div className={`${styles.sales} ${darkMode ? styles.dark : ''} ${className}`}>
@@ -472,7 +482,28 @@ const Sales: React.FC<SalesProps> = ({ darkMode, className = "", currentUser, us
             />
           </div>
         </div>
-
+ <div className={`${styles.searchContainer} ${darkMode ? styles.dark : ''}`}>
+      <div className={styles.searchGroup}>
+        <label htmlFor="companySearch">Pesquisar por Empresa</label>
+        <input
+          type="text"
+          id="companySearch"
+          value={searchTerm}
+          onChange={handleSearchChange}
+          placeholder="Digite o nome da empresa..."
+          className={darkMode ? styles.dark : ''}
+        />
+        {searchTerm && (
+          <button
+            className={styles.clearSearch}
+            onClick={() => setSearchTerm('')}
+            aria-label="Limpar pesquisa"
+          >
+            <FiX size={16} />
+          </button>
+        )}
+      </div>
+    </div>
         <div className={styles.filterActions}>
           <button className={`${styles.clearButton} ${darkMode ? styles.dark : ''}`} onClick={clearFilters}>
             Limpar Filtros
