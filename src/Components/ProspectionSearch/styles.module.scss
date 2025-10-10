@@ -1,0 +1,206 @@
+@import '../../../src/Styles/theme.scss';
+
+.prospectionSearch {
+  margin-bottom: 20px;
+}
+
+.searchContainer {
+  position: relative;
+
+  label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: $font-size-text-md-light;
+    color: $color-title-text-light;
+    font-weight: 600;
+
+    .dark & {
+      color: $color-title-text-dark;
+    }
+  }
+}
+
+.searchInputWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  .searchIcon {
+    position: absolute;
+    left: 12px;
+    color: $color-card-text-light;
+    z-index: 2;
+
+    .dark & {
+      color: $color-card-text-dark;
+    }
+  }
+
+  input {
+    padding: 12px 45px 12px 40px;
+    border: 1px solid $color-primary-dark-light;
+    border-radius: 8px;
+    background: $color-white-light;
+    color: $color-text-light;
+    font-size: $font-size-text-md-light;
+    transition: all 0.3s ease;
+    width: 100%;
+    position: relative;
+
+    &:focus {
+      outline: none;
+      border-color: $color-bg-button-light;
+      box-shadow: 0 0 0 3px rgba($color-bg-button-light, 0.1);
+    }
+
+    &.dark {
+      background: $color-primary-light-dark;
+      border-color: $color-primary-dark-dark;
+      color: $color-text-dark;
+
+      &:focus {
+        border-color: $color-bg-button-dark;
+        box-shadow: 0 0 0 3px rgba($color-bg-button-dark, 0.2);
+      }
+    }
+
+    &::placeholder {
+      color: $color-card-text-light;
+
+      .dark & {
+        color: $color-card-text-dark;
+      }
+    }
+  }
+
+  .clearButton {
+    position: absolute;
+    right: 12px;
+    background: none;
+    border: none;
+    color: $color-card-text-light;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+
+    &:hover {
+      background: $color-primary-light-light;
+      color: $color-title-text-light;
+    }
+
+    .dark & {
+      color: $color-card-text-dark;
+
+      &:hover {
+        background: $color-primary-light-dark;
+        color: $color-title-text-dark;
+      }
+    }
+  }
+}
+
+.resultsContainer {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: $color-white-light;
+  border: 1px solid $color-primary-dark-light;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  max-height: 300px;
+  overflow-y: auto;
+  margin-top: 4px;
+
+  &.dark {
+    background: $color-card-bg-dark;
+    border-color: $color-primary-dark-dark;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  }
+}
+
+.loading, .noResults {
+  padding: 16px;
+  text-align: center;
+  color: $color-card-text-light;
+  font-size: $font-size-text-md-light;
+
+  .dark & {
+    color: $color-card-text-dark;
+  }
+}
+
+.resultsList {
+  .resultItem {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    border-bottom: 1px solid $color-primary-light-light;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    gap: 12px;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    &:hover {
+      background: $color-primary-light-light;
+
+      .dark & {
+        background: $color-primary-light-dark;
+      }
+    }
+
+    .resultContent {
+      flex: 1;
+    }
+
+    .companyName {
+      font-weight: 600;
+      color: $color-title-text-light;
+      margin-bottom: 4px;
+      font-size: $font-size-text-md-light;
+
+      .dark & {
+        color: $color-title-text-dark;
+      }
+    }
+
+    .contactInfo {
+      font-size: $font-size-text-sm-light;
+      color: $color-card-text-light;
+      margin-bottom: 4px;
+
+      .dark & {
+        color: $color-card-text-dark;
+      }
+    }
+
+    .notes {
+      font-size: $font-size-text-md-light;
+      color: $color-subtitle-text-light;
+      font-style: italic;
+
+      .dark & {
+        color: $color-subtitle-text-dark;
+      }
+    }
+
+    .selectIcon {
+      color: $color-bg-button-light;
+      flex-shrink: 0;
+
+      .dark & {
+        color: $color-bg-button-dark;
+      }
+    }
+  }
+}

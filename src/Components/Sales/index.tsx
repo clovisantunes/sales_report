@@ -7,6 +7,9 @@ import type { Product } from '../../types/Products';
 import styles from './styles.module.scss';
 import ExportButton from '../ExportButton';
 import SaleDetailsModal from '../SaleDetailsModal';
+import ProspectionSearch from '../ProspectionSearch/index';
+import type { Prospection } from '../../types/Prospections';
+
 
 interface SalesProps {
   darkMode: boolean;
@@ -149,6 +152,23 @@ const Sales: React.FC<SalesProps> = ({ darkMode, className = "", currentUser, us
     setShowClickedModal(false);
     setClickedSale(null);
   };
+  const handleProspectionSelect = (prospection: Prospection) => {
+  setFormData(prev => ({
+    ...prev,
+    company: prospection.companyName,
+    contactName: prospection.contactName,
+    contactEmail: prospection.contactEmail || '',
+    contatoEmail: prospection.contactEmail || '',
+    contatoTelefone: prospection.contactPhone || '',
+    contatoWhatsapp: prospection.contactPhone || '',
+    productType: prospection.productType,
+    comments: prospection.notes || '',
+    vendedor: prospection.assignedTo || currentUser?.id || '',
+    salesPerson: prospection.assignedTo || currentUser?.id || '',
+    lifes: 0 
+  }));
+};
+
 
  
 
@@ -709,6 +729,13 @@ const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
             </div>
 
             <form onSubmit={handleSubmit} className={styles.modalForm}>
+                {!editingSale && (
+          <ProspectionSearch
+            darkMode={darkMode}
+            onSelectProspection={handleProspectionSelect}
+            currentUser={currentUser}
+          />
+        )}
               <div className={styles.formRow}>
                 <div className={styles.formGroup}>
                   <label htmlFor="date">Data *</label>
