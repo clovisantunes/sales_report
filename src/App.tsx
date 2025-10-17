@@ -12,6 +12,11 @@ import { authService } from './services/AuthService/authService';
 import type { LoginData } from './types/Auth';
 import Users from './Components/Users';
 import { userService } from './services/userService/userService';
+import type { NotificationFormData, Notification } from './types/NotificationForm';
+import SendNotification from './Components/SendNotification';
+import { notificationService } from './services/NotificationService/notificationService';
+import NotificationDetail from './Components/NotificationDetail'; // Alterado aqui
+import NotificationsView from './Components/NotificationsView';
 
 const App: React.FC = () => {
   const [darkMode, setDarkMode] = useState(false);
@@ -21,6 +26,11 @@ const App: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
   const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [selectedNotification, setSelectedNotification] = useState<Notification | null>(null); 
+const [isNotificationsViewOpen, setIsNotificationsViewOpen] = useState(false);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -37,11 +47,7 @@ const App: React.FC = () => {
           const userProfile = await userService.getCurrentUser(currentUser.uid);
           
           const allUsers = await userService.getAllUsers();
-          setUsers(allUsers);
-          
-          console.log('👤 [APP] Perfil do usuário atual:', userProfile);
-          console.log('👥 [APP] Total de usuários carregados:', allUsers.length);
-          
+          setUsers(allUsers);          
           const userData: User = {
             id: currentUser.uid,
             name: userProfile?.name || currentUser.email?.split('@')[0] || 'Usuário',
@@ -54,6 +60,9 @@ const App: React.FC = () => {
             updatedAt: userProfile?.updatedAt ? new Date(userProfile.updatedAt) : new Date()  
           };
           setUser(userData);
+
+          const userNotifications = await notificationService.getUserNotifications(currentUser.uid);
+          setNotifications(userNotifications);
         }
       }
       
@@ -66,6 +75,21 @@ const App: React.FC = () => {
 
     checkAuth();
   }, []);
+
+  // Removido handleOpenNotificationsView e handleCloseNotificationsView
+
+  useEffect(() => {
+    if (user?.id) {
+      const unsubscribe = notificationService.subscribeToNotifications(
+        user.id, 
+        (newNotifications) => {
+          setNotifications(newNotifications);
+        }
+      );
+
+      return () => unsubscribe();
+    }
+  }, [user?.id]);
 
   const getInitials = (name?: string, lastName?: string): string => {
     if (!name) return 'US';
@@ -107,6 +131,10 @@ const App: React.FC = () => {
         
         setUser(userData);
         setIsAuthenticated(true);
+
+        const userNotifications = await notificationService.getUserNotifications(result.user.uid);
+        setNotifications(userNotifications);
+
         return true;
       } else {
         console.error('Erro no login:', result.error);
@@ -119,11 +147,73 @@ const App: React.FC = () => {
     }
   };
 
+  const handleSendNotification = async (data: NotificationFormData) => {
+    if (!user) return;
+
+    setIsLoading(true);
+    
+    try {
+      await notificationService.sendNotification(data, {
+        id: user.id,
+        name: `${user.name} ${user.lastName}`,
+        isAdmin: user.isAdmin
+      });
+      
+      alert('Notificação enviada com sucesso!');
+      setIsNotificationModalOpen(false);
+    } catch (error: any) {
+      alert(`Erro ao enviar notificação: ${error.message}`);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleNotificationClick = async (notification: Notification) => {
+    if (!user) return;
+
+    await notificationService.markAsRead(notification.id, user.id);
+    
+    setNotifications(prev => 
+      prev.map(n => 
+        n.id === notification.id ? { ...n, read: true } : n
+      )
+    );
+
+    setSelectedNotification(notification);
+  };
+
+  const handleOpenNotificationsView = () => {
+setIsNotificationsViewOpen(true);
+  }
+
+  const handleCloseNotificationsView = () => {
+  setIsNotificationsViewOpen(false);
+};
+  const handleMarkAllAsRead = async () => {
+    if (!user) return;
+
+    await notificationService.markAllAsRead(user.id);
+    
+    setNotifications(prev => 
+      prev.map(n => ({ ...n, read: true }))
+    );
+  };
+
+  const handleCloseNotificationDetail = () => {
+    setSelectedNotification(null);
+  };
+
+  const handleOpenNotificationModal = () => {
+    setIsNotificationModalOpen(true);
+  };
+
   const handleLogout = async () => {
     try {
       await authService.logout();
       setUser(null);
       setUsers([]); 
+      setNotifications([]);
+      setSelectedNotification(null); 
       setIsAuthenticated(false);
       setActiveSection('dashboard');
     } catch (error) {
@@ -200,25 +290,51 @@ const App: React.FC = () => {
   return (
     <div className={darkMode ? 'dark-theme' : ''}>
       <Navbar 
-        user={{
-          name: user?.name || 'Usuário',
-          lastName: user?.lastName || '',
-          email: user?.email || '',
-          avatar: user?.profilePhoto || '',
-          initials: user?.initials || 'US' 
-        }}
+        user={
+          user ?? {
+            id: '',
+            name: 'Usuário',
+            lastName: '',
+            email: '',
+            initials: 'US',
+            isAdmin: false,
+            profilePhoto: '',
+            createdAt: new Date(),
+            updatedAt: new Date()
+          }
+        }
         onLogout={handleLogout}
         appName="Relatorio de Visitas"
         darkMode={darkMode}
         onDarkModeToggle={handleDarkModeToggle}
+        notifications={notifications.map(n => ({ ...n, image: n.image ?? undefined }))}
+        onNotificationClick={handleNotificationClick} 
+        onMarkAllAsRead={handleMarkAllAsRead}
+                onNotificationsClick={handleOpenNotificationsView} 
       />
       
+      <NotificationDetail
+        isOpen={!!selectedNotification}
+        onClose={handleCloseNotificationDetail}
+        notification={selectedNotification}
+        onMarkAsRead={handleNotificationClick}
+      />
+      <NotificationsView
+  isOpen={isNotificationsViewOpen}
+  onClose={handleCloseNotificationsView}
+  notifications={notifications}
+  onNotificationClick={handleNotificationClick}
+  onMarkAllAsRead={handleMarkAllAsRead}
+/>
+
       <Sidebar 
         isExpanded={sidebarExpanded}
         onToggle={handleSidebarToggle}
         darkMode={darkMode}
         activeSection={activeSection}
+        user={user ?? undefined}
         onSectionChange={handleSectionChange}
+        onSendNotification={handleOpenNotificationModal}
       />
 
       <div style={{ 
@@ -230,6 +346,13 @@ const App: React.FC = () => {
       }}>
         {renderContent()}
       </div>
+
+      <SendNotification
+        isOpen={isNotificationModalOpen}
+        onClose={() => setIsNotificationModalOpen(false)}
+        onSend={handleSendNotification}
+        isLoading={isLoading}
+      />
     </div>
   );
 };

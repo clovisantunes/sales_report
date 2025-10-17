@@ -5,10 +5,8 @@ export interface SidebarProps {
   className?: string;
   activeSection: string;
   onSectionChange: (section: string) => void;
-}
-
-export interface MenuItem {
-  id: string;
-  label: string;
-  icon: React.ComponentType;
+  user?: {
+    isAdmin: boolean;
+  };
+  onSendNotification?: () => void;
 }
