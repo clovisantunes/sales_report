@@ -52,30 +52,6 @@ const Customers: React.FC<CustomersProps> = ({ darkMode, className = "", users =
     return salesPersonId;
   };
 
-  const getStatusLabel = (status: string) => {
-    const labels = {
-      'active': 'Ativo',
-      'inactive': 'Inativo',
-      'pending': 'Pendente'
-    };
-    return labels[status as keyof typeof labels] || status;
-  };
-
-  const getSalesStatusLabel = (status: string) => {
-    const labels = {
-      'prospecção': 'Prospecção',
-      'apresentada proposta': 'Proposta Apresentada',
-      'negociar': 'Em Negociação',
-      'fechar proposta': 'Fechar Proposta',
-      'fechado': 'Fechado',
-      'pós venda': 'Pós Venda',
-      'visita manutenção': 'Visita Manutenção',
-      'renegociar contrato': 'Renegociar Contrato',
-      'perdida': 'Perdida'
-    };
-    return labels[status as keyof typeof labels] || status;
-  };
-
   const getContactMethodLabel = (method: string) => {
     const labels = {
       'presencial': 'Presencial',
