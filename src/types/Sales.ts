@@ -19,8 +19,11 @@ export interface Sale {
   contatoTelefone?: string;
   contatoEmail?: string;
   contatoWhatsapp?: string;
-  contatoPresencial?: string; 
-    sellerInfo?: {
+  contatoPresencial?: string;
+  periodicidade: 'anual' | 'mensal';
+  valor: string;
+  
+  sellerInfo?: {
     name: string;
     lastName: string;
     email: string;

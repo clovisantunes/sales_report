@@ -10,7 +10,6 @@ import SaleDetailsModal from '../SaleDetailsModal';
 import ProspectionSearch from '../ProspectionSearch/index';
 import type { Prospection } from '../../types/Prospections';
 
-
 interface SalesProps {
   darkMode: boolean;
   className?: string;
@@ -53,7 +52,9 @@ const Sales: React.FC<SalesProps> = ({ darkMode, className = "", currentUser, us
     contatoTelefone: '',
     contatoEmail: '',
     contatoWhatsapp: '',
-    contatoPresencial: ''
+    contatoPresencial: '',
+    periodicidade: 'anual' as 'anual' | 'mensal',
+    valor: ''
   });
 
   useEffect(() => {
@@ -87,7 +88,6 @@ const Sales: React.FC<SalesProps> = ({ darkMode, className = "", currentUser, us
     }
   };
 
-
   const goToNextPage = () => {
     if (currentPage < totalPages) {
       setCurrentPage(currentPage + 1);
@@ -103,7 +103,6 @@ const Sales: React.FC<SalesProps> = ({ darkMode, className = "", currentUser, us
   const goToPage = (pageNumber: number) => {
     setCurrentPage(pageNumber);
   };
-
 
   const handleMouseEnter = (sale: Sale, event: React.MouseEvent) => {
     const rect = event.currentTarget.getBoundingClientRect();
@@ -132,7 +131,6 @@ const Sales: React.FC<SalesProps> = ({ darkMode, className = "", currentUser, us
     setHoveredSale(null);
   };
 
-
   const handleRowClick = (sale: Sale, event: React.MouseEvent) => {
     if ((event.target as HTMLElement).closest('button')) {
       return;
@@ -152,25 +150,23 @@ const Sales: React.FC<SalesProps> = ({ darkMode, className = "", currentUser, us
     setShowClickedModal(false);
     setClickedSale(null);
   };
+
   const handleProspectionSelect = (prospection: Prospection) => {
-  setFormData(prev => ({
-    ...prev,
-    company: prospection.companyName,
-    contactName: prospection.contactName,
-    contactEmail: prospection.contactEmail || '',
-    contatoEmail: prospection.contactEmail || '',
-    contatoTelefone: prospection.contactPhone || '',
-    contatoWhatsapp: prospection.contactPhone || '',
-    productType: prospection.productType,
-    comments: prospection.notes || '',
-    vendedor: prospection.assignedTo || currentUser?.id || '',
-    salesPerson: prospection.assignedTo || currentUser?.id || '',
-    lifes: 0 
-  }));
-};
-
-
- 
+    setFormData(prev => ({
+      ...prev,
+      company: prospection.companyName,
+      contactName: prospection.contactName,
+      contactEmail: prospection.contactEmail || '',
+      contatoEmail: prospection.contactEmail || '',
+      contatoTelefone: prospection.contactPhone || '',
+      contatoWhatsapp: prospection.contactPhone || '',
+      productType: prospection.productType,
+      comments: prospection.notes || '',
+      vendedor: prospection.assignedTo || currentUser?.id || '',
+      salesPerson: prospection.assignedTo || currentUser?.id || '',
+      lifes: 0 
+    }));
+  };
 
   const getContactMethodLabel = (method: string) => {
     const labels = {
@@ -252,7 +248,9 @@ const Sales: React.FC<SalesProps> = ({ darkMode, className = "", currentUser, us
       contatoTelefone: '',
       contatoEmail: '',
       contatoWhatsapp: '',
-      contatoPresencial: ''
+      contatoPresencial: '',
+      periodicidade: 'anual',
+      valor: ''
     });
     setShowModal(true);
   };
@@ -279,7 +277,9 @@ const Sales: React.FC<SalesProps> = ({ darkMode, className = "", currentUser, us
         contatoTelefone: sale.contatoTelefone || '',
         contatoEmail: sale.contatoEmail || '',
         contatoWhatsapp: sale.contatoWhatsapp || '',
-        contatoPresencial: sale.contatoPresencial || ''
+        contatoPresencial: sale.contatoPresencial || '',
+        periodicidade: sale.periodicidade || 'anual',
+        valor: sale.valor || ''
       });
       setShowModal(true);
     }
@@ -343,7 +343,9 @@ const Sales: React.FC<SalesProps> = ({ darkMode, className = "", currentUser, us
         contatoTelefone: formData.contatoTelefone,
         contatoEmail: formData.contatoEmail,
         contatoWhatsapp: formData.contatoWhatsapp,
-        contatoPresencial: formData.contatoPresencial
+        contatoPresencial: formData.contatoPresencial,
+        periodicidade: formData.periodicidade,
+        valor: formData.valor
       };
 
       if (editingSale) {
@@ -363,12 +365,12 @@ const Sales: React.FC<SalesProps> = ({ darkMode, className = "", currentUser, us
     }
   };
 
-const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
 
   const filteredSales = sales.filter(sale => {
     if (searchTerm && !sale.companyName.toLowerCase().includes(searchTerm.toLowerCase())) {
-    return false;
-  }
+      return false;
+    }
     if (filters.stage && sale.stage !== filters.stage) return false;
     if (filters.salesPerson && sale.salesPerson !== filters.salesPerson) return false;
     if (filters.productType && sale.productType !== filters.productType) return false;
@@ -394,10 +396,10 @@ const [searchTerm, setSearchTerm] = useState('');
     return user ? `${user.name} ${user.lastName}` : userId;
   };
 
-const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  setSearchTerm(e.target.value);
-  setCurrentPage(1); 
-};
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+    setCurrentPage(1); 
+  };
 
   return (
     <div className={`${styles.sales} ${darkMode ? styles.dark : ''} ${className}`}>
@@ -502,28 +504,28 @@ const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
             />
           </div>
         </div>
- <div className={`${styles.searchContainer} ${darkMode ? styles.dark : ''}`}>
-      <div className={styles.searchGroup}>
-        <label htmlFor="companySearch">Pesquisar por Empresa</label>
-        <input
-          type="text"
-          id="companySearch"
-          value={searchTerm}
-          onChange={handleSearchChange}
-          placeholder="Digite o nome da empresa..."
-          className={darkMode ? styles.dark : ''}
-        />
-        {searchTerm && (
-          <button
-            className={styles.clearSearch}
-            onClick={() => setSearchTerm('')}
-            aria-label="Limpar pesquisa"
-          >
-            <FiX size={16} />
-          </button>
-        )}
-      </div>
-    </div>
+        <div className={`${styles.searchContainer} ${darkMode ? styles.dark : ''}`}>
+          <div className={styles.searchGroup}>
+            <label htmlFor="companySearch">Pesquisar por Empresa</label>
+            <input
+              type="text"
+              id="companySearch"
+              value={searchTerm}
+              onChange={handleSearchChange}
+              placeholder="Digite o nome da empresa..."
+              className={darkMode ? styles.dark : ''}
+            />
+            {searchTerm && (
+              <button
+                className={styles.clearSearch}
+                onClick={() => setSearchTerm('')}
+                aria-label="Limpar pesquisa"
+              >
+                <FiX size={16} />
+              </button>
+            )}
+          </div>
+        </div>
         <div className={styles.filterActions}>
           <button className={`${styles.clearButton} ${darkMode ? styles.dark : ''}`} onClick={clearFilters}>
             Limpar Filtros
@@ -729,13 +731,14 @@ const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
             </div>
 
             <form onSubmit={handleSubmit} className={styles.modalForm}>
-                {!editingSale && (
-          <ProspectionSearch
-            darkMode={darkMode}
-            onSelectProspection={handleProspectionSelect}
-            currentUser={currentUser}
-          />
-        )}
+              {!editingSale && (
+                <ProspectionSearch
+                  darkMode={darkMode}
+                  onSelectProspection={handleProspectionSelect}
+                  currentUser={currentUser}
+                />
+              )}
+              
               <div className={styles.formRow}>
                 <div className={styles.formGroup}>
                   <label htmlFor="date">Data *</label>
@@ -805,18 +808,23 @@ const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
                 />
               </div>
 
-              <div className={styles.formGroup}>
-                <label htmlFor="lifes">Número de Vidas</label>
-                <input
-                  type="number"
-                  id="lifes"
-                  name="lifes"
-                  value={formData.lifes}
-                  onChange={handleFormChange}
-                  disabled={submitting}
-                  className={darkMode ? styles.dark : ''}
-                />
+              <div className={styles.formRow}>
+                <div className={styles.formGroup}>
+                  <label htmlFor="lifes">Número de Vidas</label>
+                  <input
+                    type="number"
+                    id="lifes"
+                    name="lifes"
+                    value={formData.lifes}
+                    onChange={handleFormChange}
+                    disabled={submitting}
+                    className={darkMode ? styles.dark : ''}
+                  />
+                </div>
+
+                
               </div>
+
 
               <div className={styles.formRow}>
                 <div className={styles.formGroup}>
@@ -858,6 +866,43 @@ const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
                     ))}
                   </select>
                 </div>
+                <div className={styles.formGroup}>
+                  <label htmlFor="periodicidade">Periodicidade</label>
+                  <select
+                    id="periodicidade"
+                    name="periodicidade"
+                    value={formData.periodicidade}
+                    onChange={handleFormChange}
+                    disabled={submitting}
+                    className={darkMode ? styles.dark : ''}
+                  >
+                    <option value="anual">Anual</option>
+                    <option value="mensal">Mensal</option>
+                  </select>
+                </div>
+                
+              <div className={styles.formGroup}>
+                <label htmlFor="valor">Valor (R$)</label>
+                <input
+                  type="text"
+                  id="valor"
+                  name="valor"
+                  value={formData.valor}
+                  onChange={handleFormChange}
+                  placeholder="Digite o valor"
+                  disabled={submitting}
+                  className={darkMode ? styles.dark : ''}
+                  onKeyPress={(e) => {
+                      if (!/[0-9,]/.test(e.key) && 
+                          e.key !== 'Backspace' && 
+                          e.key !== 'Delete' && 
+                          e.key !== 'Tab' && 
+                          e.key !== 'Enter') {
+                        e.preventDefault();
+                      }
+                    }}
+                />
+              </div>
               </div>
 
               <div className={styles.formRow}>

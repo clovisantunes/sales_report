@@ -37,6 +37,9 @@ class SalesService {
       contatoWhatsapp: sale.contatoWhatsapp || '',
       contatoPresencial: sale.contatoPresencial || '',
       
+      periodicidade: sale.periodicidade || 'anual',
+      valor: sale.valor || '',
+
       createdAt: sale.createdAt ? 
         this.parseDateToTimestamp(sale.createdAt) : 
         Timestamp.now(),
@@ -68,7 +71,8 @@ class SalesService {
       comments: data.comments || '',
       salesPerson: data.salesPerson,
       result: data.result || '',
-      
+      periodicidade: data.periodicidade || 'anual',
+      valor: data.valor || '',
       cnpj: data.cnpj || '',
       lifes: data.lifes || 0,
       
@@ -79,6 +83,7 @@ class SalesService {
       contatoWhatsapp: data.contatoWhatsapp || '',
       contatoPresencial: data.contatoPresencial || '',
       
+
       createdAt: data.createdAt?.toDate().toLocaleDateString('pt-BR') || new Date().toLocaleDateString('pt-BR'),
       updatedAt: data.updatedAt?.toDate().toLocaleDateString('pt-BR') || new Date().toLocaleDateString('pt-BR')
     };
@@ -180,7 +185,11 @@ class SalesService {
         contatoPresencial: sale.contatoPresencial || '',
         cnpj: sale.cnpj || 'N/A',
         lifes: sale.lifes || 0,
-        createdAt: new Date().toLocaleDateString('pt-BR')
+        
+        periodicidade: sale.periodicidade || 'anual',
+        valor: sale.valor || '',
+
+        createdAt: new Date().toLocaleDateString('pt-BR'),
       };
 
       console.log('📤 [SALES SERVICE] Dados validados:', validatedSale);
@@ -215,6 +224,10 @@ class SalesService {
         contatoPresencial: sale.contatoPresencial || '',
         cnpj: sale.cnpj || '',
         lifes: sale.lifes || 0,
+        
+        periodicidade: sale.periodicidade || 'anual',
+        valor: sale.valor || '',
+
         updatedAt: new Date().toLocaleDateString('pt-BR')
       };
 
@@ -247,6 +260,9 @@ class SalesService {
       if (sale.contatoWhatsapp !== undefined) updateData.contatoWhatsapp = sale.contatoWhatsapp || '';
       if (sale.contatoPresencial !== undefined) updateData.contatoPresencial = sale.contatoPresencial || '';
 
+       if (sale.periodicidade !== undefined) updateData.periodicidade = sale.periodicidade || 'anual';
+      if (sale.valor !== undefined) updateData.valor = sale.valor || '';
+      
       console.log('🔥 [SALES SERVICE] Dados para atualização no Firestore:', updateData);
 
       await updateDoc(docRef, updateData);
