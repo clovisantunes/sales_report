@@ -35,7 +35,10 @@ export const customerService = {
           contatoPresencial: data.contatoPresencial || '',
           createdAt: data.createdAt?.toDate?.().toLocaleDateString('pt-BR') || '',
           updatedAt: data.updatedAt?.toDate?.().toLocaleDateString('pt-BR') || '',
-          lifes: data.lifes || 0
+          lifes: data.lifes || 0,
+          periodicidade: data.periodicidade || '',
+          valor: data.valor || 0,
+          cnpj: data.cnpj || 'N/A'
         } as Sale;
       });
 
@@ -91,7 +94,10 @@ export const customerService = {
           contatoPresencial: data.contatoPresencial || '',
           createdAt: data.createdAt?.toDate?.().toLocaleDateString('pt-BR') || '',
           updatedAt: data.updatedAt?.toDate?.().toLocaleDateString('pt-BR') || '',
-          lifes: data.lifes || 0
+          lifes: data.lifes || 0,
+          periodicidade: data.periodicidade || '',
+          valor: data.valor || 0,
+          cnpj: data.cnpj || 'N/A'
         } as Sale;
       });
 
@@ -199,6 +205,8 @@ export const customerService = {
         contatoEmail: data.contatoEmail || '',
         contatoWhatsapp: data.contatoWhatsapp || '',
         contatoPresencial: data.contatoPresencial || '',
+        periodicidade: data.periodicidade || '',
+        valor: data.valor || 0,
         createdAt: data.createdAt?.toDate?.().toLocaleDateString('pt-BR') || '',
         updatedAt: data.updatedAt?.toDate?.().toLocaleDateString('pt-BR') || ''
       };
