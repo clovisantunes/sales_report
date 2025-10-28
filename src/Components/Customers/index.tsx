@@ -40,6 +40,18 @@ const Customers: React.FC<CustomersProps> = ({ darkMode, className = "", users =
     }
   };
 
+  // Função para obter o nome do vendedor pelo ID
+  const getSalesPersonName = (salesPersonId: string) => {
+    if (!users || users.length === 0) return salesPersonId;
+    
+    const user = users.find(u => u.id === salesPersonId);
+    if (user) {
+      return user.name || `${user.firstName} ${user.lastName}` || salesPersonId;
+    }
+    
+    return salesPersonId;
+  };
+
   const getStatusLabel = (status: string) => {
     const labels = {
       'active': 'Ativo',
@@ -118,6 +130,9 @@ const Customers: React.FC<CustomersProps> = ({ darkMode, className = "", users =
     try {
       console.log('💾 Salvando alterações:', editingCustomer);
       
+      // Aqui você precisa implementar a atualização real no serviço
+      // await customerService.updateCustomer(editingCustomer.id, editingCustomer);
+      
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       await loadCustomers();
@@ -133,12 +148,6 @@ const Customers: React.FC<CustomersProps> = ({ darkMode, className = "", users =
   const handleResetData = async () => {
     await loadCustomers();
     clearFilters();
-  };
-
-  const getUserName = (userId: string) => {
-    if (!users || users.length === 0) return userId;
-    const user = users.find(u => u.id === userId);
-    return user ? user.name : userId;
   };
 
   const hasContactInfo = (customer: Customer) => {
@@ -235,7 +244,9 @@ const Customers: React.FC<CustomersProps> = ({ darkMode, className = "", users =
             >
               <option value="">Todos os vendedores</option>
               {users && users.map(user => (
-                <option key={user.id} value={user.id}>{user.name}</option>
+                <option key={user.id} value={user.id}>
+                  {user.name || `${user.firstName} ${user.lastName}` || user.id}
+                </option>
               ))}
             </select>
           </div>
@@ -304,8 +315,6 @@ const Customers: React.FC<CustomersProps> = ({ darkMode, className = "", users =
                   <th>Cliente</th>
                   <th>Empresa</th>
                   <th>Contato</th>
-                  <th>Status</th>
-                  <th>Status da Venda</th>
                   <th>Vendedor</th>
                   <th>Ações</th>
                 </tr>
@@ -369,20 +378,10 @@ const Customers: React.FC<CustomersProps> = ({ darkMode, className = "", users =
                         <span className={styles.noContact}>Sem informações de contato</span>
                       )}
                     </td>
-                    <td>
-                      <span className={`${styles.status} ${styles[customer.status]} ${darkMode ? styles.dark : ''}`}>
-                        {getStatusLabel(customer.status)}
-                      </span>
-                    </td>
-                    <td>
-                      <span className={`${styles.salesStatus} ${styles[customer.salesStatus]}`}>
-                        {getSalesStatusLabel(customer.salesStatus)}
-                      </span>
-                    </td>
                   
                     <td>
                       <span className={styles.salesPerson}>
-                        {getUserName(customer.salesPerson)}
+                        {getSalesPersonName(customer.salesPerson)}
                       </span>
                     </td>
                     <td>
@@ -517,53 +516,6 @@ const Customers: React.FC<CustomersProps> = ({ darkMode, className = "", users =
                   </div>
                 </div>
               </div>
-
-              <div className={styles.formSection}>
-                <h3 className={styles.sectionTitle}>Status</h3>
-                <div className={styles.formRow}>
-                  <div className={styles.formGroup}>
-                    <label htmlFor="status">Status do Cliente</label>
-                    <select
-                      id="status"
-                      value={editingCustomer.status}
-                      onChange={(e) => setEditingCustomer({
-                        ...editingCustomer,
-                        status: e.target.value as 'active' | 'inactive' | 'pending'
-                      })}
-                      disabled={submitting}
-                      className={darkMode ? styles.dark : ''}
-                    >
-                      <option value="active">Ativo</option>
-                      <option value="inactive">Inativo</option>
-                      <option value="pending">Pendente</option>
-                    </select>
-                  </div>
-                  <div className={styles.formGroup}>
-                    <label htmlFor="salesStatus">Status da Venda</label>
-                    <select
-                      id="salesStatus"
-                      value={editingCustomer.salesStatus}
-                      onChange={(e) => setEditingCustomer({
-                        ...editingCustomer,
-                        salesStatus: e.target.value
-                      })}
-                      disabled={submitting}
-                      className={darkMode ? styles.dark : ''}
-                    >
-                      <option value="prospecção">Prospecção</option>
-                      <option value="apresentada proposta">Proposta Apresentada</option>
-                      <option value="negociar">Em Negociação</option>
-                      <option value="fechar proposta">Fechar Proposta</option>
-                      <option value="fechado">Fechado</option>
-                      <option value="pós venda">Pós Venda</option>
-                      <option value="visita manutenção">Visita Manutenção</option>
-                      <option value="renegociar contrato">Renegociar Contrato</option>
-                      <option value="perdida">Perdida</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-
               <div className={styles.formSection}>
                 <div className={styles.formGroup}>
                   <label htmlFor="notes">Observações</label>
