@@ -39,7 +39,7 @@ const Sales: React.FC<SalesProps> = ({ darkMode, className = "", currentUser, us
     company: '',
     type: 'Em negociação',
     contactName: '',
-    contactMethod: 'email' as 'presencial' | 'telefone' | 'email' | 'whatsapp',
+    contactMethod: 'presencial' as 'presencial' | 'telefone' | 'email' | 'whatsapp',
     stage: 'apresentada proposta' as 'prospecção' | 'apresentada proposta' | 'Primeira Visita' |  'negociar' | 'fechar proposta' | 'finalizado' | 'visita manutenção' | 'renegociar contrato' | 'perdida',
     productType: '',
     comments: '',
@@ -838,11 +838,12 @@ const Sales: React.FC<SalesProps> = ({ darkMode, className = "", currentUser, us
                     disabled={submitting}
                     className={darkMode ? styles.dark : ''}
                   >
+                    <option value="Primeira Visita">Primeira Visita</option>
                     <option value="apresentada proposta">Apresentada proposta</option>
                     <option value="negociar">Negociar</option>
                     <option value="fechar proposta">Fechar proposta</option>
                     <option value="finalizado">Finalizado</option>
-                    <option value="pós venda">Pós venda</option>
+
                     <option value="visita manutenção">Visita manutenção</option>
                     <option value="renegociar contrato">Renegociar contrato</option>
                     <option value="perdida">Perdida</option>
@@ -905,25 +906,25 @@ const Sales: React.FC<SalesProps> = ({ darkMode, className = "", currentUser, us
               </div>
               </div>
 
-              <div className={styles.formRow}>
-                <div className={styles.formGroup}>
-                  <label htmlFor="primeiroContato">Forma Primeiro Contato *</label>
-                  <select
-                    id="primeiroContato"
-                    name="primeiroContato"
-                    value={formData.contactMethod}
-                    onChange={handleFormChange}
-                    required
-                    disabled={submitting}
-                    className={darkMode ? styles.dark : ''}
-                  >
-                    <option value="presencial">Presencial</option>
-                    <option value="email">Email</option>
-                    <option value="whatsapp">WhatsApp</option>
-                    <option value="telefone">Ligação</option>
-                  </select>
-                </div>
-              </div>
+           <div className={styles.formRow}>
+  <div className={styles.formGroup}>
+    <label htmlFor="contactMethod">Forma de Contato *</label>
+    <select
+      id="contactMethod"
+      name="contactMethod"
+      value={formData.contactMethod}
+      onChange={handleFormChange}
+      required
+      disabled={submitting}
+      className={darkMode ? styles.dark : ''}
+    >
+      <option value="presencial">Presencial</option>
+      <option value="email">Email</option>
+      <option value="whatsapp">WhatsApp</option>
+      <option value="telefone">Ligação</option>
+    </select>
+  </div>
+</div>
 
               <div className={styles.formGroup}>
                 <label htmlFor="vendedor">Vendedor Responsável</label>
