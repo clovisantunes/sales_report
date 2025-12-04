@@ -5,7 +5,7 @@ export interface Sale {
   type: string;
   contactName: string;
   contactMethod: 'presencial' | 'telefone' | 'email' | 'whatsapp';
-  stage: 'prospecção' | 'apresentada proposta' | 'negociar' | 'fechar proposta' | 'finalizado' | 'fechado' | 'pós venda' | 'visita manutenção' | 'renegociar contrato' | 'perdida';
+  stage: 'Primeira Visita' |'prospecção' | 'apresentada proposta' | 'negociar' | 'fechar proposta' | 'finalizado' | 'fechado' |  'visita manutenção' | 'renegociar contrato' | 'perdida';
   productType: string;
   comments: string;
   salesPerson: string;

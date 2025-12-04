@@ -40,8 +40,7 @@ const Sales: React.FC<SalesProps> = ({ darkMode, className = "", currentUser, us
     type: 'Em negociação',
     contactName: '',
     contactMethod: 'email' as 'presencial' | 'telefone' | 'email' | 'whatsapp',
-    primeiroContato: 'email' as 'presencial' | 'telefone' | 'email' | 'whatsapp',
-    stage: 'apresentada proposta' as 'prospecção' | 'apresentada proposta' | 'negociar' | 'fechar proposta' | 'finalizado' | 'pós venda' | 'visita manutenção' | 'renegociar contrato' | 'perdida',
+    stage: 'apresentada proposta' as 'prospecção' | 'apresentada proposta' | 'Primeira Visita' |  'negociar' | 'fechar proposta' | 'finalizado' | 'visita manutenção' | 'renegociar contrato' | 'perdida',
     productType: '',
     comments: '',
     salesPerson: currentUser?.id || '',
@@ -184,7 +183,7 @@ const Sales: React.FC<SalesProps> = ({ darkMode, className = "", currentUser, us
       'negociar': 'Negociar',
       'fechar proposta': 'Fechar proposta',
       'finalizado': 'Finalizado',
-      'pós venda': 'Pós venda',
+      'Primeira Visita': 'Primeira Visita',
       'visita manutenção': 'Visita manutenção',
       'renegociar contrato': 'Renegociar contrato',
       'perdida': 'Perdida'
@@ -235,8 +234,7 @@ const Sales: React.FC<SalesProps> = ({ darkMode, className = "", currentUser, us
       company: '',
       type: 'Em negociação',
       contactName: '',
-      contactMethod: 'email',
-      primeiroContato: 'email',
+      contactMethod: 'presencial',
       stage: 'apresentada proposta',
       cnpj: '',
       productType: '',
@@ -257,6 +255,7 @@ const Sales: React.FC<SalesProps> = ({ darkMode, className = "", currentUser, us
 
   const handleEditSale = (saleId: string) => {
     const sale = sales.find(s => s.id === saleId);
+
     if (sale) {
       setEditingSale(sale);
       setFormData({
@@ -265,7 +264,6 @@ const Sales: React.FC<SalesProps> = ({ darkMode, className = "", currentUser, us
         type: sale.type,
         contactName: sale.contactName,
         contactMethod: sale.contactMethod,
-        primeiroContato: sale.contactMethod || 'email',
         stage: sale.stage === "fechado" ? "finalizado" : sale.stage,
         lifes: sale.lifes,
         productType: sale.productType,
@@ -324,13 +322,15 @@ const Sales: React.FC<SalesProps> = ({ darkMode, className = "", currentUser, us
     setSubmitting(true);
 
     try {
+
+       const contactMethod = formData.contactMethod || 'presencial';
+
       const saleData = {
         date: formData.date,
         companyName: formData.company,
         type: 'Em negociação',
         contactName: formData.contactName,
-        contactMethod: formData.contactMethod,
-        primeiroContato: formData.primeiroContato,
+        contactMethod: contactMethod,
         stage: formData.stage,
         cnpj: formData.cnpj,
         productType: formData.productType,
@@ -450,10 +450,10 @@ const Sales: React.FC<SalesProps> = ({ darkMode, className = "", currentUser, us
               onChange={(e) => handleFilterChange('stage', e.target.value)}
             >
               <option value="">Todos os estágios</option>
+              <option value="Primeira Visita">Primeira Visita</option>
               <option value="apresentada proposta">Apresentada proposta</option>
               <option value="negociar">Negociar</option>
               <option value="finalizado">Finalizado</option>
-              <option value="pós venda">Pós venda</option>
               <option value="visita manutenção">Visita manutenção</option>
               <option value="renegociar contrato">Renegociar contrato</option>
               <option value="perdida">Perdida</option>
@@ -911,7 +911,7 @@ const Sales: React.FC<SalesProps> = ({ darkMode, className = "", currentUser, us
                   <select
                     id="primeiroContato"
                     name="primeiroContato"
-                    value={formData.primeiroContato}
+                    value={formData.contactMethod}
                     onChange={handleFormChange}
                     required
                     disabled={submitting}

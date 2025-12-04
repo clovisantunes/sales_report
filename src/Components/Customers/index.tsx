@@ -40,7 +40,6 @@ const Customers: React.FC<CustomersProps> = ({ darkMode, className = "", users =
     }
   };
 
-  // Função para obter o nome do vendedor pelo ID
   const getSalesPersonName = (salesPersonId: string) => {
     if (!users || users.length === 0) return salesPersonId;
     
@@ -106,8 +105,6 @@ const Customers: React.FC<CustomersProps> = ({ darkMode, className = "", users =
     try {
       console.log('💾 Salvando alterações:', editingCustomer);
       
-      // Aqui você precisa implementar a atualização real no serviço
-      // await customerService.updateCustomer(editingCustomer.id, editingCustomer);
       
       await new Promise(resolve => setTimeout(resolve, 1000));
       
