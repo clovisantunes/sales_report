@@ -189,27 +189,6 @@ class SalesService {
 
   async updateSale(saleId: string, sale: Partial<Omit<Sale, 'id' | 'createdAt'>>): Promise<void> {
     try {
-      
-      const saleData = {
-        ...sale,
-        comments: sale.comments || '',
-        result: sale.result || '',
-        statusFechado: sale.statusFechado || false,
-        vendedor: sale.vendedor || '',
-        contatoTelefone: sale.contatoTelefone || '',
-        contatoEmail: sale.contatoEmail || '',
-        contatoWhatsapp: sale.contatoWhatsapp || '',
-        contatoPresencial: sale.contatoPresencial || '',
-        cnpj: sale.cnpj || '',
-        lifes: sale.lifes || 0,
-        
-        periodicidade: sale.periodicidade || 'anual',
-        valor: sale.valor || '',
-
-        updatedAt: new Date().toLocaleDateString('pt-BR')
-      };
-
-
       const docRef = doc(db, 'sales', saleId);
       
       const updateData: any = {
