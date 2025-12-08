@@ -21,16 +21,6 @@ const CustomerFiltersComponent: React.FC<CustomerFiltersProps> = ({
   onApplyFilters,
   onResetData
 }) => {
-  const getContactMethodLabel = (method: string) => {
-    const labels: Record<string, string> = {
-      'presencial': 'Presencial',
-      'telefone': 'Telefone',
-      'email': 'Email',
-      'whatsapp': 'WhatsApp'
-    };
-    return labels[method] || method;
-  };
-
   return (
     <div className={`${styles.filtersContainer} ${darkMode ? styles.dark : ''}`}>
       <h3 className={`${styles.filtersTitle} ${darkMode ? styles.dark : ''}`}>Filtros</h3>
