@@ -64,10 +64,8 @@ const Dashboard: React.FC<DashboardProps> = ({ darkMode, className = "", users =
       setLoading(true);
       setError(null);
       
-      console.log('🔄 Carregando dados do dashboard...');
       
       const salesData = await salesService.getSales();
-      console.log('📊 Vendas carregadas:', salesData);
       
       setVendas(salesData);
       
@@ -77,10 +75,7 @@ const Dashboard: React.FC<DashboardProps> = ({ darkMode, className = "", users =
       const graficoData = calcularDadosGrafico(salesData);
       setDadosGrafico(graficoData);
       
-      console.log('✅ Dashboard carregado com sucesso');
-      console.log('📈 Métricas calculadas:', metricasData);
     } catch (error) {
-      console.error('❌ Erro ao carregar dashboard:', error);
       setError('Erro ao carregar dados do dashboard. Tente novamente.');
     } finally {
       setLoading(false);
@@ -91,7 +86,6 @@ const Dashboard: React.FC<DashboardProps> = ({ darkMode, className = "", users =
   console.log('🔍 Calculando métricas para', sales.length, 'vendas');
   
   const vendasFechadas = sales.filter(sale => {
-    console.log('Venda:', sale.id, 'Stage:', sale.stage, 'Date:', sale.date);
     return sale.stage === 'finalizado';
   });
 

@@ -242,7 +242,7 @@ setIsNotificationsViewOpen(true);
       case 'sales':
         return <Sales darkMode={darkMode} currentUser={user} users={users} />;
       case 'customers':
-        return <Customers darkMode={darkMode} />;
+          return <Customers darkMode={darkMode} users={users} />;
       case 'products':
         return <Products darkMode={darkMode} isAdmin={user?.isAdmin} />;
       case 'prospections': 

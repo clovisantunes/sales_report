@@ -129,22 +129,6 @@ export const customerService = {
       contactMethod: sale.contactMethod || 'email',
     };
 
-    console.log('🔧 Convertendo venda para cliente:', {
-      venda: {
-        contactName: sale.contactName,
-        companyName: sale.companyName,
-        contatoEmail: sale.contatoEmail,
-        contatoTelefone: sale.contatoTelefone,
-        stage: sale.stage,
-        statusFechado: sale.statusFechado,
-        vendedor: sale.vendedor,
-        salesPerson: sale.salesPerson,
-        contatoWhatsapp: sale.contatoWhatsapp,
-        contatoPresencial: sale.contatoPresencial,
-        contactMethod: sale.contactMethod
-      },
-      cliente: customer
-    });
 
     return customer;
   },

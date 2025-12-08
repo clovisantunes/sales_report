@@ -104,14 +104,7 @@ class SalesService {
         const sellerInfo = usersMap.get(sale.salesPerson);
         const sellerInfoVendedor = usersMap.get(sale.vendedor);
         
-        console.log(`👤 [SALES SERVICE] Venda ${sale.id}:`, {
-          salesPersonId: sale.salesPerson,
-          salesPersonName: sellerInfo ? `${sellerInfo.name} ${sellerInfo.lastName}` : 'N/A',
-          vendedorId: sale.vendedor,
-          vendedorName: sellerInfoVendedor ? `${sellerInfoVendedor.name} ${sellerInfoVendedor.lastName}` : 'N/A',
-          cnpj: sale.cnpj,
-          lifes: sale.lifes
-        });
+    
         
         return {
           ...sale,
@@ -130,7 +123,6 @@ class SalesService {
         };
       });
       
-      console.log('✅ [SALES SERVICE] Vendas enriquecidas com informações dos vendedores');
       return enrichedSales;
     } catch (error) {
       console.error('❌ [SALES SERVICE] Erro ao enriquecer vendas com informações do vendedor:', error);
@@ -149,19 +141,13 @@ class SalesService {
       querySnapshot.forEach((doc) => {
         const data = doc.data();
         const sale = this.firestoreToSale(doc.id, data);
-        console.log(`📄 [SALES SERVICE] Venda ${doc.id}:`, {
-          cnpj: sale.cnpj,
-          lifes: sale.lifes,
-          company: sale.companyName
-        });
+       
         sales.push(sale);
       });
       
-      console.log(`✅ [SALES SERVICE] ${sales.length} vendas carregadas do Firestore`);
       
       const enrichedSales = await this.enrichSalesWithSellerInfo(sales);
       
-      console.log('✅ [SALES SERVICE] Vendas retornadas com informações dos vendedores');
       return enrichedSales;
     } catch (error) {
       console.error('❌ [SALES SERVICE] Erro ao buscar vendas:', error);
@@ -171,7 +157,6 @@ class SalesService {
 
   async addSale(sale: Omit<Sale, 'id' | 'createdAt' | 'updatedAt'>): Promise<string> {
     try {
-      console.log('➕ [SALES SERVICE] Adicionando nova venda...', sale);
       
       const validatedSale = {
         ...sale,
@@ -192,25 +177,18 @@ class SalesService {
         createdAt: new Date().toLocaleDateString('pt-BR'),
       };
 
-      console.log('📤 [SALES SERVICE] Dados validados:', validatedSale);
 
       const saleData = this.saleToFirestore(validatedSale as any);
-      console.log('🔥 [SALES SERVICE] Dados para Firestore:', saleData);
 
       const docRef = await addDoc(collection(db, 'sales'), saleData);
-      console.log('✅ [SALES SERVICE] Venda adicionada com ID:', docRef.id);
       return docRef.id;
     } catch (error: any) {
-      console.error('❌ [SALES SERVICE] Erro detalhado ao adicionar venda:', error);
-      console.error('Código do erro:', error.code);
-      console.error('Mensagem do erro:', error.message);
       throw new Error('Erro ao adicionar venda: ' + error.message);
     }
   }
 
   async updateSale(saleId: string, sale: Partial<Omit<Sale, 'id' | 'createdAt'>>): Promise<void> {
     try {
-      console.log('✏️ [SALES SERVICE] Atualizando venda...', saleId, sale);
       
       const saleData = {
         ...sale,
@@ -231,7 +209,6 @@ class SalesService {
         updatedAt: new Date().toLocaleDateString('pt-BR')
       };
 
-      console.log('📤 [SALES SERVICE] Dados para atualização:', saleData);
 
       const docRef = doc(db, 'sales', saleId);
       

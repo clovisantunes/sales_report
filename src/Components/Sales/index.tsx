@@ -821,10 +821,7 @@ const Sales: React.FC<SalesProps> = ({ darkMode, className = "", currentUser, us
                     className={darkMode ? styles.dark : ''}
                   />
                 </div>
-
-                
               </div>
-
 
               <div className={styles.formRow}>
                 <div className={styles.formGroup}>
