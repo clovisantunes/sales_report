@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { authService } from '../../services/AuthService/authService';
 import { FiMail, FiLock, FiEye, FiEyeOff, FiArrowLeft, FiCheck } from 'react-icons/fi';
 import styles from './styles.module.scss';
+import logoImage from '../../assets/logo.png'; 
 
 interface LoginData {
   email: string;
@@ -110,63 +111,86 @@ const Login: React.FC<LoginProps> = ({ onLogin, darkMode, appName = "SalesReport
 
   return (
     <div className={`${styles.loginContainer} ${darkMode ? styles.dark : ''}`}>
-      <div className={styles.loginBackground}>
-        <div className={styles.backgroundPattern}></div>
-      </div>
+      <div className={styles.backgroundImage}></div>
+      <div className={styles.overlay}></div>
       
-      <div className={styles.loginContent}>
-        <div className={`${styles.loginCard} ${darkMode ? styles.dark : ''}`}>
-          {/* Header */}
-          <div className={styles.loginHeader}>
-            <div className={styles.logoSection}>
-              <div className={styles.logoIcon}>
-                <div className={styles.logoGraphic}>
-                  <div className={styles.chartBar}></div>
-                  <div className={styles.chartBar}></div>
-                  <div className={styles.chartBar}></div>
-                </div>
+      <div className={styles.loginWrapper}>
+        <div className={styles.loginLeftPanel}>
+          <div className={styles.brandSection}>
+            <div className={styles.logoContainer}>
+              <img 
+                src={logoImage} 
+                alt={`${appName} Logo`} 
+                className={styles.logoImage}
+              />
+            </div>
+            <div className={styles.appInfo}>
+              <h1 className={styles.appNameLarge}>{appName}</h1>
+              <p className={styles.appDescription}>
+                Gestão Inteligente de Vendas e Relatórios
+              </p>
+            </div>
+            <div className={styles.featuresList}>
+              <div className={styles.featureItem}>
+                <div className={styles.featureIcon}>📊</div>
+                <span>Relatórios em tempo real</span>
               </div>
-              <div className={styles.logoText}>
-                <h1 className={`${styles.appName} ${darkMode ? styles.dark : ''}`}>
-                  {appName}
-                </h1>
-                <p className={`${styles.appTagline} ${darkMode ? styles.dark : ''}`}>
-                  Gestão Inteligente de Vendas
-                </p>
+              <div className={styles.featureItem}>
+                <div className={styles.featureIcon}>🔒</div>
+                <span>Segurança avançada</span>
+              </div>
+              <div className={styles.featureItem}>
+                <div className={styles.featureIcon}>⚡</div>
+                <span>Alta performance</span>
               </div>
             </div>
           </div>
-
-          {/* Content */}
-          <div className={styles.loginBody}>
-            {!showForgotPassword ? (
-              <>
-                <div className={styles.welcomeSection}>
-                  <h2 className={`${styles.welcomeTitle} ${darkMode ? styles.dark : ''}`}>
-                    Bem-vindo de volta
-                  </h2>
-                  <p className={`${styles.welcomeSubtitle} ${darkMode ? styles.dark : ''}`}>
-                    Entre com suas credenciais para acessar o sistema
-                  </p>
+        </div>
+        
+        <div className={styles.loginRightPanel}>
+          <div className={`${styles.loginCard} ${darkMode ? styles.dark : ''}`}>
+            <div className={styles.cardHeader}>
+              {!showForgotPassword ? (
+                <h2 className={styles.cardTitle}>Bem-vindo de volta</h2>
+              ) : (
+                <div className={styles.sectionHeader}>
+                  <button
+                    onClick={handleBackToLogin}
+                    className={styles.backButton}
+                  >
+                    <FiArrowLeft />
+                  </button>
+                  <h2 className={styles.cardTitle}>Recuperar Senha</h2>
                 </div>
+              )}
+              <p className={styles.cardSubtitle}>
+                {!showForgotPassword 
+                  ? 'Entre com suas credenciais para continuar'
+                  : 'Digite seu email para recuperar sua senha'
+                }
+              </p>
+            </div>
 
+            <div className={styles.cardBody}>
+              {error && (
+                <div className={`${styles.errorMessage} ${darkMode ? styles.dark : ''}`}>
+                  <div className={styles.errorIcon}>!</div>
+                  <div className={styles.errorText}>{error}</div>
+                </div>
+              )}
+
+              {!showForgotPassword ? (
                 <form onSubmit={handleSubmit} className={styles.loginForm}>
-                  {error && (
-                    <div className={`${styles.errorMessage} ${darkMode ? styles.dark : ''}`}>
-                      <div className={styles.errorIcon}>!</div>
-                      {error}
-                    </div>
-                  )}
-
                   <div className={styles.formGroup}>
-                    <div className={styles.inputContainer}>
+                    <label className={styles.formLabel}>Email</label>
+                    <div className={styles.inputWrapper}>
                       <FiMail className={styles.inputIcon} />
                       <input
                         type="email"
                         name="email"
                         value={loginData.email}
                         onChange={handleInputChange}
-                        placeholder="Digite seu email"
+                        placeholder="seu@email.com"
                         disabled={loading}
                         className={`${styles.formInput} ${darkMode ? styles.dark : ''}`}
                         required
@@ -175,7 +199,17 @@ const Login: React.FC<LoginProps> = ({ onLogin, darkMode, appName = "SalesReport
                   </div>
 
                   <div className={styles.formGroup}>
-                    <div className={styles.inputContainer}>
+                    <div className={styles.labelContainer}>
+                      <label className={styles.formLabel}>Senha</label>
+                      <button
+                        type="button"
+                        onClick={() => setShowForgotPassword(true)}
+                        className={`${styles.forgotLink} ${darkMode ? styles.dark : ''}`}
+                      >
+                        Esqueceu a senha?
+                      </button>
+                    </div>
+                    <div className={styles.inputWrapper}>
                       <FiLock className={styles.inputIcon} />
                       <input
                         type={showPassword ? "text" : "password"}
@@ -197,16 +231,6 @@ const Login: React.FC<LoginProps> = ({ onLogin, darkMode, appName = "SalesReport
                     </div>
                   </div>
 
-                  <div className={styles.formOptions}>
-                    <button
-                      type="button"
-                      onClick={() => setShowForgotPassword(true)}
-                      className={`${styles.forgotLink} ${darkMode ? styles.dark : ''}`}
-                    >
-                      Esqueceu sua senha?
-                    </button>
-                  </div>
-
                   <button
                     type="submit"
                     disabled={loading}
@@ -222,93 +246,69 @@ const Login: React.FC<LoginProps> = ({ onLogin, darkMode, appName = "SalesReport
                     )}
                   </button>
                 </form>
-              </>
-            ) : (
-              <div className={styles.forgotPasswordSection}>
-                {!resetSent ? (
-                  <>
-                    <div className={styles.sectionHeader}>
-                      <button
-                        onClick={handleBackToLogin}
-                        className={styles.backButton}
-                      >
-                        <FiArrowLeft />
-                      </button>
-                      <h2 className={`${styles.sectionTitle} ${darkMode ? styles.dark : ''}`}>
-                        Recuperar Senha
-                      </h2>
+              ) : !resetSent ? (
+                <div className={styles.forgotPasswordForm}>
+                  <p className={styles.resetDescription}>
+                    Digite seu email cadastrado e enviaremos um link para redefinir sua senha.
+                  </p>
+                  
+                  <div className={styles.formGroup}>
+                    <label className={styles.formLabel}>Email</label>
+                    <div className={styles.inputWrapper}>
+                      <FiMail className={styles.inputIcon} />
+                      <input
+                        type="email"
+                        value={resetEmail}
+                        onChange={(e) => setResetEmail(e.target.value)}
+                        placeholder="seu@email.com"
+                        disabled={loading}
+                        className={`${styles.formInput} ${darkMode ? styles.dark : ''}`}
+                        required
+                      />
                     </div>
-
-                    <p className={`${styles.sectionDescription} ${darkMode ? styles.dark : ''}`}>
-                      Digite seu email cadastrado e enviaremos um link para redefinir sua senha.
-                    </p>
-
-                    {error && (
-                      <div className={`${styles.errorMessage} ${darkMode ? styles.dark : ''}`}>
-                        <div className={styles.errorIcon}>!</div>
-                        {error}
-                      </div>
-                    )}
-
-                    <div className={styles.formGroup}>
-                      <div className={styles.inputContainer}>
-                        <FiMail className={styles.inputIcon} />
-                        <input
-                          type="email"
-                          value={resetEmail}
-                          onChange={(e) => setResetEmail(e.target.value)}
-                          placeholder="seu@email.com"
-                          disabled={loading}
-                          className={`${styles.formInput} ${darkMode ? styles.dark : ''}`}
-                          required
-                        />
-                      </div>
-                    </div>
-
-                    <button
-                      onClick={handleForgotPassword}
-                      disabled={loading}
-                      className={`${styles.resetButton} ${darkMode ? styles.dark : ''} ${loading ? styles.loading : ''}`}
-                    >
-                      {loading ? (
-                        <>
-                          <div className={styles.buttonSpinner}></div>
-                          Enviando...
-                        </>
-                      ) : (
-                        'Enviar Link de Recuperação'
-                      )}
-                    </button>
-                  </>
-                ) : (
-                  <div className={styles.successSection}>
-                    <div className={styles.successIcon}>
-                      <FiCheck />
-                    </div>
-                    <h3 className={`${styles.successTitle} ${darkMode ? styles.dark : ''}`}>
-                      Email enviado!
-                    </h3>
-                    <p className={`${styles.successDescription} ${darkMode ? styles.dark : ''}`}>
-                      Enviamos um link de recuperação para <strong>{resetEmail}</strong>. 
-                      Verifique sua caixa de entrada e siga as instruções.
-                    </p>
-                    <button
-                      onClick={handleBackToLogin}
-                      className={`${styles.backToLoginButton} ${darkMode ? styles.dark : ''}`}
-                    >
-                      Voltar para o Login
-                    </button>
                   </div>
-                )}
-              </div>
-            )}
-          </div>
 
-          {/* Footer */}
-          <div className={styles.loginFooter}>
-            <p className={`${styles.footerText} ${darkMode ? styles.dark : ''}`}>
-              © 2024 {appName}. Todos os direitos reservados.
-            </p>
+                  <button
+                    onClick={handleForgotPassword}
+                    disabled={loading}
+                    className={`${styles.resetButton} ${darkMode ? styles.dark : ''} ${loading ? styles.loading : ''}`}
+                  >
+                    {loading ? (
+                      <>
+                        <div className={styles.buttonSpinner}></div>
+                        Enviando...
+                      </>
+                    ) : (
+                      'Enviar Link de Recuperação'
+                    )}
+                  </button>
+                </div>
+              ) : (
+                <div className={styles.successSection}>
+                  <div className={styles.successIcon}>
+                    <FiCheck />
+                  </div>
+                  <h3 className={styles.successTitle}>Email enviado!</h3>
+                  <p className={styles.successDescription}>
+                    Enviamos um link de recuperação para <strong>{resetEmail}</strong>. 
+                    Verifique sua caixa de entrada e siga as instruções.
+                  </p>
+                  <button
+                    onClick={handleBackToLogin}
+                    className={`${styles.backToLoginButton} ${darkMode ? styles.dark : ''}`}
+                  >
+                    Voltar para o Login
+                  </button>
+                </div>
+              )}
+            </div>
+
+            <div className={styles.cardFooter}>
+              
+              <p className={styles.copyright}>
+                © 2025 Clovis Antunes. Todos os direitos reservados.
+              </p>
+            </div>
           </div>
         </div>
       </div>

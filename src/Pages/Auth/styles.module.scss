@@ -5,180 +5,325 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, 
-    rgba($color-bg-button-light, 0.95) 0%, 
-    rgba($color-secondary-light, 0.9) 50%, 
-    rgba($color-accent-light, 0.85) 100%);
-  padding: 20px;
+  background: $color-white-light;
   position: relative;
   overflow: hidden;
 
   &.dark {
-    background: linear-gradient(135deg, 
-      rgba($color-bg-button-dark, 0.95) 0%, 
-      rgba($color-secondary-dark, 0.9) 50%, 
-      rgba($color-accent-dark, 0.85) 100%);
+    background: $color-primary-bg-dark;
   }
 }
 
-.loginBackground {
+.backgroundImage {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  z-index: 0;
+  background: 
+    linear-gradient(135deg, rgba($color-bg-button-light, 0.02) 0%, transparent 100%),
+    url('data:image/svg+xml,<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="M0 50L100 50M50 0L50 100" stroke="%23e9ecef" stroke-width="1" fill="none"/></svg>');
+  opacity: 0.4;
   
-  .backgroundPattern {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+  .dark & {
     background: 
-      radial-gradient(circle at 20% 80%, rgba($color-white-light, 0.1) 0%, transparent 50%),
-      radial-gradient(circle at 80% 20%, rgba($color-white-light, 0.05) 0%, transparent 50%),
-      radial-gradient(circle at 40% 40%, rgba($color-white-light, 0.08) 0%, transparent 50%);
-    
-    .dark & {
-      background: 
-        radial-gradient(circle at 20% 80%, rgba($color-white-dark, 0.05) 0%, transparent 50%),
-        radial-gradient(circle at 80% 20%, rgba($color-white-dark, 0.03) 0%, transparent 50%),
-        radial-gradient(circle at 40% 40%, rgba($color-white-dark, 0.04) 0%, transparent 50%);
-    }
+      linear-gradient(135deg, rgba($color-bg-button-dark, 0.03) 0%, transparent 100%),
+      url('data:image/svg+xml,<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="M0 50L100 50M50 0L50 100" stroke="%2321262d" stroke-width="1" fill="none"/></svg>');
   }
 }
 
-.loginContent {
+.loginWrapper {
+  display: flex;
+  max-width: 1000px;
+  width: 95%;
+  min-height: 600px;
+  background: $color-white-light;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 
+    0 20px 60px rgba(0, 0, 0, 0.08),
+    0 0 0 1px rgba($color-primary-dark-light, 0.1);
   position: relative;
   z-index: 1;
-  width: 100%;
-  max-width: 440px;
-}
-
-.loginCard {
-  background: $color-on-white-bg-light;
-  border-radius: 24px;
-  box-shadow: 
-    0 20px 60px rgba(0, 0, 0, 0.15),
-    0 0 0 1px rgba($color-white-light, 0.1);
-  backdrop-filter: blur(20px);
-  overflow: hidden;
-  transition: all 0.3s ease;
-
-  &.dark {
+  
+  .dark & {
     background: $color-card-bg-dark;
     box-shadow: 
-      0 20px 60px rgba(0, 0, 0, 0.4),
+      0 20px 60px rgba(0, 0, 0, 0.25),
       0 0 0 1px rgba($color-white-dark, 0.05);
   }
 }
 
-.loginHeader {
-  padding: 40px 40px 20px;
-  border-bottom: 1px solid rgba($color-primary-dark-light, 0.1);
-
+.loginLeftPanel {
+  flex: 1;
+  background: linear-gradient(145deg, $color-primary-light-light, $color-white-light);
+  padding: 60px 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  
   .dark & {
-    border-bottom-color: rgba($color-primary-dark-dark, 0.2);
+    background: linear-gradient(145deg, $color-primary-light-dark, $color-primary-bg-dark);
+  }
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba($color-bg-button-light, 0.03) 0%, transparent 70%);
+    
+    .dark & {
+      background: radial-gradient(circle, rgba($color-bg-button-dark, 0.05) 0%, transparent 70%);
+    }
   }
 }
 
-.logoSection {
+.brandSection {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+}
+
+.logoContainer {
+  margin-bottom: 40px;
+  
+  .logoImage {
+    height: 70px;
+    width: auto;
+    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.1));
+  }
+}
+
+.appInfo {
+  margin-bottom: 50px;
+  
+  .appNameLarge {
+    font-size: 32px;
+    font-weight: 700;
+    color: $color-title-text-light;
+    margin: 0 0 12px;
+    line-height: 1.2;
+    
+    .dark & {
+      color: $color-title-text-dark;
+    }
+  }
+  
+  .appDescription {
+    font-size: $font-size-text-lg-light;
+    color: $color-subtitle-text-light;
+    margin: 0;
+    line-height: 1.6;
+    
+    .dark & {
+      color: $color-subtitle-text-dark;
+    }
+  }
+}
+
+.featuresList {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+  max-width: 320px;
+}
+
+.featureItem {
   display: flex;
   align-items: center;
   gap: 16px;
-}
-
-.logoIcon {
-  .logoGraphic {
-    width: 48px;
-    height: 48px;
-    background: linear-gradient(135deg, $color-bg-button-light, $color-secondary-light);
-    border-radius: 12px;
+  padding: 16px;
+  background: rgba($color-primary-light-light, 0.5);
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba($color-primary-dark-light, 0.1);
+  transition: all 0.3s ease;
+  
+  .dark & {
+    background: rgba($color-primary-light-dark, 0.3);
+    border-color: rgba($color-primary-dark-dark, 0.2);
+  }
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba($color-bg-button-light, 0.1);
+    border-color: rgba($color-bg-button-light, 0.2);
+    
+    .dark & {
+      box-shadow: 0 8px 20px rgba($color-bg-button-dark, 0.15);
+      border-color: rgba($color-bg-button-dark, 0.3);
+    }
+  }
+  
+  .featureIcon {
+    width: 44px;
+    height: 44px;
+    background: linear-gradient(135deg, $color-bg-button-light, $color-accent-light);
+    color: $color-white-light;
+    border-radius: 10px;
     display: flex;
-    align-items: end;
-    justify-content: space-between;
-    padding: 8px 6px;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
     
     .dark & {
       background: linear-gradient(135deg, $color-bg-button-dark, $color-accent-dark);
     }
+  }
+  
+  span {
+    font-size: $font-size-text-md-light;
+    font-weight: 500;
+    color: $color-title-text-light;
+    text-align: left;
     
-    .chartBar {
-      width: 8px;
-      background: $color-white-light;
-      border-radius: 2px;
+    .dark & {
+      color: $color-title-text-dark;
+    }
+  }
+}
+
+.loginRightPanel {
+  flex: 1;
+  padding: 60px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: $color-white-light;
+  
+  .dark & {
+    background: $color-card-bg-dark;
+  }
+}
+
+.loginCard {
+  width: 100%;
+  max-width: 380px;
+  
+  .cardHeader {
+    text-align: center;
+    margin-bottom: 40px;
+    
+    .sectionHeader {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      justify-content: center;
+      margin-bottom: 16px;
       
-      &:nth-child(1) { height: 12px; }
-      &:nth-child(2) { height: 20px; }
-      &:nth-child(3) { height: 16px; }
+      .backButton {
+        background: $color-primary-light-light;
+        border: none;
+        color: $color-text-light;
+        cursor: pointer;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+        flex-shrink: 0;
+        
+        .dark & {
+          background: $color-primary-light-dark;
+          color: $color-text-dark;
+        }
+        
+        &:hover {
+          background: $color-primary-dark-light;
+          transform: translateX(-4px);
+          
+          .dark & {
+            background: $color-primary-dark-dark;
+          }
+        }
+      }
+    }
+    
+    .cardTitle {
+      font-size: 28px;
+      font-weight: 700;
+      color: $color-title-text-light;
+      margin: 0 0 8px;
       
       .dark & {
-        background: $color-white-dark;
+        color: $color-title-text-dark;
+      }
+    }
+    
+    .cardSubtitle {
+      font-size: $font-size-text-md-light;
+      color: $color-subtitle-text-light;
+      margin: 0;
+      
+      .dark & {
+        color: $color-subtitle-text-dark;
       }
     }
   }
 }
 
-.logoText {
-  .appName {
-    font-size: 24px;
-    font-weight: 700;
-    color: $color-title-text-light;
-    margin: 0;
-    line-height: 1.2;
-    
-    &.dark {
-      color: $color-title-text-dark;
-    }
+.cardBody {
+  margin-bottom: 40px;
+}
+
+.errorMessage {
+  background: rgba(220, 38, 38, 0.08);
+  color: #dc2626;
+  padding: 16px;
+  border-radius: 12px;
+  font-size: $font-size-text-md-light;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid rgba(220, 38, 38, 0.15);
+  margin-bottom: 24px;
+  
+  &.dark {
+    background: rgba(220, 38, 38, 0.12);
+    color: #f87171;
+    border-color: rgba(220, 38, 38, 0.25);
   }
   
-  .appTagline {
+  .errorIcon {
+    width: 20px;
+    height: 20px;
+    background: #dc2626;
+    color: $color-white-light;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
     font-size: $font-size-text-sm-light;
-    color: $color-subtitle-text-light;
-    margin: 4px 0 0;
-    font-weight: 500;
+    flex-shrink: 0;
     
-    &.dark {
-      color: $color-subtitle-text-dark;
-    }
-  }
-}
-
-.loginBody {
-  padding: 30px 40px;
-}
-
-.welcomeSection {
-  text-align: center;
-  margin-bottom: 32px;
-  
-  .welcomeTitle {
-    font-size: $font-size-subtitle-light;
-    font-weight: 600;
-    color: $color-title-text-light;
-    margin: 0 0 8px;
-    
-    &.dark {
-      color: $color-title-text-dark;
+    .dark & {
+      background: #f87171;
+      color: #7f1d1d;
     }
   }
   
-  .welcomeSubtitle {
-    font-size: $font-size-text-md-light;
-    color: $color-subtitle-text-light;
-    margin: 0;
-    
-    &.dark {
-      color: $color-subtitle-text-dark;
-    }
+  .errorText {
+    flex: 1;
   }
 }
 
-.loginForm {
+.loginForm,
+.forgotPasswordForm {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 24px;
 }
 
 .formGroup {
@@ -187,7 +332,25 @@
   gap: 8px;
 }
 
-.inputContainer {
+.labelContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.formLabel {
+  font-size: $font-size-text-sm-light;
+  font-weight: 600;
+  color: $color-title-text-light;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  
+  .dark & {
+    color: $color-title-text-dark;
+  }
+}
+
+.inputWrapper {
   position: relative;
   display: flex;
   align-items: center;
@@ -208,7 +371,7 @@
 .formInput {
   width: 100%;
   padding: 16px 16px 16px 48px;
-  border: 2px solid $color-primary-light-light;
+  border: 2px solid $color-primary-dark-light;
   border-radius: 12px;
   font-size: $font-size-text-md-light;
   transition: all 0.3s ease;
@@ -258,6 +421,7 @@
   padding: 4px;
   border-radius: 4px;
   transition: color 0.3s ease;
+  font-size: 18px;
   
   .dark & {
     color: $color-subtitle-text-dark;
@@ -272,12 +436,6 @@
   }
 }
 
-.formOptions {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: -8px;
-}
-
 .forgotLink {
   background: none;
   border: none;
@@ -286,6 +444,7 @@
   font-weight: 500;
   cursor: pointer;
   transition: color 0.3s ease;
+  text-decoration: none;
   
   &.dark {
     color: $color-link-text-dark;
@@ -300,7 +459,8 @@
   }
 }
 
-.loginButton, .resetButton {
+.loginButton,
+.resetButton {
   width: 100%;
   padding: 16px;
   border: none;
@@ -312,8 +472,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  background: linear-gradient(135deg, $color-bg-button-light, $color-secondary-light);
+  gap: 12px;
+  background: linear-gradient(135deg, $color-bg-button-light, $color-accent-light);
   color: $color-white-light;
   margin-top: 8px;
   
@@ -343,107 +503,103 @@
 }
 
 .buttonSpinner {
-  width: 18px;
-  height: 18px;
-  border: 2px solid transparent;
-  border-top: 2px solid currentColor;
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba($color-white-light, 0.3);
   border-radius: 50%;
+  border-top-color: $color-white-light;
   animation: spin 1s linear infinite;
+  
+  .dark & {
+    border: 3px solid rgba($color-white-dark, 0.3);
+    border-top-color: $color-white-dark;
+  }
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  to { transform: rotate(360deg); }
 }
 
-.errorMessage {
-  background: rgba(220, 38, 38, 0.1);
-  color: #dc2626;
-  padding: 16px;
-  border-radius: 12px;
-  font-size: $font-size-text-md-light;
+.divider {
   display: flex;
   align-items: center;
-  gap: 10px;
-  border: 1px solid rgba(220, 38, 38, 0.2);
+  text-align: center;
+  color: $color-subtitle-text-light;
+  margin: 20px 0;
   
-  &.dark {
-    background: rgba(220, 38, 38, 0.15);
-    color: #f87171;
-    border-color: rgba(220, 38, 38, 0.3);
+  .dark & {
+    color: $color-subtitle-text-dark;
   }
   
-  .errorIcon {
-    width: 20px;
-    height: 20px;
-    background: #dc2626;
-    color: white;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    font-size: 12px;
+  &::before,
+  &::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid $color-primary-dark-light;
     
     .dark & {
-      background: #f87171;
-      color: #7f1d1d;
+      border-bottom-color: $color-primary-dark-dark;
     }
+  }
+  
+  span {
+    padding: 0 16px;
+    font-size: $font-size-text-sm-light;
   }
 }
 
-.forgotPasswordSection {
-  .sectionHeader {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 16px;
+.socialLogin {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.socialButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 14px;
+  border: 2px solid $color-primary-dark-light;
+  border-radius: 12px;
+  background: $color-white-light;
+  color: $color-text-light;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: $font-size-text-md-light;
+  
+  .dark & {
+    background: $color-primary-light-dark;
+    border-color: $color-primary-dark-dark;
+    color: $color-text-dark;
+  }
+  
+  &:hover {
+    border-color: $color-bg-button-light;
+    background: rgba($color-bg-button-light, 0.05);
     
-    .backButton {
-      background: none;
-      border: none;
-      color: $color-subtitle-text-light;
-      cursor: pointer;
-      padding: 8px;
-      border-radius: 8px;
-      transition: all 0.3s ease;
-      
-      .dark & {
-        color: $color-subtitle-text-dark;
-      }
-      
-      &:hover {
-        background: $color-primary-light-light;
-        color: $color-text-light;
-        
-        .dark & {
-          background: $color-primary-light-dark;
-          color: $color-text-dark;
-        }
-      }
-    }
-    
-    .sectionTitle {
-      font-size: $font-size-subtitle-light;
-      font-weight: 600;
-      color: $color-title-text-light;
-      margin: 0;
-      
-      &.dark {
-        color: $color-title-text-dark;
-      }
+    .dark & {
+      border-color: $color-bg-button-dark;
+      background: rgba($color-bg-button-dark, 0.1);
     }
   }
   
-  .sectionDescription {
-    font-size: $font-size-text-md-light;
-    color: $color-subtitle-text-light;
-    margin: 0 0 24px;
-    line-height: 1.5;
-    
-    &.dark {
-      color: $color-subtitle-text-dark;
-    }
+  img {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+.resetDescription {
+  font-size: $font-size-text-md-light;
+  color: $color-subtitle-text-light;
+  margin: 0 0 24px;
+  line-height: 1.5;
+  text-align: center;
+  
+  .dark & {
+    color: $color-subtitle-text-dark;
   }
 }
 
@@ -454,23 +610,27 @@
   .successIcon {
     width: 64px;
     height: 64px;
-    background: linear-gradient(135deg, #10b981, #059669);
-    color: white;
+    background: linear-gradient(135deg, $color-bg-button-light, $color-accent-light);
+    color: $color-white-light;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 0 auto 20px;
+    margin: 0 auto 24px;
     font-size: 24px;
+    
+    .dark & {
+      background: linear-gradient(135deg, $color-bg-button-dark, $color-accent-dark);
+    }
   }
   
   .successTitle {
-    font-size: $font-size-subtitle-light;
+    font-size: 24px;
     font-weight: 600;
     color: $color-title-text-light;
     margin: 0 0 12px;
     
-    &.dark {
+    .dark & {
       color: $color-title-text-dark;
     }
   }
@@ -478,10 +638,10 @@
   .successDescription {
     font-size: $font-size-text-md-light;
     color: $color-subtitle-text-light;
-    margin: 0 0 24px;
+    margin: 0 0 32px;
     line-height: 1.5;
     
-    &.dark {
+    .dark & {
       color: $color-subtitle-text-dark;
     }
   }
@@ -490,11 +650,13 @@
     background: $color-primary-light-light;
     color: $color-text-light;
     border: 2px solid $color-primary-dark-light;
-    padding: 12px 24px;
-    border-radius: 8px;
+    padding: 14px 28px;
+    border-radius: 12px;
+    font-size: $font-size-text-md-light;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
+    width: 100%;
     
     &.dark {
       background: $color-primary-light-dark;
@@ -505,6 +667,7 @@
     &:hover {
       background: $color-primary-dark-light;
       color: $color-white-light;
+      transform: translateY(-2px);
       
       .dark & {
         background: $color-primary-dark-dark;
@@ -513,58 +676,169 @@
   }
 }
 
-.loginFooter {
-  padding: 20px 40px;
-  border-top: 1px solid rgba($color-primary-dark-light, 0.1);
+.cardFooter {
   text-align: center;
+  border-top: 1px solid $color-primary-dark-light;
+  padding-top: 24px;
   
   .dark & {
-    border-top-color: rgba($color-primary-dark-dark, 0.2);
+    border-top-color: $color-primary-dark-dark;
   }
   
   .footerText {
     font-size: $font-size-text-sm-light;
     color: $color-subtitle-text-light;
-    margin: 0;
+    margin: 0 0 12px;
     
-    &.dark {
+    .dark & {
+      color: $color-subtitle-text-dark;
+    }
+    
+    .signupLink {
+      color: $color-link-text-light;
+      font-weight: 600;
+      text-decoration: none;
+      transition: color 0.3s ease;
+      
+      &.dark {
+        color: $color-link-text-dark;
+      }
+      
+      &:hover {
+        color: $color-hover-text-light;
+        
+        .dark & {
+          color: $color-hover-text-dark;
+        }
+      }
+    }
+  }
+  
+  .copyright {
+    font-size: $font-size-text-sm-light;
+    color: $color-subtitle-text-light;
+    margin: 0;
+    opacity: 0.8;
+    
+    .dark & {
       color: $color-subtitle-text-dark;
     }
   }
 }
 
-@media (max-width: 480px) {
-  .loginContainer {
-    padding: 15px;
-  }
-  
-  .loginCard {
-    border-radius: 20px;
-  }
-  
-  .loginHeader,
-  .loginBody {
-    padding: 30px 25px;
-  }
-  
-  .loginFooter {
-    padding: 20px 25px;
-  }
-  
-  .logoSection {
+// Responsividade
+@media (max-width: 992px) {
+  .loginWrapper {
     flex-direction: column;
-    text-align: center;
-    gap: 12px;
+    min-height: auto;
+    max-width: 500px;
+  }
+  
+  .loginLeftPanel {
+    padding: 40px 30px;
+    min-height: 300px;
+    
+    &::before {
+      display: none;
+    }
+  }
+  
+  .loginRightPanel {
+    padding: 40px 30px;
   }
 }
 
-@media (max-width: 360px) {
-  .loginHeader,
-  .loginBody {
-    padding: 25px 20px;
+@media (max-width: 768px) {
+  .loginWrapper {
+    width: 95%;
+    border-radius: 20px;
   }
   
-  .loginFooter {
-    padding: 15px 20px;
+  .loginLeftPanel {
+    padding: 30px 24px;
+    
+    .appNameLarge {
+      font-size: 28px;
+    }
+    
+    .appDescription {
+      font-size: $font-size-text-md-light;
+    }
+  }
+  
+  .loginRightPanel {
+    padding: 30px 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  .loginContainer {
+    padding: 16px;
+    background: $color-white-light;
+    
+    &.dark {
+      background: $color-primary-bg-dark;
+    }
+  }
+  
+  .loginWrapper {
+    border-radius: 16px;
+    box-shadow: 
+      0 10px 40px rgba(0, 0, 0, 0.08),
+      0 0 0 1px rgba($color-primary-dark-light, 0.08);
+    
+    .dark & {
+      box-shadow: 
+        0 10px 40px rgba(0, 0, 0, 0.2),
+        0 0 0 1px rgba($color-white-dark, 0.05);
+    }
+  }
+  
+  .loginLeftPanel,
+  .loginRightPanel {
+    padding: 24px 20px;
+  }
+  
+  .cardHeader {
+    margin-bottom: 32px;
+    
+    .cardTitle {
+      font-size: 24px;
+    }
+    
+    .cardSubtitle {
+      font-size: $font-size-text-sm-light;
+    }
+  }
+  
+  .appInfo {
+    margin-bottom: 32px;
+    
+    .appNameLarge {
+      font-size: 24px;
+    }
+    
+    .appDescription {
+      font-size: $font-size-text-md-light;
+    }
+  }
+  
+  .featuresList {
+    gap: 12px;
+    
+    .featureItem {
+      padding: 12px;
+      gap: 12px;
+      
+      .featureIcon {
+        width: 36px;
+        height: 36px;
+        font-size: 16px;
+      }
+      
+      span {
+        font-size: $font-size-text-sm-light;
+      }
+    }
   }
 }
