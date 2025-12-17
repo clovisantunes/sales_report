@@ -1,4 +1,4 @@
-# 📁 Project Structure
+# 📁 Sales Report
 
 Este documento descreve a estrutura de pastas e arquivos do projeto, explicando a função de cada um para facilitar a manutenção e o desenvolvimento.
 
