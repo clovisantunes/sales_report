@@ -282,7 +282,7 @@ setIsNotificationsViewOpen(true);
       <Login 
         onLogin={handleLogin}
         darkMode={darkMode}
-        appName="Relatorio de Visitas"
+        appName="Gerenciamento de visitas"
       />
     );
   }
@@ -304,7 +304,7 @@ setIsNotificationsViewOpen(true);
           }
         }
         onLogout={handleLogout}
-        appName="Relatorio de Visitas"
+        appName="Gerenciamento de visitas"
         darkMode={darkMode}
         onDarkModeToggle={handleDarkModeToggle}
         notifications={notifications.map(n => ({ ...n, image: n.image ?? undefined }))}

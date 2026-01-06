@@ -1,0 +1,234 @@
+@import '../../../../Styles/theme.scss';
+
+.tabelaContainer {
+  background: $color-on-white-bg-light;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+
+  &.dark {
+    background: $color-card-bg-dark;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  }
+
+  .tabelaHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 15px;
+  }
+
+  .tabelaTitulo {
+    font-size: $font-size-text-xl-light;
+    font-weight: 600;
+    color: $color-title-text-light;
+    margin: 0;
+
+    &.dark {
+      color: $color-title-text-dark;
+    }
+  }
+
+  .tabelaInfo {
+    font-size: $font-size-text-sm-light;
+    color: $color-subtitle-text-light;
+    margin: 0;
+
+    &.dark {
+      color: $color-subtitle-text-dark;
+    }
+  }
+}
+
+.tableWrapper {
+  overflow-x: auto;
+  border-radius: 8px;
+}
+
+.tabelaVendas {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 1000px;
+
+  th {
+    background: $color-primary-light-light;
+    color: $color-title-text-light;
+    font-weight: 600;
+    padding: 15px 12px;
+    text-align: left;
+    border-bottom: 2px solid $color-primary-dark-light;
+    font-size: $font-size-text-md-light;
+    white-space: nowrap;
+
+    &.dark {
+      background: $color-primary-light-dark;
+      color: $color-title-text-dark;
+      border-bottom-color: $color-primary-dark-dark;
+    }
+  }
+
+  td {
+    padding: 12px;
+    border-bottom: 1px solid $color-primary-dark-dark;
+    color: $color-card-text-light;
+    font-size: $font-size-text-md-light;
+    vertical-align: top;
+
+    &.dark {
+      border-bottom-color: $color-primary-dark-dark;
+      color: $color-card-text-dark;
+    }
+  }
+
+  tbody tr {
+    transition: all 0.3s ease;
+
+    &:hover {
+      background: $color-bg-button-dark;
+
+      &.dark {
+        background: $color-primary-light-dark;
+      }
+    }
+
+    &.linhaFechada {
+      background: rgba(16, 185, 129, 0.05);
+
+      &.dark {
+        background: rgba(16, 185, 129, 0.1);
+      }
+
+      &:hover {
+        background: rgba(16, 185, 129, 0.1);
+
+        &.dark {
+          background: rgba(16, 185, 129, 0.15);
+        }
+      }
+    }
+
+    &.linhaPerdida {
+      background: rgba(220, 38, 38, 0.05);
+
+      &.dark {
+        background: rgba(220, 38, 38, 0.1);
+      }
+
+      &:hover {
+        background: rgba(220, 38, 38, 0.1);
+
+        &.dark {
+          background: rgba(220, 38, 38, 0.15);
+        }
+      }
+    }
+  }
+
+  .empresa {
+    font-weight: 600;
+    color: $color-title-text-light;
+
+    &.dark {
+      color: $color-title-text-dark;
+    }
+  }
+
+  .estagio {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: $font-size-text-sm-light;
+    font-weight: 600;
+    text-align: center;
+    display: inline-block;
+    min-width: 100px;
+
+    &.prospecção {
+      background: #fef3c7;
+      color: #d97706;
+    }
+
+    &.apresentada proposta {
+      background: #fed7aa;
+      color: #ea580c;
+    }
+
+    &.negociar, &.fechar proposta {
+      background: #bfdbfe;
+      color: #1d4ed8;
+    }
+
+    &.fechado, &.finalizado {
+      background: #d1fae5;
+      color: #059669;
+    }
+
+    &.pós venda, &.visita manutenção, &.renegociar contrato {
+      background: #ddd6fe;
+      color: #7c3aed;
+    }
+
+    &.perdida {
+      background: #fee2e2;
+      color: #dc2626;
+    }
+  }
+
+  &.dark {
+    .estagio {
+      // Ajustar opacidade para dark mode se necessário
+      &.prospecção {
+        background: rgba(254, 243, 199, 0.2);
+      }
+      &.apresentada proposta {
+        background: rgba(254, 215, 170, 0.2);
+      }
+      &.negociar, &.fechar proposta {
+        background: rgba(191, 219, 254, 0.2);
+      }
+      &.fechado, &.finalizado {
+        background: rgba(209, 250, 229, 0.2);
+      }
+      &.pós venda, &.visita manutenção, &.renegociar contrato {
+        background: rgba(221, 214, 254, 0.2);
+      }
+      &.perdida {
+        background: rgba(254, 226, 226, 0.2);
+      }
+    }
+  }
+}
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+  color: $color-card-text-light;
+  font-size: $font-size-text-lg-light;
+
+  &.dark {
+    color: $color-card-text-dark;
+  }
+}
+
+@media (max-width: 768px) {
+  .tabelaContainer {
+    padding: 15px;
+  }
+
+  .tabelaHeader {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 480px) {
+  .tabelaContainer {
+    padding: 10px;
+  }
+}

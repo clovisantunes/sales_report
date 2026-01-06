@@ -1,0 +1,137 @@
+@import '../../../../Styles/theme.scss';
+
+.metricaCard {
+  background: $color-on-white-bg-light;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+
+  &.dark {
+    background: $color-card-bg-dark;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  }
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+
+    &.dark {
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    }
+  }
+
+  // Borda lateral baseada no trend
+  position: relative;
+  overflow: hidden;
+  
+  &.trend-positive::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(to bottom, #10b981, #059669);
+  }
+  
+  &.trend-negative::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(to bottom, #ef4444, #dc2626);
+  }
+  
+  &.trend-total::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(to bottom, #3b82f6, #1d4ed8);
+  }
+  
+  &.trend-neutral::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(to bottom, #6b7280, #4b5563);
+  }
+
+  .cardHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+  }
+
+  .cardIcon {
+    font-size: 1.5rem;
+    opacity: 0.8;
+  }
+
+  .metricaTitulo {
+    font-size: $font-size-text-md-light;
+    color: $color-card-text-light;
+    margin-bottom: 10px;
+    font-weight: 500;
+
+    &.dark {
+      color: $color-card-text-dark;
+    }
+  }
+
+  .metricaValor {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: $color-title-text-light;
+    margin-bottom: 8px;
+    line-height: 1;
+
+    &.dark {
+      color: $color-title-text-dark;
+    }
+  }
+
+  .metricaInfo {
+    font-size: $font-size-text-sm-light;
+    color: $color-subtitle-text-light;
+
+    &.dark {
+      color: $color-subtitle-text-dark;
+    }
+
+    &.positivo {
+      color: #10b981;
+      font-weight: 600;
+    }
+
+    &.negativo {
+      color: #ef4444;
+      font-weight: 600;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .metricaCard {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .metricaCard {
+    padding: 15px;
+
+    .metricaValor {
+      font-size: 2rem;
+    }
+  }
+}

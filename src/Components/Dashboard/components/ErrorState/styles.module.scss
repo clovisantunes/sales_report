@@ -1,0 +1,60 @@
+@import '../../../../Styles/theme.scss';
+
+.dashboard {
+  padding: 20px;
+  min-height: calc(100vh - 70px);
+  background: $color-primary-light-light;
+  transition: all 0.3s ease;
+  padding-top: 13.5vh;
+
+  &.dark {
+    background: $color-primary-bg-dark;
+  }
+}
+
+.errorState {
+  background: #fee2e2;
+  border: 1px solid #fecaca;
+  color: #dc2626;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+
+  &.dark {
+    background: rgba(220, 38, 38, 0.1);
+    border-color: rgba(220, 38, 38, 0.3);
+    color: #fca5a5;
+  }
+
+  button {
+    background: #dc2626;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s ease;
+
+    &.dark {
+      background: rgba(220, 38, 38, 0.8);
+
+      &:hover:not(:disabled) {
+        background: rgba(220, 38, 38, 1);
+      }
+    }
+
+    &:hover:not(:disabled) {
+      background: #b91c1c;
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+}
